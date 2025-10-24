@@ -360,32 +360,50 @@ nav {
   animation-delay: 0.8s;
   animation-duration: 3.5s;
 }
-/* Notification Bell Vibration Animation */
-@keyframes bellVibrate {
+/* Circle Pulse Animation */
+@keyframes circlePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+.circle-pulse {
+  animation: circlePulse 2s ease-in-out infinite;
+  transform-origin: 350px 280px;
+}
+
+/* Phone Vibration Animation */
+@keyframes phoneVibrate {
   0%,
   100% {
     transform: rotate(0deg);
   }
   10% {
-    transform: rotate(-15deg);
+    transform: rotate(-8deg);
   }
   20% {
-    transform: rotate(15deg);
+    transform: rotate(8deg);
   }
   30% {
-    transform: rotate(-15deg);
+    transform: rotate(-8deg);
   }
   40% {
-    transform: rotate(15deg);
+    transform: rotate(8deg);
   }
   50% {
     transform: rotate(0deg);
   }
 }
 
-.notification-bell {
-  animation: bellVibrate 2s ease-in-out infinite;
-  transform-origin: 380px 265px; /* Top of the bell */
+.phone-vibrate {
+  animation: phoneVibrate 2s ease-in-out infinite;
+  transform-origin: 350px 280px;
 }
 
 .login-form-container {

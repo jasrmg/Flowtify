@@ -335,14 +335,22 @@
             />
 
             <!-- Notification bell -->
-            <g class="notification-bell">
-              <circle cx="350" cy="280" r="30" fill="#32B67A" opacity="0.9" />
-              <path
-                d="M340 270 L340 285 L360 285 L360 270 Q360 265 355 265 L345 265 Q340 265 340 270 Z"
-                fill="white"
+            <g class="notification-group">
+              <circle
+                cx="350"
+                cy="280"
+                r="22"
+                fill="#32B67A"
+                opacity="0.9"
+                class="circle-pulse"
               />
-              <rect x="345" y="285" width="10" height="5" rx="2" fill="white" />
-              <circle cx="365" cy="265" r="6" fill="#FF6B6B" />
+              <g class="phone-vibrate">
+                <path
+                  d="M343 273 L343 288 C343 290 345 292 347 292 L353 292 C355 292 357 290 357 288 L357 273 C357 271 355 269 353 269 L347 269 C345 269 343 271 343 273 Z M345 285 L355 285 M350 289 C350.5 289 351 288.5 351 288 C351 287.5 350.5 287 350 287 C349.5 287 349 287.5 349 288 C349 288.5 349.5 289 350 289 Z"
+                  fill="white"
+                />
+                <circle cx="356" cy="271" r="4" fill="#FF6B6B" />
+              </g>
             </g>
           </svg>
         </div>
