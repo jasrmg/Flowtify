@@ -284,27 +284,32 @@
             />
 
             <!-- Water waves -->
-            <path
-              d="M50 350 Q100 330 150 350 T250 350 T350 350 T450 350"
-              stroke="#3FA9F5"
-              stroke-width="6"
-              fill="none"
-              opacity="0.4"
-            />
-            <path
-              d="M50 370 Q100 350 150 370 T250 370 T350 370 T450 370"
-              stroke="#32B67A"
-              stroke-width="6"
-              fill="none"
-              opacity="0.4"
-            />
-            <path
-              d="M50 390 Q100 370 150 390 T250 390 T350 390 T450 390"
-              stroke="#3FA9F5"
-              stroke-width="5"
-              fill="none"
-              opacity="0.3"
-            />
+            <g class="wave-group">
+              <path
+                d="M50 350 Q100 330 150 350 T250 350 T350 350 T450 350"
+                stroke="#3FA9F5"
+                stroke-width="6"
+                fill="none"
+                opacity="0.4"
+                class="water-waves"
+              />
+              <path
+                d="M50 370 Q100 350 150 370 T250 370 T350 370 T450 370"
+                stroke="#32B67A"
+                stroke-width="6"
+                fill="none"
+                opacity="0.4"
+                class="water-waves"
+              />
+              <path
+                d="M50 390 Q100 370 150 390 T250 390 T350 390 T450 390"
+                stroke="#3FA9F5"
+                stroke-width="5"
+                fill="none"
+                opacity="0.3"
+                class="water-waves"
+              />
+            </g>
 
             <!-- House protected by umbrella -->
             <rect
@@ -330,13 +335,15 @@
             />
 
             <!-- Notification bell -->
-            <circle cx="380" cy="280" r="30" fill="#32B67A" opacity="0.9" />
-            <path
-              d="M370 270 L370 285 L390 285 L390 270 Q390 265 385 265 L375 265 Q370 265 370 270 Z"
-              fill="white"
-            />
-            <rect x="375" y="285" width="10" height="5" rx="2" fill="white" />
-            <circle cx="395" cy="265" r="6" fill="#FF6B6B" />
+            <g class="notification-bell">
+              <circle cx="380" cy="280" r="30" fill="#32B67A" opacity="0.9" />
+              <path
+                d="M370 270 L370 285 L390 285 L390 270 Q390 265 385 265 L375 265 Q370 265 370 270 Z"
+                fill="white"
+              />
+              <rect x="375" y="285" width="10" height="5" rx="2" fill="white" />
+              <circle cx="395" cy="265" r="6" fill="#FF6B6B" />
+            </g>
           </svg>
         </div>
 

@@ -292,7 +292,7 @@ nav {
   width: 100%;
   z-index: 1;
 }
-
+/* raindrop */
 .raindrop {
   animation: rainFall 2s linear infinite;
   transform-origin: center;
@@ -334,6 +334,58 @@ nav {
 }
 .raindrop:nth-child(7) {
   animation-duration: 1.7s;
+}
+/* Water Wave Animation */
+@keyframes waveMotion {
+  0%,
+  100% {
+    transform: scaleY(1) translateY(0);
+  }
+  50% {
+    transform: scaleY(1.1) translateY(-3px);
+  }
+}
+
+.water-waves {
+  animation: waveMotion 2.5s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.water-waves:nth-child(2) {
+  animation-delay: 0.4s;
+  animation-duration: 3s;
+}
+
+.water-waves:nth-child(3) {
+  animation-delay: 0.8s;
+  animation-duration: 3.5s;
+}
+/* Notification Bell Vibration Animation */
+@keyframes bellVibrate {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(-15deg);
+  }
+  20% {
+    transform: rotate(15deg);
+  }
+  30% {
+    transform: rotate(-15deg);
+  }
+  40% {
+    transform: rotate(15deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+}
+
+.notification-bell {
+  animation: bellVibrate 2s ease-in-out infinite;
+  transform-origin: 380px 265px; /* Top of the bell */
 }
 
 .login-form-container {
