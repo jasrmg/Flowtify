@@ -2,8 +2,8 @@
 
 **Community-Based Flood Monitoring and Reporting System**
 
-BantayBaha is a community-driven web application designed to help **residents** and **local government units (LGUs)** in the Philippines share and verify **real-time flood updates**.  
-By combining user-generated reports with admin verification, BantayBaha provides a **reliable, centralized source of flood information** to enhance **public safety** and **disaster response**.
+Flowtify is a community-driven web application designed to help **residents** and **local government units (LGUs)** in the Philippines share and verify **real-time flood updates**.  
+By combining user-generated reports with admin verification, Flowtify provides a **reliable, centralized source of flood information** to enhance **public safety** and **disaster response**.
 
 ---
 

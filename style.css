@@ -293,6 +293,49 @@ nav {
   z-index: 1;
 }
 
+.raindrop {
+  animation: rainFall 2s linear infinite;
+  transform-origin: center;
+}
+
+/* Slight random horizontal drift + downward fall */
+@keyframes rainFall {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(60px) translateX(1px) scale(1.05);
+  }
+  100% {
+    transform: translateY(120px) translateX(-1px) scale(1);
+    opacity: 0;
+  }
+}
+
+.raindrop:nth-child(1) {
+  animation-duration: 1.8s;
+}
+.raindrop:nth-child(2) {
+  animation-duration: 2.1s;
+}
+.raindrop:nth-child(3) {
+  animation-duration: 1.6s;
+}
+.raindrop:nth-child(4) {
+  animation-duration: 2.3s;
+}
+.raindrop:nth-child(5) {
+  animation-duration: 1.9s;
+}
+.raindrop:nth-child(6) {
+  animation-duration: 2.2s;
+}
+.raindrop:nth-child(7) {
+  animation-duration: 1.7s;
+}
+
 .login-form-container {
   flex: 1;
   display: flex;
