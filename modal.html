@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Profile Modal</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="modal.css" />
+  </head>
+  <body>
+    <!-- Demo Button -->
+    <button class="demo-btn" onclick="openModal()">
+      Open Profile Edit Modal
+    </button>
+
+    <!-- Modal Overlay -->
+    <div
+      class="modal-overlay"
+      id="modalOverlay"
+      onclick="closeModalOnOutsideClick(event)"
+    >
+      <div class="modal-container">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h2 class="modal-title">Edit Profile</h2>
+          <button class="close-btn" onclick="closeModal()">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <!-- Profile Picture Section -->
+          <div class="profile-picture-section">
+            <div class="profile-picture-wrapper" onclick="triggerFileInput()">
+              <div class="profile-picture" id="profilePicture">JD</div>
+              <div class="camera-overlay">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+                  ></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+              </div>
+            </div>
+            <input
+              type="file"
+              id="profilePictureInput"
+              accept="image/*"
+              onchange="handleFileSelect(event)"
+            />
+            <p class="profile-picture-label">
+              <span onclick="triggerFileInput()">Click to upload</span> a new
+              profile picture
+            </p>
+          </div>
+
+          <!-- Form Fields -->
+          <form id="profileForm">
+            <div class="form-group">
+              <label for="firstName" class="form-label">First Name</label>
+              <input
+                type="text"
+                id="firstName"
+                class="form-input"
+                placeholder="Enter your first name"
+                value="John"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input
+                type="text"
+                id="lastName"
+                class="form-input"
+                placeholder="Enter your last name"
+                value="Doe"
+              />
+            </div>
+          </form>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button class="btn btn-cancel" onclick="closeModal()">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            Cancel
+          </button>
+          <button class="btn btn-save" onclick="saveProfile()">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Open modal
+      function openModal() {
+        const modal = document.getElementById("modalOverlay");
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      // Close modal
+      function closeModal() {
+        const modal = document.getElementById("modalOverlay");
+        modal.classList.remove("active");
+        document.body.style.overflow = "auto";
+      }
+
+      // Close modal when clicking outside
+      function closeModalOnOutsideClick(event) {
+        if (event.target.id === "modalOverlay") {
+          closeModal();
+        }
+      }
+
+      // Trigger file input
+      function triggerFileInput() {
+        document.getElementById("profilePictureInput").click();
+      }
+
+      // Handle file selection
+      function handleFileSelect(event) {
+        const file = event.target.files[0];
+        if (file && file.type.startsWith("image/")) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const profilePicture = document.getElementById("profilePicture");
+            profilePicture.innerHTML = `<img src="${e.target.result}" alt="Profile Picture">`;
+          };
+          reader.readAsDataURL(file);
+        }
+      }
+
+      // Save profile
+      function saveProfile() {
+        const firstName = document.getElementById("firstName").value;
+        const lastName = document.getElementById("lastName").value;
+
+        if (!firstName.trim() || !lastName.trim()) {
+          alert("Please fill in all fields");
+          return;
+        }
+
+        // Here you would typically send the data to your backend
+        console.log("Saving profile:", { firstName, lastName });
+        alert(`Profile saved!\nName: ${firstName} ${lastName}`);
+        closeModal();
+      }
+
+      // Close modal on ESC key
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeModal();
+        }
+      });
+    </script>
+  </body>
+</html>
