@@ -392,3 +392,5 @@ window.addEventListener("resize", () => {
     sidebarLeft.classList.remove("active");
   }
 });
+
+// TODO: FULL SCREEN THE NOTIFICATION DROPDOWN WHEN ITS CLICKED IF ITS IN MOBILE DEVICES SIZE
