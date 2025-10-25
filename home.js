@@ -168,6 +168,12 @@ function initializeEventListeners() {
   profileBtn.addEventListener("click", (e) => {
     e.stopPropagation();
     profileDropdown.classList.toggle("active");
+
+    // Close notification dropdown if open
+    const notificationDropdown = document.getElementById(
+      "notificationDropdown"
+    );
+    notificationDropdown.classList.remove("active");
   });
 
   // Close dropdown when clicking outside
@@ -213,10 +219,56 @@ function initializeEventListeners() {
     filterReports(searchTerm);
   });
 
-  // Notification button
+  // Notification dropdown toggle
   const notificationBtn = document.getElementById("notificationBtn");
-  notificationBtn.addEventListener("click", () => {
-    alert("Notification panel would open here!");
+  const notificationDropdown = document.getElementById("notificationDropdown");
+
+  notificationBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const isActive = notificationDropdown.classList.toggle("active");
+
+    // Prevent body scroll on mobile when notification is open
+    if (window.innerWidth <= 968) {
+      if (isActive) {
+        document.body.classList.add("notification-open");
+      } else {
+        document.body.classList.remove("notification-open");
+      }
+    }
+
+    // Close profile dropdown if open
+    const profileDropdown = document.getElementById("profileDropdown");
+    profileDropdown.classList.remove("active");
+  });
+
+  // Close notification dropdown when clicking outside
+  document.addEventListener("click", (e) => {
+    if (
+      !notificationDropdown.contains(e.target) &&
+      !notificationBtn.contains(e.target)
+    ) {
+      notificationDropdown.classList.remove("active");
+      document.body.classList.remove("notification-open");
+    }
+  });
+
+  // Close notification on back button (mobile)
+  const notificationBackBtn = document.getElementById("notificationBackBtn");
+  if (notificationBackBtn) {
+    notificationBackBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      notificationDropdown.classList.remove("active");
+      document.body.classList.remove("notification-open");
+    });
+  }
+
+  // Individual notification click
+  const notificationItems = document.querySelectorAll(".notification-item");
+  notificationItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      item.classList.remove("unread");
+      // Here you could navigate to specific notification details
+    });
   });
 }
 
