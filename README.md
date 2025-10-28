@@ -1,6 +1,6 @@
 # 🌊 Flowtify
 
-**Community-Based Flood Monitoring and Reporting System**
+**Community-Based Flood Monitoring and Reporting System**  
 *built with next.js*
 
 Flowtify is a community-driven web application designed to help **residents** and **local government units (LGUs)** in the Philippines share and verify **real-time flood updates**.  
