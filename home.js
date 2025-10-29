@@ -193,6 +193,22 @@ function initializeEventListeners() {
   const navLinks = document.querySelectorAll(".nav-link");
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
+      const page = link.getAttribute("data-page");
+
+      // Allow navigation for links with href to actual pages
+      if (
+        link.hasAttribute("href") &&
+        link.getAttribute("href").endsWith(".html")
+      ) {
+        // Don't prevent default - let the browser navigate
+        // Just close mobile menu
+        if (window.innerWidth <= 968) {
+          sidebarLeft.classList.remove("active");
+        }
+        return; // Exit early, allow default navigation
+      }
+
+      // For non-page links (like #), prevent default
       e.preventDefault();
 
       // Remove active class from all links
@@ -206,7 +222,6 @@ function initializeEventListeners() {
         sidebarLeft.classList.remove("active");
       }
 
-      const page = link.getAttribute("data-page");
       console.log(`Navigating to: ${page}`);
       // Here you would implement actual page navigation or content switching
     });
