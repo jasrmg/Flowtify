@@ -237,17 +237,29 @@ function initializeEventListeners() {
   // Notification dropdown toggle
   const notificationBtn = document.getElementById("notificationBtn");
   const notificationDropdown = document.getElementById("notificationDropdown");
+  const navbar = document.querySelector(".navbar");
 
   notificationBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    const isActive = notificationDropdown.classList.toggle("active");
 
-    // Prevent body scroll on mobile when notification is open
-    if (window.innerWidth <= 968) {
-      if (isActive) {
-        document.body.classList.add("notification-open");
-      } else {
-        document.body.classList.remove("notification-open");
+    // Check if mobile (480px or below)
+    const isMobile = window.innerWidth <= 480;
+
+    if (isMobile) {
+      // Fullscreen overlay mode
+      navbar.classList.add("overlay-active", "notification-overlay");
+      document.body.classList.add("overlay-open");
+      notificationDropdown.classList.add("active");
+    } else {
+      const isActive = notificationDropdown.classList.toggle("active");
+
+      // Prevent body scroll on tablet when notification is open
+      if (window.innerWidth <= 968) {
+        if (isActive) {
+          document.body.classList.add("notification-open");
+        } else {
+          document.body.classList.remove("notification-open");
+        }
       }
     }
 
@@ -262,8 +274,13 @@ function initializeEventListeners() {
       !notificationDropdown.contains(e.target) &&
       !notificationBtn.contains(e.target)
     ) {
-      notificationDropdown.classList.remove("active");
-      document.body.classList.remove("notification-open");
+      // Check if in overlay mode (mobile)
+      if (navbar.classList.contains("notification-overlay")) {
+        return; // Don't close when clicking inside in overlay mode
+      } else {
+        notificationDropdown.classList.remove("active");
+        document.body.classList.remove("notification-open");
+      }
     }
   });
 
@@ -272,8 +289,7 @@ function initializeEventListeners() {
   if (notificationBackBtn) {
     notificationBackBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      notificationDropdown.classList.remove("active");
-      document.body.classList.remove("notification-open");
+      closeNotificationOverlay();
     });
   }
 
@@ -285,6 +301,18 @@ function initializeEventListeners() {
       // Here you could navigate to specific notification details
     });
   });
+}
+
+/**
+ * Close notification overlay
+ */
+function closeNotificationOverlay() {
+  const navbar = document.querySelector(".navbar");
+  const notificationDropdown = document.getElementById("notificationDropdown");
+
+  navbar.classList.remove("overlay-active", "notification-overlay");
+  notificationDropdown.classList.remove("active");
+  document.body.classList.remove("overlay-open", "notification-open");
 }
 
 // Initialize responsive search toggle
@@ -401,10 +429,19 @@ function initializeSafetyTipsCarousel() {
 // Handle window resize
 window.addEventListener("resize", () => {
   const sidebarLeft = document.getElementById("sidebarLeft");
+  const navbar = document.querySelector(".navbar");
 
   // Close mobile menu when resizing to desktop
   if (window.innerWidth > 968) {
     sidebarLeft.classList.remove("active");
+  }
+
+  // If resized above 480px while overlay is open, close it
+  if (
+    window.innerWidth > 480 &&
+    navbar.classList.contains("notification-overlay")
+  ) {
+    closeNotificationOverlay();
   }
 });
 

@@ -1166,7 +1166,16 @@ body.notification-open {
     z-index: 9999;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
+    padding: 0;
+  }
+
+  /* Hide all navbar elements except the active one */
+  .navbar.overlay-active .mobile-menu-btn,
+  .navbar.overlay-active .navbar-brand,
+  .navbar.overlay-active .search-toggle-btn,
+  .navbar.overlay-active .notification-btn,
+  .navbar.overlay-active .user-profile {
+    display: none;
   }
 
   /* Hide all navbar elements except the active one */
@@ -1190,11 +1199,14 @@ body.notification-open {
     box-shadow: none;
   }
 
+  .navbar.overlay-active.search-overlay .search-bar {
+    padding: 1rem;
+  }
+
   .navbar.overlay-active.search-overlay .search-bar input {
     font-size: 1.1rem;
     padding: 1rem 3.5rem 1rem 3rem;
   }
-
   .navbar.overlay-active.search-overlay .search-close-btn {
     display: flex;
     position: absolute;
@@ -1225,7 +1237,7 @@ body.notification-open {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    max-width: 480px;
+    max-width: 100%;
     opacity: 1;
     visibility: visible;
     transform: none;
@@ -1246,10 +1258,12 @@ body.notification-open {
     grid-template-columns: auto 1fr;
     gap: 1rem;
     align-items: center;
+    padding: 1.5rem 1.25rem;
   }
 
   .navbar.overlay-active.notification-overlay .notification-header h4 {
     text-align: center;
+    margin: 0;
   }
 
   .navbar.overlay-active.notification-overlay .notification-back-btn {

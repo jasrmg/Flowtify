@@ -457,13 +457,6 @@ function initializeEventListeners() {
     });
   }
 
-  // Map search functionality
-  const mapSearchInput = document.getElementById("mapSearchInput");
-  mapSearchInput.addEventListener("input", (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    filterReportsBySearch(searchTerm);
-  });
-
   // Status filter
   const statusFilter = document.getElementById("statusFilter");
   statusFilter.addEventListener("change", (e) => {
@@ -478,7 +471,6 @@ function initializeEventListeners() {
 
     // Reset filters
     statusFilter.value = "all";
-    mapSearchInput.value = "";
 
     setTimeout(() => {
       refreshBtn.classList.remove("spinning");
@@ -666,22 +658,10 @@ function initializeResponsiveSearch() {
 }
 
 /**
- * Filter reports by search term
- */
-function filterReportsBySearch(searchTerm) {
-  applyFilters(searchTerm);
-}
-
-/**
  * Apply all active filters
  */
-function applyFilters(searchOverride = null) {
+function applyFilters() {
   const statusFilter = document.getElementById("statusFilter").value;
-  const mapSearchInput = document.getElementById("mapSearchInput");
-  const searchTerm =
-    searchOverride !== null
-      ? searchOverride
-      : mapSearchInput.value.toLowerCase();
 
   // Start with all reports
   let filtered = [...allReports];
@@ -689,15 +669,6 @@ function applyFilters(searchOverride = null) {
   // Apply status filter
   if (statusFilter !== "all") {
     filtered = filtered.filter((report) => report.status === statusFilter);
-  }
-
-  // Apply search filter
-  if (searchTerm) {
-    filtered = filtered.filter(
-      (report) =>
-        report.location.toLowerCase().includes(searchTerm) ||
-        report.description.toLowerCase().includes(searchTerm)
-    );
   }
 
   // Update filtered reports and render
