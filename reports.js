@@ -260,6 +260,82 @@ function initializeEventListeners() {
       }
     });
   });
+
+  // Initialize responsive search toggle
+  initializeResponsiveSearch();
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    const navbar = document.querySelector(".navbar");
+
+    // Close mobile menu when resizing to desktop
+    if (window.innerWidth > 968) {
+      sidebarLeft.classList.remove("active");
+    }
+
+    // If resized above 480px while overlay is open, close it
+    if (
+      window.innerWidth > 480 &&
+      navbar.classList.contains("notification-overlay")
+    ) {
+      closeNotificationOverlay();
+    }
+  });
+}
+
+/**
+ * Initialize responsive search toggle
+ */
+function initializeResponsiveSearch() {
+  const searchToggleBtn = document.getElementById("searchToggleBtn");
+  const searchBar = document.getElementById("searchBar");
+  const searchCloseBtn = document.getElementById("searchCloseBtn");
+  const searchInput = document.getElementById("searchInput");
+  const navbar = document.querySelector(".navbar");
+
+  if (!searchToggleBtn) return;
+
+  // Open search
+  searchToggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    openMobileSearch();
+  });
+
+  // Close search
+  searchCloseBtn.addEventListener("click", () => {
+    closeMobileSearch();
+  });
+
+  // Close search when clicking outside
+  document.addEventListener("click", (e) => {
+    if (
+      window.innerWidth <= 968 &&
+      searchBar.classList.contains("mobile-expanded") &&
+      !searchBar.contains(e.target) &&
+      !searchToggleBtn.contains(e.target)
+    ) {
+      closeMobileSearch();
+    }
+  });
+
+  // Close search on escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && searchBar.classList.contains("mobile-expanded")) {
+      closeMobileSearch();
+    }
+  });
+
+  function openMobileSearch() {
+    searchBar.classList.add("mobile-expanded");
+    navbar.classList.add("search-active");
+    searchInput.focus();
+  }
+
+  function closeMobileSearch() {
+    searchBar.classList.remove("mobile-expanded");
+    navbar.classList.remove("search-active");
+    searchInput.value = "";
+  }
 }
 
 /**
