@@ -217,7 +217,7 @@ let currentReportId = null;
 // Initialize the app
 document.addEventListener("DOMContentLoaded", () => {
   initializeTheme();
-  initializeNavigation();
+  initializeScrollSpy();
   renderReportsTable();
   renderActiveAlerts();
   renderEmergencyHotlines();
@@ -227,19 +227,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeSearch();
   initializeModals();
 
-  // Initialize map when map section is shown
-  const mapSection = document.getElementById("mapSection");
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.target.classList.contains("active") && !map) {
-        initializeMap();
-      }
-    });
-  });
-  observer.observe(mapSection, {
-    attributes: true,
-    attributeFilter: ["class"],
-  });
+  // Initialize map after a short delay
+  setTimeout(initializeMap, 500);
 });
 
 // Theme Toggle
@@ -270,46 +259,64 @@ function initializeTheme() {
   });
 }
 
-// Navigation between sections
-function initializeNavigation() {
+// Initialize Scroll Spy
+function initializeScrollSpy() {
   const navLinks = document.querySelectorAll(".nav-link");
   const sections = document.querySelectorAll(".content-section");
 
+  // Smooth scroll on nav link click
   navLinks.forEach((link) => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
+      const targetId = link.getAttribute("href");
+      const targetSection = document.querySelector(targetId);
 
-      const sectionId = link.getAttribute("data-section");
-
-      // Update active nav link
-      navLinks.forEach((l) => l.classList.remove("active"));
-      link.classList.add("active");
-
-      // Show corresponding section
-      sections.forEach((section) => {
-        if (section.id === sectionId + "Section") {
-          section.classList.add("active");
-        } else {
-          section.classList.remove("active");
-        }
-      });
+      if (targetSection) {
+        targetSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
 
       // Close mobile sidebar
       if (window.innerWidth <= 968) {
         document.getElementById("sidebarLeft").classList.remove("active");
       }
+    });
+  });
 
-      // Initialize map if navigating to map section
-      if (sectionId === "map" && !map) {
-        setTimeout(initializeMap, 100);
+  // Update active nav link on scroll
+  const observerOptions = {
+    root: null,
+    rootMargin: "-80px 0px -80% 0px",
+    threshold: 0,
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const sectionId = entry.target.id;
+        navLinks.forEach((link) => {
+          link.classList.remove("active");
+          if (link.getAttribute("href") === `#${sectionId}`) {
+            link.classList.add("active");
+          }
+        });
       }
     });
+  }, observerOptions);
+
+  sections.forEach((section) => {
+    observer.observe(section);
   });
 }
 
 // Initialize Leaflet Map
 function initializeMap() {
   if (map) return;
+
+  const mapElement = document.getElementById("map");
+  if (!mapElement) return;
 
   map = L.map("map").setView([10.3157, 123.8854], 13);
 
@@ -703,7 +710,6 @@ function performSearch(query) {
 
   navLinks.forEach((link) => {
     const sectionName = link.querySelector("span").textContent.toLowerCase();
-    const sectionId = link.getAttribute("data-section");
 
     if (sectionName.includes(query)) {
       if (!matchFound) {
@@ -739,7 +745,6 @@ function initializeModals() {
     if (currentReportId) {
       alert(`Report #${currentReportId} approved!`);
       reportModal.classList.remove("active");
-      // Remove from pending reports
       const index = pendingReports.findIndex((r) => r.id === currentReportId);
       if (index > -1) {
         pendingReports.splice(index, 1);
@@ -752,7 +757,6 @@ function initializeModals() {
     if (currentReportId) {
       alert(`Report #${currentReportId} rejected!`);
       reportModal.classList.remove("active");
-      // Remove from pending reports
       const index = pendingReports.findIndex((r) => r.id === currentReportId);
       if (index > -1) {
         pendingReports.splice(index, 1);
@@ -803,7 +807,6 @@ function initializeModals() {
       renderActiveAlerts();
       alertModal.classList.remove("active");
 
-      // Clear form
       document.getElementById("alertTitle").value = "";
       document.getElementById("alertLocation").value = "";
       document.getElementById("alertSeverity").value = "low";
@@ -855,7 +858,6 @@ function initializeModals() {
       renderEmergencyHotlines();
       hotlineModal.classList.remove("active");
 
-      // Clear form
       document.getElementById("hotlineName").value = "";
       document.getElementById("hotlineNumber").value = "";
       document.getElementById("hotlineDescription").value = "";

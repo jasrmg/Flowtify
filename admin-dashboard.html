@@ -282,25 +282,12 @@
     <div class="layout-container">
       <!-- Left Sidebar -->
       <aside class="sidebar-left" id="sidebarLeft">
+        <div class="sidebar-header">
+          <h3>Dashboard</h3>
+        </div>
         <ul class="sidebar-nav">
           <li class="nav-item">
-            <a href="#" class="nav-link active" data-section="dashboard">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <rect x="3" y="3" width="7" height="7"></rect>
-                <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="14" y="14" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
-              </svg>
-              <span>Dashboard</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="#" class="nav-link" data-section="map">
+            <a href="#mapSection" class="nav-link" data-section="map">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -314,7 +301,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link" data-section="reports">
+            <a href="#reportsSection" class="nav-link" data-section="reports">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -332,7 +319,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link" data-section="alerts">
+            <a href="#alertsSection" class="nav-link" data-section="alerts">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -349,7 +336,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link" data-section="hotlines">
+            <a href="#hotlinesSection" class="nav-link" data-section="hotlines">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -364,7 +351,11 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link" data-section="statistics">
+            <a
+              href="#statisticsSection"
+              class="nav-link"
+              data-section="statistics"
+            >
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -379,7 +370,7 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="#" class="nav-link" data-section="logs">
+            <a href="#logsSection" class="nav-link" data-section="logs">
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -402,140 +393,137 @@
 
       <!-- Main Content -->
       <main class="main-content">
-        <!-- Dashboard Section -->
-        <section class="content-section active" id="dashboardSection">
-          <div class="content-header">
-            <h1>Admin Dashboard</h1>
-            <p>Overview and system management</p>
-          </div>
+        <div class="content-header">
+          <h1>Admin Dashboard</h1>
+          <p>Overview and system management</p>
+        </div>
 
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-icon primary">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path
-                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
-                  ></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-              </div>
-              <div class="stat-content">
-                <h3>Total Reports</h3>
-                <div class="stat-number">1,247</div>
-                <div class="stat-change positive">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <polyline points="18 15 12 9 6 15"></polyline>
-                  </svg>
-                  <span>12% from last month</span>
-                </div>
-              </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon primary">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+              </svg>
             </div>
-
-            <div class="stat-card">
-              <div class="stat-icon success">
+            <div class="stat-content">
+              <h3>Total Reports</h3>
+              <div class="stat-number">1,247</div>
+              <div class="stat-change positive">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
                   stroke-width="2"
                 >
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                  <polyline points="18 15 12 9 6 15"></polyline>
                 </svg>
-              </div>
-              <div class="stat-content">
-                <h3>Verified Reports</h3>
-                <div class="stat-number">892</div>
-                <div class="stat-change positive">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <polyline points="18 15 12 9 6 15"></polyline>
-                  </svg>
-                  <span>8% from last month</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon warning">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
-                </svg>
-              </div>
-              <div class="stat-content">
-                <h3>Pending Review</h3>
-                <div class="stat-number">23</div>
-                <div class="stat-change negative">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                  <span>3% from yesterday</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-icon accent">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                </svg>
-              </div>
-              <div class="stat-content">
-                <h3>Active Users</h3>
-                <div class="stat-number">3,421</div>
-                <div class="stat-change positive">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <polyline points="18 15 12 9 6 15"></polyline>
-                  </svg>
-                  <span>24% from last month</span>
-                </div>
+                <span>12% from last month</span>
               </div>
             </div>
           </div>
-        </section>
+
+          <div class="stat-card">
+            <div class="stat-icon success">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <h3>Verified Reports</h3>
+              <div class="stat-number">892</div>
+              <div class="stat-change positive">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+                <span>8% from last month</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon warning">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <h3>Pending Review</h3>
+              <div class="stat-number">23</div>
+              <div class="stat-change negative">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+                <span>3% from yesterday</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon accent">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <div class="stat-content">
+              <h3>Active Users</h3>
+              <div class="stat-number">3,421</div>
+              <div class="stat-change positive">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                </svg>
+                <span>24% from last month</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Map Section -->
         <section class="content-section" id="mapSection">
-          <div class="content-header">
-            <h1>Flood Reports Map</h1>
+          <div class="section-header">
+            <h2>Flood Reports Map</h2>
             <p>Interactive view of reported flood locations</p>
           </div>
 
@@ -546,8 +534,8 @@
 
         <!-- Reports Section -->
         <section class="content-section" id="reportsSection">
-          <div class="content-header">
-            <h1>Pending Reports</h1>
+          <div class="section-header">
+            <h2>Pending Reports</h2>
             <p>Review and manage flood reports</p>
           </div>
 
@@ -572,7 +560,7 @@
         <!-- Alerts Section -->
         <section class="content-section" id="alertsSection">
           <div class="section-header">
-            <h1>Active Flood Alerts</h1>
+            <h2>Active Flood Alerts</h2>
             <button class="create-btn" id="addAlertBtn">
               <svg
                 viewBox="0 0 24 24"
@@ -587,17 +575,15 @@
             </button>
           </div>
 
-          <div class="scroll-container">
-            <div class="alerts-grid" id="alertsGrid">
-              <!-- Populated by JS -->
-            </div>
+          <div class="alerts-grid" id="alertsGrid">
+            <!-- Populated by JS -->
           </div>
         </section>
 
         <!-- Emergency Hotlines Section -->
         <section class="content-section" id="hotlinesSection">
           <div class="section-header">
-            <h1>Emergency Hotlines</h1>
+            <h2>Emergency Hotlines</h2>
             <button class="create-btn" id="addHotlineBtn">
               <svg
                 viewBox="0 0 24 24"
@@ -612,17 +598,15 @@
             </button>
           </div>
 
-          <div class="scroll-container">
-            <div class="hotlines-grid" id="hotlinesGrid">
-              <!-- Populated by JS -->
-            </div>
+          <div class="hotlines-grid" id="hotlinesGrid">
+            <!-- Populated by JS -->
           </div>
         </section>
 
         <!-- Statistics Section -->
         <section class="content-section" id="statisticsSection">
-          <div class="content-header">
-            <h1>Statistics Overview</h1>
+          <div class="section-header">
+            <h2>Statistics Overview</h2>
             <p>Visual summary of system data</p>
           </div>
 
@@ -720,8 +704,8 @@
 
         <!-- System Logs Section -->
         <section class="content-section" id="logsSection">
-          <div class="content-header">
-            <h1>System Logs</h1>
+          <div class="section-header">
+            <h2>System Logs</h2>
             <p>Recent admin actions and system events</p>
           </div>
 
