@@ -257,7 +257,7 @@
   opacity: 0;
   visibility: hidden;
 }
-
+/* DUPLICATE WITH REPORTS.CSS */
 .loading-spinner {
   width: 48px;
   height: 48px;
@@ -272,6 +272,7 @@
     transform: rotate(360deg);
   }
 }
+/* DUPLICATE WITH REPORTS.CSS */
 
 .map-loading p {
   font-size: 0.95rem;
@@ -586,9 +587,9 @@
     width: 100%;
     max-width: 100%;
     height: auto;
-    padding: 0;
     background: transparent;
     box-shadow: none;
+    padding: 1rem;
   }
 
   .navbar.overlay-active.search-overlay .search-bar input {
