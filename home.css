@@ -503,15 +503,6 @@
     display: none;
   }
 
-  /* Hide all navbar elements except the active one */
-  .navbar.overlay-active .mobile-menu-btn,
-  .navbar.overlay-active .navbar-brand,
-  .navbar.overlay-active .search-toggle-btn,
-  .navbar.overlay-active .notification-btn,
-  .navbar.overlay-active .user-profile {
-    display: none;
-  }
-
   /* Search Overlay */
   .navbar.overlay-active.search-overlay .search-bar {
     display: flex;
@@ -522,9 +513,6 @@
     padding: 0;
     background: transparent;
     box-shadow: none;
-  }
-
-  .navbar.overlay-active.search-overlay .search-bar {
     padding: 1rem;
   }
 
@@ -625,5 +613,3 @@
     height: 60px;
   }
 }
-
-/* TODO: FULL SCREEN THE NOTIFICATION DROPDOWN WHEN ITS CLICKED IF ITS IN MOBILE DEVICES SIZE */
