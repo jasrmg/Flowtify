@@ -90,3 +90,10 @@ h6 {
   transform: rotate(180deg);
 }
 /* THEME TOGGLE CSS */
+
+/* Layout Container */
+.layout-container {
+  display: flex;
+  margin-top: 64px;
+  min-height: calc(100vh - 64px);
+}
