@@ -575,12 +575,15 @@ function initializeEventListeners() {
     const isMobile = window.innerWidth <= 480;
 
     if (isMobile) {
+      // Fullscreen overlay mode for mobile
       navbar.classList.add("overlay-active", "notification-overlay");
       document.body.classList.add("overlay-open");
       notificationDropdown.classList.add("active");
     } else {
+      // Normal dropdown for larger screens
       const isActive = notificationDropdown.classList.toggle("active");
 
+      // Prevent body scroll on tablet when notification is open
       if (window.innerWidth <= 968) {
         if (isActive) {
           document.body.classList.add("notification-open");
@@ -598,8 +601,9 @@ function initializeEventListeners() {
       !notificationDropdown.contains(e.target) &&
       !notificationBtn.contains(e.target)
     ) {
+      // Check if in overlay mode (mobile)
       if (navbar.classList.contains("notification-overlay")) {
-        return;
+        return; // Don't close when clicking inside in overlay mode
       } else {
         notificationDropdown.classList.remove("active");
         document.body.classList.remove("notification-open");
@@ -607,6 +611,14 @@ function initializeEventListeners() {
     }
   });
 
+  const notificationItems = document.querySelectorAll(".notification-item");
+  notificationItems.forEach((item) => {
+    item.addEventListener("click", () => {
+      item.classList.remove("unread");
+    });
+  });
+
+  // Close notification on back button (mobile)
   const notificationBackBtn = document.getElementById("notificationBackBtn");
   if (notificationBackBtn) {
     notificationBackBtn.addEventListener("click", (e) => {
@@ -614,13 +626,6 @@ function initializeEventListeners() {
       closeNotificationOverlay();
     });
   }
-
-  const notificationItems = document.querySelectorAll(".notification-item");
-  notificationItems.forEach((item) => {
-    item.addEventListener("click", () => {
-      item.classList.remove("unread");
-    });
-  });
 }
 
 // Close notification overlay
@@ -691,14 +696,24 @@ function initializeSearch() {
   });
 
   function openMobileSearch() {
+    const isMobile = window.innerWidth <= 480;
+
+    if (isMobile) {
+      // Fullscreen overlay mode for mobile
+      navbar.classList.add("overlay-active", "search-overlay");
+      document.body.classList.add("overlay-open");
+    }
+
     searchBar.classList.add("mobile-expanded");
     navbar.classList.add("search-active");
     searchInput.focus();
   }
 
   function closeMobileSearch() {
+    navbar.classList.remove("overlay-active", "search-overlay");
     searchBar.classList.remove("mobile-expanded");
     navbar.classList.remove("search-active");
+    document.body.classList.remove("overlay-open");
     searchInput.value = "";
   }
 }
@@ -901,6 +916,7 @@ window.addEventListener("resize", () => {
     sidebarLeft.classList.remove("active");
   }
 
+  // Close notification overlay if resized above mobile breakpoint
   if (
     window.innerWidth > 480 &&
     navbar.classList.contains("notification-overlay")

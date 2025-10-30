@@ -32,10 +32,14 @@ body.dark-mode {
 
 html {
   scroll-behavior: smooth;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   font-family: "Inter", sans-serif;
+  width: 100%;
+  max-width: 100vw;
   color: var(--text-primary);
   background-color: var(--bg-primary);
   line-height: 1.6;
@@ -311,7 +315,7 @@ h6 {
 .notification-dropdown {
   position: absolute;
   top: calc(100% + 0.5rem);
-  right: -2rem;
+  right: 0;
   width: 380px;
   max-height: 500px;
   background-color: var(--bg-secondary);
@@ -582,6 +586,7 @@ body.notification-open {
   padding: 0.5rem;
   color: var(--text-primary);
   transition: all 0.3s ease;
+  z-index: 1;
 }
 
 .mobile-menu-btn:hover {
@@ -598,6 +603,9 @@ body.notification-open {
   display: flex;
   margin-top: 64px;
   min-height: calc(100vh - 64px);
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 /* Left Sidebar */
@@ -1547,6 +1555,7 @@ body.notification-open {
   .search-bar {
     display: flex;
     max-width: 300px;
+    flex: 1;
   }
 
   .search-toggle-btn {
@@ -1631,6 +1640,9 @@ body.notification-open {
 @media (max-width: 480px) {
   .main-content {
     padding: 1rem;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
   }
 
   .content-header h1 {
@@ -1661,28 +1673,6 @@ body.notification-open {
     display: block;
   }
 
-  .navbar.overlay-active {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 100vh;
-    background-color: var(--bg-secondary);
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    padding: 0;
-  }
-
-  .navbar.overlay-active .mobile-menu-btn,
-  .navbar.overlay-active .navbar-brand,
-  .navbar.overlay-active .search-toggle-btn,
-  .navbar.overlay-active .notification-btn,
-  .navbar.overlay-active .user-profile {
-    display: none;
-  }
-
   .navbar.overlay-active.search-overlay .search-bar {
     display: flex;
     position: static;
@@ -1711,6 +1701,33 @@ body.notification-open {
     height: 24px;
   }
 
+  /* Fullscreen overlay mode */
+  .navbar.overlay-active {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-secondary);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* Hide all navbar elements except the active one */
+  .navbar.overlay-active .mobile-menu-btn,
+  .navbar.overlay-active .navbar-brand,
+  .navbar.overlay-active .search-toggle-btn,
+  .navbar.overlay-active .notification-btn,
+  .navbar.overlay-active .user-profile {
+    display: none;
+  }
+
+  /* Notification Overlay - FULLSCREEN for mobile */
   .navbar.overlay-active.notification-overlay .notification-container {
     display: flex;
     flex-direction: column;
@@ -1761,6 +1778,7 @@ body.notification-open {
     display: block;
   }
 
+  /* Prevent body scroll when overlay is active */
   body.overlay-open {
     overflow: hidden;
   }
@@ -1779,6 +1797,7 @@ body.notification-open {
 
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
   .stat-card {
@@ -1787,6 +1806,8 @@ body.notification-open {
 
   .table-container {
     overflow-x: auto;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
   }
 
   .data-table {

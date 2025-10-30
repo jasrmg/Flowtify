@@ -444,5 +444,3 @@ window.addEventListener("resize", () => {
     closeNotificationOverlay();
   }
 });
-
-// TODO: FULL SCREEN THE NOTIFICATION DROPDOWN WHEN ITS CLICKED IF ITS IN MOBILE DEVICES SIZE
