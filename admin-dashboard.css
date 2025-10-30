@@ -1673,32 +1673,48 @@ body.notification-open {
     display: block;
   }
 
+  /* Search overlay should only show topbar, not fullscreen */
+  .navbar.overlay-active.search-overlay {
+    height: 64px;
+    bottom: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 0.75rem;
+    justify-content: center;
+  }
+
   .navbar.overlay-active.search-overlay .search-bar {
     display: flex;
     position: static;
     width: 100%;
     max-width: 100%;
     height: auto;
-    padding: 1rem;
+    padding: 0;
     background: transparent;
     box-shadow: none;
   }
 
   .navbar.overlay-active.search-overlay .search-bar input {
-    font-size: 1.1rem;
-    padding: 1rem 3.5rem 1rem 3rem;
+    font-size: 1rem;
+    padding: 0.875rem 3.5rem 0.875rem 3rem;
+    width: 100%;
+  }
+
+  .navbar.overlay-active.search-overlay .search-icon {
+    left: 1.4rem;
   }
 
   .navbar.overlay-active.search-overlay .search-close-btn {
     display: flex;
     position: absolute;
-    right: 1rem;
-    top: 1rem;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
   .navbar.overlay-active.search-overlay .search-close-btn svg {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
   }
 
   /* Fullscreen overlay mode */
