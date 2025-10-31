@@ -48,6 +48,41 @@ export const Navbar = () => {
     };
   }, []);
 
+  // handle body class and navbar class
+  useEffect(() => {
+    const navbar = document.querySelector(".navbar");
+    if (isSearchOpen) {
+      navbar?.classList.add("search-active");
+      if (window.innerWidth <= 480) {
+        navbar?.classList.add("overlay-active", "search-overlay");
+        document.body.classList.add("overlay-open");
+      }
+    } else {
+      navbar?.classList.remove(
+        "search-active",
+        "overlay-active",
+        "search-overlay"
+      );
+      document.body.classList.remove("overlay-open");
+    }
+  }, [isSearchOpen]);
+
+  // Handle notification overlay for mobile
+  useEffect(() => {
+    const navbar = document.querySelector(".navbar");
+    if (isNotificationOpen) {
+      if (window.innerWidth <= 480) {
+        navbar?.classList.add("overlay-active", "notification-overlay");
+        document.body.classList.add("overlay-open");
+      } else if (window.innerWidth <= 968) {
+        document.body.classList.add("notification-open");
+      }
+    } else {
+      navbar?.classList.remove("overlay-active", "notification-overlay");
+      document.body.classList.remove("overlay-open", "notification-open");
+    }
+  }, [isNotificationOpen]);
+
   const handleLogout = () => {
     console.log("logout");
   };
@@ -119,7 +154,7 @@ export const Navbar = () => {
       </button>
 
       <div
-        className={`search-bar ${isSearchOpen ? "active" : ""}`}
+        className={`search-bar ${isSearchOpen ? "mobile-expanded" : ""}`}
         id="searchBar"
       >
         <svg

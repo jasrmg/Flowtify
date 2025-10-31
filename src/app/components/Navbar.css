@@ -512,3 +512,146 @@ body.notification-open {
   width: 24px;
   height: 24px;
 }
+@media (max-width: 968px) {
+  .mobile-menu-btn {
+    display: block;
+  }
+
+  .notification-dropdown {
+    width: 90vw;
+    max-width: 380px;
+    right: -4rem;
+  }
+}
+
+/* Mobile Overlay Styles */
+@media (max-width: 480px) {
+  .search-toggle-btn {
+    display: block;
+  }
+
+  .search-bar {
+    display: none;
+  }
+
+  /* Fullscreen overlay mode */
+  .navbar.overlay-active {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--bg-secondary);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  /* Hide all navbar elements except the active one */
+  .navbar.overlay-active .mobile-menu-btn,
+  .navbar.overlay-active .navbar-brand,
+  .navbar.overlay-active .search-toggle-btn,
+  .navbar.overlay-active .notification-btn,
+  .navbar.overlay-active .user-profile {
+    display: none;
+  }
+
+  /* Search Overlay - topbar only for mobile */
+  .navbar.overlay-active.search-overlay {
+    height: 64px;
+    bottom: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 0 0.75rem;
+    justify-content: center;
+  }
+
+  .navbar.overlay-active.search-overlay .search-bar {
+    display: flex;
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .navbar.overlay-active.search-overlay .search-bar input {
+    font-size: 1rem;
+    padding: 0.875rem 3.5rem 0.875rem 3rem;
+    width: 100%;
+  }
+
+  .navbar.overlay-active.search-overlay .search-icon {
+    left: 1.4rem;
+  }
+
+  .navbar.overlay-active.search-overlay .search-close-btn {
+    display: flex;
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Notification Overlay - FULLSCREEN for mobile */
+  .navbar.overlay-active.notification-overlay .notification-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+  }
+
+  .navbar.overlay-active.notification-overlay .notification-btn {
+    display: none;
+  }
+
+  .navbar.overlay-active.notification-overlay .notification-dropdown {
+    position: static;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    border-radius: 0;
+    box-shadow: none;
+    max-height: none;
+  }
+
+  .navbar.overlay-active.notification-overlay .notification-list {
+    flex: 1;
+    max-height: none;
+    overflow-y: auto;
+  }
+
+  .navbar.overlay-active.notification-overlay .notification-header {
+    flex-shrink: 0;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    padding: 1.5rem 1.25rem;
+  }
+
+  .navbar.overlay-active.notification-overlay .notification-header h4 {
+    text-align: center;
+    margin: 0;
+  }
+
+  .navbar.overlay-active.notification-overlay .notification-back-btn {
+    display: block;
+  }
+
+  /* Prevent body scroll when overlay is active */
+  body.overlay-open {
+    overflow: hidden;
+  }
+}
