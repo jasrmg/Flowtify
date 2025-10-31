@@ -1,0 +1,76 @@
+.logs-container {
+  background-color: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px var(--shadow);
+}
+
+.log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.log-item {
+  padding: 1rem;
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.2s ease;
+}
+
+.log-item:hover {
+  transform: translateX(4px);
+}
+
+.log-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.log-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.log-icon.info {
+  background-color: rgba(63, 169, 245, 0.15);
+  color: var(--secondary);
+}
+
+.log-icon.success {
+  background-color: rgba(50, 182, 122, 0.15);
+  color: var(--accent);
+}
+
+.log-icon.warning {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.log-icon.error {
+  background-color: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+}
+
+.log-content {
+  flex: 1;
+}
+
+.log-message {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.log-time {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
