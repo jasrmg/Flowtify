@@ -54,6 +54,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden !important;
+}
+
 h1,
 h2,
 h3,

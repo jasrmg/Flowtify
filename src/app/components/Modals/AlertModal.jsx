@@ -1,14 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
+  const scrollPosition = useRef(0);
+
   const [formData, setFormData] = useState({
     title: "",
     location: "",
     severity: "low",
     message: "",
   });
+
+  // dont allow scroll if the modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save current scroll position
+      scrollPosition.current = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollPosition.current}px`;
+      document.body.style.width = "100%";
+      document.body.classList.add("modal-open");
+    } else if (scrollPosition.current !== 0) {
+      // Restore scroll position
+      const savedPosition = scrollPosition.current;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.classList.remove("modal-open");
+
+      // Use requestAnimationFrame to ensure styles are applied before scrolling
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: savedPosition,
+          behavior: "instant",
+        });
+      });
+    }
+
+    return () => {
+      if (document.body.classList.contains("modal-open")) {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.classList.remove("modal-open");
+      }
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

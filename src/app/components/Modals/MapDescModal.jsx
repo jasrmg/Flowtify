@@ -1,6 +1,46 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+
 export const MapDescModal = ({ isOpen, onClose, marker }) => {
+  const scrollPosition = useRef(0);
+
+  // dont allow scroll if the modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save current scroll position
+      scrollPosition.current = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollPosition.current}px`;
+      document.body.style.width = "100%";
+      document.body.classList.add("modal-open");
+    } else if (scrollPosition.current !== 0) {
+      // Restore scroll position
+      const savedPosition = scrollPosition.current;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.classList.remove("modal-open");
+
+      // Use requestAnimationFrame to ensure styles are applied before scrolling
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: savedPosition,
+          behavior: "instant",
+        });
+      });
+    }
+
+    return () => {
+      if (document.body.classList.contains("modal-open")) {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.classList.remove("modal-open");
+      }
+    };
+  }, [isOpen]);
+
   if (!isOpen || !marker) return null;
 
   return (
@@ -22,10 +62,28 @@ export const MapDescModal = ({ isOpen, onClose, marker }) => {
           </button>
         </div>
         <div className="modal-body">
+          {marker.photo && (
+            <div className="modal-field">
+              <img
+                src={marker.photo}
+                alt={marker.location}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  borderRadius: "8px",
+                  marginBottom: "16px",
+                  objectFit: "cover",
+                  maxHeight: "400px",
+                }}
+              />
+            </div>
+          )}
+
           <div className="modal-field">
             <label>Location</label>
             <p>{marker.location}</p>
           </div>
+
           <div className="modal-field">
             <label>Full Description</label>
             <p>{marker.fullDescription}</p>

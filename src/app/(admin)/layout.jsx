@@ -1,11 +1,12 @@
 import { Navbar } from "@/app/components/Navbar";
 import { Sidebar } from "./dashboard/components/Sidebar";
+import { ThemeToggle } from "../components/ThemeToggle";
 
 export const AdminLayout = ({ children }) => {
   return (
     <>
       {/* ThemeToggle */}
-
+      <ThemeToggle />
       {/* Navbar */}
       <Navbar />
 

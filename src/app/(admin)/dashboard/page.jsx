@@ -109,21 +109,6 @@ export default function DashboardPage() {
         <p>Overview and system management</p>
       </div>
 
-      <div className="stats-grid">
-        {statsData.map((stat) => (
-          <StatCard
-            key={stat.id}
-            title={stat.title}
-            value={stat.value}
-            change={stat.change}
-            changeType={stat.changeType}
-            period={stat.period}
-            icon={stat.icon}
-            iconType={stat.iconType}
-          />
-        ))}
-      </div>
-
       {/* Map Section */}
       <section className="content-section" id="mapSection">
         <div className="section-header">
