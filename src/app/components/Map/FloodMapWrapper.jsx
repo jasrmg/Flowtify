@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import dynamic from "next/dynamic";
 
 // Dynamically import the map component with no SSR
@@ -27,11 +27,11 @@ const FloodMap = dynamic(
 );
 
 export const FloodMapWrapper = ({ markers, onViewDescription }) => {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const isMounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
 
   if (!isMounted) {
     return (
