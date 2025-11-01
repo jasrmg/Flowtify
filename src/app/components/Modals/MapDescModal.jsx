@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 
 export const MapDescModal = ({ isOpen, onClose, marker }) => {
   const scrollPosition = useRef(0);
@@ -64,7 +65,7 @@ export const MapDescModal = ({ isOpen, onClose, marker }) => {
         <div className="modal-body">
           {marker.photo && (
             <div className="modal-field">
-              <img
+              <Image
                 src={marker.photo}
                 alt={marker.location}
                 style={{
