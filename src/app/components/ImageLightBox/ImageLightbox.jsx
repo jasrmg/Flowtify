@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import "./ImageLightbox.css";
 
 export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
+  //
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [zoom, setZoom] = useState(1);
+
+  // Convert single image to array format if needed
+  const imageArray = Array.isArray(images) ? images : [images];
 
   // Prevent body scroll
   useEffect(() => {
@@ -16,19 +20,20 @@ export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
     };
   }, []);
 
-  const handleNext = () => {
-    if (currentIndex < images.length - 1) {
+  const handleNext = useCallback(() => {
+    if (currentIndex < imageArray.length - 1) {
       setCurrentIndex(currentIndex + 1);
       setZoom(1);
     }
-  };
+  }, [currentIndex, imageArray.length]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentIndex > 0) {
       setCurrentIndex(currentIndex - 1);
       setZoom(1);
     }
-  };
+  }, [currentIndex]);
+  //
 
   const handleZoomIn = () => {
     setZoom((prev) => Math.min(prev + 0.5, 3));
@@ -43,9 +48,6 @@ export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
     setZoom(1);
   };
 
-  // Convert single image to array format if needed
-  const imageArray = Array.isArray(images) ? images : [images];
-
   // Handle keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -56,7 +58,7 @@ export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, onClose]);
+  }, [handleNext, handlePrevious, onClose]);
 
   return (
     <div className="lightbox-overlay" onClick={onClose}>
