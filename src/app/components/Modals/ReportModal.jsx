@@ -1,5 +1,8 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
+
 export const ReportModal = ({
   isOpen,
   onClose,
@@ -7,6 +10,44 @@ export const ReportModal = ({
   onApprove,
   onReject,
 }) => {
+  const scrollPosition = useRef(0);
+
+  // dont allow scroll if the modal is open
+  useEffect(() => {
+    if (isOpen) {
+      // Save current scroll position
+      scrollPosition.current = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollPosition.current}px`;
+      document.body.style.width = "100%";
+      document.body.classList.add("modal-open");
+    } else if (scrollPosition.current !== 0) {
+      // Restore scroll position
+      const savedPosition = scrollPosition.current;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.classList.remove("modal-open");
+
+      // Use requestAnimationFrame to ensure styles are applied before scrolling
+      requestAnimationFrame(() => {
+        window.scrollTo({
+          top: savedPosition,
+          behavior: "instant",
+        });
+      });
+    }
+
+    return () => {
+      if (document.body.classList.contains("modal-open")) {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.classList.remove("modal-open");
+      }
+    };
+  }, [isOpen]);
+
   if (!isOpen || !report) return null;
 
   const handleApprove = () => {
@@ -57,7 +98,20 @@ export const ReportModal = ({
           <div className="modal-field">
             <label>Photo</label>
             <div className="photo-preview">
-              <img src={report.photo} alt="Flood report photo" />
+              <Image
+                src={report.photo}
+                alt="Flood report photo"
+                width={800}
+                height={600}
+                style={{
+                  width: "100%",
+                  height: "auto",
+                  borderRadius: "8px",
+                  marginBottom: "16px",
+                  objectFit: "cover",
+                  maxHeight: "400px",
+                }}
+              />
             </div>
           </div>
         </div>

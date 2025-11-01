@@ -68,6 +68,8 @@ export const MapDescModal = ({ isOpen, onClose, marker }) => {
               <Image
                 src={marker.photo}
                 alt={marker.location}
+                width={800}
+                height={600}
                 style={{
                   width: "100%",
                   height: "auto",
