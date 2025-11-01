@@ -68,6 +68,42 @@ h6 {
   font-family: "Poppins", sans-serif;
 }
 
+/* BUTTON STYLES */
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-family: "Inter", sans-serif;
+  display: inline-block;
+}
+
+.btn-primary {
+  background-color: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2a9d68;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(50, 182, 122, 0.3);
+}
+
+.btn-secondary {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #2d8ed1;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(63, 169, 245, 0.3);
+}
+/* BUTTON STYLES */
+
 /* THEME TOGGLE CSS */
 .theme-toggle {
   position: fixed;
