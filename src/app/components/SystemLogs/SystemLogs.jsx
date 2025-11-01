@@ -56,7 +56,7 @@ const getLogIcon = (type) => {
 export const SystemLogs = ({ logs }) => {
   return (
     <div className="logs-container">
-      <div className="log-list">
+      <div className="log-list" id="logList">
         {logs.map((log) => (
           <div key={log.id} className="log-item">
             <div className={`log-icon ${log.type}`}>{getLogIcon(log.type)}</div>

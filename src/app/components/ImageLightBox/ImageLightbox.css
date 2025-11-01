@@ -1,0 +1,241 @@
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.95);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.lightbox-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Close Button */
+.lightbox-close {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.lightbox-close:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
+}
+
+.lightbox-close svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+/* Navigation Arrows */
+.lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.lightbox-arrow:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.lightbox-arrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.lightbox-arrow svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+.lightbox-arrow-left {
+  left: 2rem;
+}
+
+.lightbox-arrow-right {
+  right: 2rem;
+}
+
+/* Image Container */
+.lightbox-image-container {
+  width: 90%;
+  height: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.lightbox-image-wrapper {
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Zoom Controls */
+.lightbox-zoom-controls {
+  position: absolute;
+  bottom: 6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  z-index: 10;
+}
+
+.lightbox-zoom-controls button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-zoom-controls button:hover:not(:disabled) {
+  transform: scale(1.2);
+}
+
+.lightbox-zoom-controls button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.lightbox-zoom-controls svg {
+  width: 24px;
+  height: 24px;
+  color: white;
+}
+
+.zoom-level {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-width: 50px;
+  text-align: center;
+}
+
+/* Pagination Dots */
+.lightbox-dots {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.75rem;
+  z-index: 10;
+}
+
+.lightbox-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.lightbox-dot:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.2);
+}
+
+.lightbox-dot.active {
+  background-color: white;
+  transform: scale(1.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .lightbox-close {
+    top: 1rem;
+    right: 1rem;
+    width: 40px;
+    height: 40px;
+  }
+
+  .lightbox-arrow {
+    width: 48px;
+    height: 48px;
+  }
+
+  .lightbox-arrow-left {
+    left: 1rem;
+  }
+
+  .lightbox-arrow-right {
+    right: 1rem;
+  }
+
+  .lightbox-zoom-controls {
+    bottom: 5rem;
+    padding: 0.5rem 1rem;
+  }
+
+  .lightbox-zoom-controls svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lightbox-image-container {
+    width: 95%;
+    height: 70%;
+  }
+
+  .lightbox-arrow {
+    width: 40px;
+    height: 40px;
+  }
+
+  .lightbox-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+}

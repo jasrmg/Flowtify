@@ -6,8 +6,11 @@ export const pendingReports = [
     description:
       "Severe flooding on main road, water level approximately 2 feet high. Multiple vehicles stranded.",
     date: "2024-10-30 14:30",
-    photo:
+    photo: [
       "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1589820296156-2454bb98a4ba?w=800&h=600&fit=crop",
+    ],
   },
   {
     id: 2,
@@ -61,8 +64,11 @@ export const mapMarkers = [
       "Severe flooding on main road, water level approximately 2 feet high.",
     fullDescription:
       "Severe flooding reported on Gorordo Avenue in Barangay Lahug. Water level has reached approximately 2 feet, causing multiple vehicles to become stranded. Local authorities are working on clearing the drainage system. Residents are advised to avoid the area and use alternative routes.",
-    photo:
+    photo: [
       "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1589820296156-2454bb98a4ba?w=800&h=600&fit=crop",
+    ],
   },
   {
     id: 2,

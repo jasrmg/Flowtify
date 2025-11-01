@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { ImageLightbox } from "../ImageLightBox/ImageLightbox";
+import { ImageGallery } from "../ImageGallery/ImageGallery";
 
 export const ReportModal = ({
   isOpen,
@@ -11,6 +13,8 @@ export const ReportModal = ({
   onReject,
 }) => {
   const scrollPosition = useRef(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
 
   // dont allow scroll if the modal is open
   useEffect(() => {
@@ -98,18 +102,12 @@ export const ReportModal = ({
           <div className="modal-field">
             <label>Photo</label>
             <div className="photo-preview">
-              <Image
-                src={report.photo}
+              <ImageGallery
+                images={report.photo}
                 alt="Flood report photo"
-                width={800}
-                height={600}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  borderRadius: "8px",
-                  marginBottom: "16px",
-                  objectFit: "cover",
-                  maxHeight: "400px",
+                onImageClick={(index) => {
+                  setLightboxStartIndex(index);
+                  setLightboxOpen(true);
                 }}
               />
             </div>
@@ -143,6 +141,15 @@ export const ReportModal = ({
           </button>
         </div>
       </div>
+
+      {/* Image Lightbox */}
+      {lightboxOpen && (
+        <ImageLightbox
+          images={report.photo}
+          initialIndex={lightboxStartIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import "./HotlinesGrid.css";
 
 export const HotlinesGrid = ({ hotlines }) => {
   return (
-    <div className="hotlines-grid">
+    <div className="hotlines-grid" id="hotlinesGrid">
       {hotlines.map((hotline) => (
         <div key={hotline.id} className="hotline-card">
           <div className="hotline-icon">

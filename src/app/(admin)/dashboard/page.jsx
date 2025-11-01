@@ -158,9 +158,7 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <div className="alerts-grid" id="alertsGrid">
-          <AlertsGrid alerts={activeAlerts} />
-        </div>
+        <AlertsGrid alerts={activeAlerts} />
       </section>
 
       {/* Emergency Hotlines Section */}
@@ -184,9 +182,7 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <div className="hotlines-grid" id="hotlinesGrid">
-          <HotlinesGrid hotlines={emergencyHotlines} />
-        </div>
+        <HotlinesGrid hotlines={emergencyHotlines} />
       </section>
 
       {/* Statistics Section */}
@@ -223,11 +219,7 @@ export default function DashboardPage() {
           <p>Recent admin actions and system events</p>
         </div>
 
-        <div className="logs-container">
-          <div className="log-list" id="logList">
-            <SystemLogs logs={systemLogs} />
-          </div>
-        </div>
+        <SystemLogs logs={systemLogs} />
       </section>
 
       {/* Map Description Modal */}

@@ -1,10 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+
+import { ImageGallery } from "../ImageGallery/ImageGallery";
+import { ImageLightbox } from "../ImageLightBox/ImageLightbox";
 
 export const MapDescModal = ({ isOpen, onClose, marker }) => {
   const scrollPosition = useRef(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
 
   // dont allow scroll if the modal is open
   useEffect(() => {
@@ -65,18 +70,12 @@ export const MapDescModal = ({ isOpen, onClose, marker }) => {
         <div className="modal-body">
           {marker.photo && (
             <div className="modal-field">
-              <Image
-                src={marker.photo}
+              <ImageGallery
+                images={marker.photo}
                 alt={marker.location}
-                width={800}
-                height={600}
-                style={{
-                  width: "100%",
-                  height: "auto",
-                  borderRadius: "8px",
-                  marginBottom: "16px",
-                  objectFit: "cover",
-                  maxHeight: "400px",
+                onImageClick={(index) => {
+                  setLightboxStartIndex(index);
+                  setLightboxOpen(true);
                 }}
               />
             </div>
@@ -93,6 +92,14 @@ export const MapDescModal = ({ isOpen, onClose, marker }) => {
           </div>
         </div>
       </div>
+      {/* Image Lightbox */}
+      {lightboxOpen && (
+        <ImageLightbox
+          images={marker.photo}
+          initialIndex={lightboxStartIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </div>
   );
 };

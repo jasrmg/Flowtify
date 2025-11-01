@@ -388,13 +388,6 @@
   color: white;
 }
 
-/* Alerts Grid */
-.alerts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
 .alert-card {
   background-color: var(--bg-secondary);
   border-radius: 16px;
@@ -798,19 +791,6 @@
   overflow: hidden;
   background-color: var(--bg-primary);
   max-height: 300px;
-}
-
-.photo-preview img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.modal-footer {
-  display: flex;
-  gap: 1rem;
-  padding: 1.5rem;
-  border-top: 1px solid var(--shadow);
 }
 
 .modal-btn {

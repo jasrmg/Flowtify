@@ -55,11 +55,23 @@ export const FloodMap = ({ markers = [], onViewDescription }) => {
       // Create popup content with updated styling
       const popupContent = `
         <div class="popup-container">
-          <div class="popup-image">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-            </svg>
-          </div>
+          ${
+            marker.photo
+              ? `
+            <div class="popup-image-container">
+              <img src="${
+                Array.isArray(marker.photo) ? marker.photo[0] : marker.photo
+              }" alt="${marker.location}" class="popup-photo" />
+            </div>
+          `
+              : `
+            <div class="popup-image">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+              </svg>
+            </div>
+          `
+          }
           <div class="popup-content">
             <div class="popup-header">
               <div class="popup-location">${marker.location}</div>

@@ -2,7 +2,7 @@ import "./AlertsGrid.css";
 
 export const AlertsGrid = ({ alerts }) => {
   return (
-    <div className="alerts-grid">
+    <div className="alerts-grid" id="alertsGrid">
       {alerts.map((alert) => (
         <div key={alert.id} className={`alert-card severity-${alert.severity}`}>
           <div className="alert-header">
