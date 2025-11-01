@@ -95,7 +95,8 @@
 /* Image Container */
 .lightbox-image-container {
   width: 90%;
-  height: 80%;
+  height: calc(100vh - 180px);
+  max-height: calc(100vh - 180px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -226,7 +227,8 @@
 @media (max-width: 480px) {
   .lightbox-image-container {
     width: 95%;
-    height: 70%;
+    height: calc(100vh - 200px);
+    max-height: calc(100vh - 200px);
   }
 
   .lightbox-arrow {

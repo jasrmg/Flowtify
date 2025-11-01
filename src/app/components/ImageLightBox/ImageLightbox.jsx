@@ -8,18 +8,6 @@ export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [zoom, setZoom] = useState(1);
 
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") handlePrevious();
-      if (e.key === "ArrowRight") handleNext();
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex, onClose]);
-
   // Prevent body scroll
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -57,6 +45,18 @@ export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
 
   // Convert single image to array format if needed
   const imageArray = Array.isArray(images) ? images : [images];
+
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") handlePrevious();
+      if (e.key === "ArrowRight") handleNext();
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [currentIndex, onClose]);
 
   return (
     <div className="lightbox-overlay" onClick={onClose}>
@@ -123,8 +123,8 @@ export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
               style={{
                 width: "auto",
                 height: "auto",
-                maxWidth: "100%",
-                maxHeight: "100%",
+                maxWidth: "90vw",
+                maxHeight: "calc(100vh - 180px)",
                 objectFit: "contain",
               }}
               priority

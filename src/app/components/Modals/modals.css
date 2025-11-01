@@ -143,13 +143,6 @@
 
 /* ADDITIONAL STYLES FOR REPORT MODAL */
 
-.photo-preview {
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: var(--bg-primary);
-  max-height: 300px;
-}
-
 .modal-footer {
   display: flex;
   gap: 1rem;
@@ -295,11 +288,6 @@
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;
-}
-
-.modal-field > div:hover .image-overlay-hint,
-.photo-preview > div:hover .image-overlay-hint {
-  opacity: 1;
 }
 
 .image-overlay-hint svg {

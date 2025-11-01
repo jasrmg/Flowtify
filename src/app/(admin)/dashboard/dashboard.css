@@ -786,13 +786,6 @@
   line-height: 1.6;
 }
 
-.photo-preview {
-  border-radius: 12px;
-  overflow: hidden;
-  background-color: var(--bg-primary);
-  max-height: 300px;
-}
-
 .modal-btn {
   flex: 1;
   display: flex;

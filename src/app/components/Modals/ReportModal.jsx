@@ -101,16 +101,14 @@ export const ReportModal = ({
           </div>
           <div className="modal-field">
             <label>Photo</label>
-            <div className="photo-preview">
-              <ImageGallery
-                images={report.photo}
-                alt="Flood report photo"
-                onImageClick={(index) => {
-                  setLightboxStartIndex(index);
-                  setLightboxOpen(true);
-                }}
-              />
-            </div>
+            <ImageGallery
+              images={report.photo}
+              alt="Flood report photo"
+              onImageClick={(index) => {
+                setLightboxStartIndex(index);
+                setLightboxOpen(true);
+              }}
+            />
           </div>
         </div>
         <div className="modal-footer">
