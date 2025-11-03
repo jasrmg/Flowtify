@@ -310,3 +310,95 @@ export const statsData = [
     ),
   },
 ];
+
+// User Feed - Flood Reports
+export const floodReports = [
+  {
+    id: 1,
+    location: "Barangay Lahug, Gorordo Ave",
+    description:
+      "Severe flooding at intersection. Water level approximately 2 feet high. Road impassable for small vehicles.",
+    status: "verified",
+    timestamp: "2 hours ago",
+    reporter: "Juan Dela Cruz",
+    date: "2024-10-30 14:30",
+  },
+  {
+    id: 2,
+    location: "Barangay Mabolo, Mango Ave",
+    description:
+      "Minor flooding reported near plaza. Pedestrian walkways affected. Situation under monitoring.",
+    status: "pending",
+    timestamp: "4 hours ago",
+    reporter: "Maria Santos",
+    date: "2024-10-30 13:15",
+  },
+  {
+    id: 3,
+    location: "Barangay Capitol Site",
+    description:
+      "Flooding has subsided. Roads are now clear and passable. Cleanup operations ongoing.",
+    status: "resolved",
+    timestamp: "6 hours ago",
+    reporter: "Pedro Garcia",
+    date: "2024-10-30 12:00",
+  },
+  {
+    id: 4,
+    location: "Barangay Guadalupe, N. Bacalso Ave",
+    description:
+      "Flash flooding reported due to heavy rainfall. Multiple areas affected. Avoid unnecessary travel.",
+    status: "verified",
+    timestamp: "1 hour ago",
+    reporter: "Ana Rodriguez",
+    date: "2024-10-30 11:45",
+  },
+  {
+    id: 5,
+    location: "Barangay Kamputhaw",
+    description:
+      "Street flooding in low-lying areas. Water level rising. Residents advised to stay alert.",
+    status: "verified",
+    timestamp: "3 hours ago",
+    reporter: "Carlos Mendoza",
+    date: "2024-10-30 10:20",
+  },
+  {
+    id: 6,
+    location: "Barangay Kasambagan",
+    description:
+      "Water accumulation near drainage areas. Monitoring ongoing for potential overflow.",
+    status: "pending",
+    timestamp: "5 hours ago",
+    reporter: "Juan Dela Cruz",
+    date: "2024-10-30 09:00",
+  },
+];
+
+// User Notifications (different from admin)
+export const userNotifications = [
+  {
+    id: 1,
+    type: "warning",
+    title: "Flood Alert - Barangay Lahug",
+    text: "Severe flooding reported at Gorordo Ave. Water level rising.",
+    time: "10 minutes ago",
+    read: false,
+  },
+  {
+    id: 2,
+    type: "info",
+    title: "Weather Update",
+    text: "Heavy rainfall expected in Metro Cebu for the next 3 hours.",
+    time: "1 hour ago",
+    read: false,
+  },
+  {
+    id: 3,
+    type: "success",
+    title: "Flood Cleared - Barangay Capitol",
+    text: "Roads are now passable. Normal traffic flow resumed.",
+    time: "3 hours ago",
+    read: true,
+  },
+];

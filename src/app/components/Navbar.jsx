@@ -40,30 +40,50 @@ export const Navbar = () => {
         }
       }
 
-      document.addEventListener("click", handleClickOutside);
+      // close search bar (only for mobile)
+      if (window.innerWidth <= 480) {
+        const searchBar = document.getElementById("searchBar");
+        const searchToggleBtn = document.getElementById("searchToggleBtn");
+        const searchCloseBtn = document.getElementById("searchCloseBtn");
 
-      return () => {
-        document.removeEventListener("click", handleClickOutside);
-      };
+        if (
+          searchBar &&
+          !searchBar.contains(e.target) &&
+          searchToggleBtn &&
+          !searchToggleBtn.contains(e.target) &&
+          searchCloseBtn &&
+          !searchCloseBtn.contains(e.target)
+        ) {
+          setIsSearchOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  // Auto-focus search input when opened on mobile
+  useEffect(() => {
+    if (isSearchOpen && window.innerWidth <= 480) {
+      const searchInput = document.getElementById("searchInput");
+      // Use setTimeout to ensure the DOM has updated
+      setTimeout(() => {
+        searchInput?.focus();
+      }, 100);
+    }
+  }, [isSearchOpen]);
 
   // handle body class and navbar class
   useEffect(() => {
     const navbar = document.querySelector(".navbar");
     if (isSearchOpen) {
       navbar?.classList.add("search-active");
-      if (window.innerWidth <= 480) {
-        navbar?.classList.add("overlay-active", "search-overlay");
-        document.body.classList.add("overlay-open");
-      }
     } else {
-      navbar?.classList.remove(
-        "search-active",
-        "overlay-active",
-        "search-overlay"
-      );
-      document.body.classList.remove("overlay-open");
+      navbar?.classList.remove("search-active");
     }
   }, [isSearchOpen]);
 
@@ -167,7 +187,11 @@ export const Navbar = () => {
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
         </svg>
-        <input type="text" placeholder="Search dashboard..." id="searchInput" />
+        <input
+          type="text"
+          placeholder="Search by location or baranggay..."
+          id="searchInput"
+        />
         <button
           className="search-close-btn"
           id="searchCloseBtn"
@@ -203,7 +227,7 @@ export const Navbar = () => {
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
             <span className="notification-badge" id="notificationBadge">
-              3
+              2
             </span>
           </button>
 
@@ -247,12 +271,12 @@ export const Navbar = () => {
                 </div>
                 <div className="notification-content">
                   <div className="notification-title">
-                    New Report Pending Review
+                    Flood Alert - Barangay Lahug
                   </div>
                   <div className="notification-text">
-                    3 new flood reports require verification from admin team.
+                    Severe flooding reported at Gorordo Ave. Water level rising.
                   </div>
-                  <div className="notification-time">5 minutes ago</div>
+                  <div className="notification-time">10 minutes ago</div>
                 </div>
               </div>
 
@@ -313,7 +337,7 @@ export const Navbar = () => {
             id="profileBtn"
             onClick={() => setIsProfileOpen(!isProfileOpen)}
           >
-            <div className="profile-avatar admin">AD</div>
+            <div className="profile-avatar">JS</div>
             <svg
               width="16"
               height="16"
@@ -340,7 +364,7 @@ export const Navbar = () => {
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
-              Admin Profile
+              View Profile
             </a>
             <a href="#" className="dropdown-item">
               <svg

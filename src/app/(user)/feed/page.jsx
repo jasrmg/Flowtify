@@ -1,17 +1,13 @@
+import { FeedContent } from "./FeedContent";
+
+// This is a server component, so we can use metadata
 export const metadata = {
   title: "Flowtify | Feed",
   description: "Feed page for flowtify users",
 };
 
 export const Feed = () => {
-  return (
-    <>
-      <head>
-        <title>Flowtify | Feed</title>
-      </head>
-      <h1>Feed</h1>
-    </>
-  );
+  return <FeedContent />;
 };
 
 export default Feed;

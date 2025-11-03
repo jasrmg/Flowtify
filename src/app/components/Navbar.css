@@ -12,7 +12,7 @@
   padding: 0 2rem;
   gap: 2rem;
   transition: background-color 0.3s ease;
-  z-index: 1;
+  z-index: 2;
 }
 
 .navbar-brand {
@@ -154,6 +154,7 @@
 .search-bar.mobile-expanded .search-icon {
   left: 2rem;
 }
+
 .navbar-right {
   display: flex;
   align-items: center;
@@ -511,6 +512,8 @@ body.notification-open {
   width: 24px;
   height: 24px;
 }
+
+/* Media Queries */
 @media (max-width: 968px) {
   .mobile-menu-btn {
     display: block;
@@ -525,6 +528,18 @@ body.notification-open {
 
 /* Mobile Overlay Styles */
 @media (max-width: 480px) {
+  .navbar {
+    padding: 0 0.75rem;
+  }
+
+  .navbar-brand span {
+    display: none;
+  }
+
+  .navbar-right {
+    gap: 1rem;
+  }
+
   .search-toggle-btn {
     display: block;
   }
