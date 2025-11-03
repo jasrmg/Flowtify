@@ -384,18 +384,6 @@ body.notification-open {
   color: var(--text-secondary);
 }
 
-.view-all-link {
-  color: var(--secondary);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.view-all-link:hover {
-  color: var(--accent);
-}
-
 .user-profile {
   position: relative;
 }

@@ -1,3 +1,6 @@
+import { MapView } from "./MapView";
+import "./map.css";
+
 export const metadata = {
   title: "Flowtify | Map View",
   description:
@@ -5,7 +8,7 @@ export const metadata = {
 };
 
 export const Map = () => {
-  return <h1>Map View</h1>;
+  return <MapView />;
 };
 
 export default Map;
