@@ -555,3 +555,175 @@ body.dark-mode .leaflet-tile {
   filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3)
     brightness(0.7);
 }
+
+body.dark-mode .leaflet-bar,
+body.dark-mode .leaflet-bar a {
+  background-color: var(--bg-secondary);
+  border-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Hover state */
+body.dark-mode .leaflet-bar a:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Disabled state */
+body.dark-mode .leaflet-bar a.leaflet-disabled {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary); /* Use the secondary text color for disabled */
+  cursor: not-allowed;
+}
+
+/* Re-apply the top border for the zoom-out button */
+body.dark-mode .leaflet-control-zoom-out {
+  border-top-color: var(--bg-primary);
+}
+
+/* Custom Leaflet Popup Styles */
+.leaflet-popup-content-wrapper {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--shadow);
+  padding: 0;
+  overflow: hidden;
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  width: 280px !important;
+}
+
+.leaflet-popup-tip {
+  background-color: var(--bg-secondary);
+}
+
+.popup-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-image {
+  width: 100%;
+  height: 140px;
+  background: linear-gradient(135deg, var(--secondary), var(--accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-image svg {
+  width: 48px;
+  height: 48px;
+  color: white;
+  opacity: 0.9;
+}
+
+.popup-content {
+  padding: 1rem;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.75rem;
+}
+
+.popup-location {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.popup-status {
+  padding: 0.25rem 0.65rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.popup-status.verified {
+  background-color: rgba(209, 67, 67, 0.15);
+  color: var(--danger);
+}
+
+.popup-status.pending {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.popup-status.resolved {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+
+.popup-description {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: 0.75rem;
+}
+
+.popup-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.popup-time svg {
+  width: 14px;
+  height: 14px;
+}
+
+.popup-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.popup-button:hover {
+  background-color: #0a1f44;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(70, 130, 180, 0.3);
+}
+
+.popup-button:active {
+  transform: translateY(0);
+}
+
+/* Custom Marker Cluster Styles */
+.marker-cluster-small,
+.marker-cluster-medium,
+.marker-cluster-large {
+  background-color: rgba(70, 130, 180, 0.6);
+  border-radius: 50%;
+}
+
+.marker-cluster-small div,
+.marker-cluster-medium div,
+.marker-cluster-large div {
+  background-color: var(--secondary);
+  color: white;
+  font-weight: 700;
+  border-radius: 50%;
+  text-align: center;
+  font-family: "Inter", sans-serif;
+}
