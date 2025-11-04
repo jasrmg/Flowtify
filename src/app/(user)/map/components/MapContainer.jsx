@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { MapDescModal } from "./MapDescModal";
 
 export const MapContainer = ({ reports, statusFilter }) => {
@@ -119,65 +119,6 @@ export const MapContainer = ({ reports, statusFilter }) => {
       }
     };
   }, []); // Empty dependency array ensures this runs only once on mount
-  // Update markers when reports or filter changes
-  useEffect(() => {
-    if (
-      !isMapReady ||
-      !mapInstanceRef.current ||
-      !markerClusterGroupRef.current
-    )
-      return;
-
-    updateMarkers(reports);
-  }, [reports, statusFilter, isMapReady]);
-
-  const updateMarkers = async (reportsData) => {
-    const L = (await import("leaflet")).default;
-
-    await import("leaflet.markercluster");
-
-    const markerClusterGroup = markerClusterGroupRef.current;
-
-    // Clear existing markers
-    markerClusterGroup.clearLayers();
-
-    // Filter reports based on status
-    const filteredReports =
-      statusFilter === "all"
-        ? reportsData
-        : reportsData.filter((report) => report.status === statusFilter);
-
-    // Create markers for each report
-    filteredReports.forEach((report) => {
-      const markerColor = getMarkerColor(report.status);
-
-      const customIcon = L.divIcon({
-        className: "custom-marker",
-        html: `<div style="background-color: ${markerColor}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>`,
-        iconSize: [24, 24],
-        iconAnchor: [12, 12],
-      });
-
-      const marker = L.marker([report.lat, report.lng], { icon: customIcon });
-
-      const popupContent = createPopupContent(report);
-      marker.bindPopup(popupContent, {
-        maxWidth: 280,
-        className: "custom-popup",
-      });
-
-      markerClusterGroup.addLayer(marker);
-    });
-
-    // Fit bounds if there are markers
-    if (filteredReports.length > 0) {
-      const bounds = L.latLngBounds(filteredReports.map((r) => [r.lat, r.lng]));
-      mapInstanceRef.current.fitBounds(bounds, {
-        padding: [50, 50],
-        maxZoom: 15,
-      });
-    }
-  };
 
   const getMarkerColor = (status) => {
     switch (status) {
@@ -239,8 +180,73 @@ export const MapContainer = ({ reports, statusFilter }) => {
         </button>
       </div>
     </div>
-  `;
+    `;
   };
+
+  const updateMarkers = useCallback(
+    async (reportsData) => {
+      const L = (await import("leaflet")).default;
+
+      await import("leaflet.markercluster");
+
+      const markerClusterGroup = markerClusterGroupRef.current;
+
+      // Clear existing markers
+      markerClusterGroup.clearLayers();
+
+      // Filter reports based on status
+      const filteredReports =
+        statusFilter === "all"
+          ? reportsData
+          : reportsData.filter((report) => report.status === statusFilter);
+
+      // Create markers for each report
+      filteredReports.forEach((report) => {
+        const markerColor = getMarkerColor(report.status);
+
+        const customIcon = L.divIcon({
+          className: "custom-marker",
+          html: `<div style="background-color: ${markerColor}; width: 24px; height: 24px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);"></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+        });
+
+        const marker = L.marker([report.lat, report.lng], { icon: customIcon });
+
+        const popupContent = createPopupContent(report);
+        marker.bindPopup(popupContent, {
+          maxWidth: 280,
+          className: "custom-popup",
+        });
+
+        markerClusterGroup.addLayer(marker);
+      });
+
+      // Fit bounds if there are markers
+      if (filteredReports.length > 0) {
+        const bounds = L.latLngBounds(
+          filteredReports.map((r) => [r.lat, r.lng])
+        );
+        mapInstanceRef.current.fitBounds(bounds, {
+          padding: [50, 50],
+          maxZoom: 15,
+        });
+      }
+    },
+    [statusFilter]
+  );
+
+  // Update markers when reports or filter changes
+  useEffect(() => {
+    if (
+      !isMapReady ||
+      !mapInstanceRef.current ||
+      !markerClusterGroupRef.current
+    )
+      return;
+
+    updateMarkers(reports);
+  }, [reports, statusFilter, isMapReady, updateMarkers]);
 
   useEffect(() => {
     // Make the handler available globally for the popup buttons
