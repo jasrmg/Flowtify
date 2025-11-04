@@ -1,8 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { MapDescModal } from "./MapDescModal";
 
 export const MapContainer = ({ reports, statusFilter }) => {
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markerClusterGroupRef = useRef(null);
@@ -197,33 +201,62 @@ export const MapContainer = ({ reports, statusFilter }) => {
     const statusClass = status;
     const statusText = status.charAt(0).toUpperCase() + status.slice(1);
 
+    // Get first photo if photo is an array, otherwise use photo directly
+    const photoUrl = Array.isArray(report.photo)
+      ? report.photo[0]
+      : report.photo;
+
+    // Create image or placeholder HTML
+    const imageHtml = photoUrl
+      ? `<img src="${photoUrl}" alt="${location}" class="popup-photo">`
+      : `
+      <div class="popup-image-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+        </svg>
+      </div>`;
+
     return `
-      <div class="popup-container">
-        <div class="popup-image">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-          </svg>
-        </div>
-        <div class="popup-content">
-          <div class="popup-header">
-            <div class="popup-location">${location}</div>
-            <span class="popup-status ${statusClass}">${statusText}</span>
-          </div>
-          <p class="popup-description">${description}</p>
-          <div class="popup-time">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            ${timestamp}
-          </div>
-          <button class="popup-button" onclick="alert('View report #${report.id}')">
-            View Full Report
-          </button>
-        </div>
-      </div>
-    `;
+    <div class="popup-container">
+      <div class="popup-image-container">
+        ${imageHtml}
+      </div>
+      <div class="popup-content">
+        <div class="popup-header">
+          <div class="popup-location">${location}</div>
+          <span class="popup-status ${statusClass}">${statusText}</span>
+        </div>
+        <p class="popup-description">${description}</p>
+        <div class="popup-time">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          ${timestamp}
+        </div>
+        <button class="popup-button" onclick="window.handleViewDescription(${report.id})">
+          View Full Description
+        </button>
+      </div>
+    </div>
+  `;
   };
+
+  useEffect(() => {
+    // Make the handler available globally for the popup buttons
+    window.handleViewDescription = (reportId) => {
+      const report = reports.find((r) => r.id === reportId);
+      if (report) {
+        setSelectedReport(report);
+        setIsModalOpen(true);
+      }
+    };
+
+    return () => {
+      delete window.handleViewDescription;
+    };
+  }, [reports]);
+
   const getDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
@@ -239,7 +272,14 @@ export const MapContainer = ({ reports, statusFilter }) => {
   };
 
   return (
-    <div ref={mapRef} id="map" style={{ height: "100%", width: "100%" }} />
+    <>
+      <div ref={mapRef} id="map" style={{ height: "100%", width: "100%" }} />
+      <MapDescModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        report={selectedReport}
+      />
+    </>
   );
 };
 

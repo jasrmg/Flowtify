@@ -410,5 +410,7 @@ export const floodReportsWithCoordinates = floodReports.map((report, index) => {
     ...report,
     lat: marker?.lat || 10.3157 + Math.random() * 0.05,
     lng: marker?.lng || 123.8854 + Math.random() * 0.05,
+    photo: marker?.photo || null, // Add the photo from mapMarkers
+    fullDescription: marker?.fullDescription || report.description, // Also add fullDescription
   };
 });
