@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 export const ImageGallery = ({ images, alt, onImageClick }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -31,7 +32,7 @@ export const ImageGallery = ({ images, alt, onImageClick }) => {
         className="gallery-image-container"
         onClick={() => onImageClick(currentIndex)}
       >
-        <img
+        <Image
           src={imageArray[currentIndex]}
           alt={`${alt} - ${currentIndex + 1}`}
           className="gallery-image"
