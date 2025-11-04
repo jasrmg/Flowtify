@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { floodReportsWithCoordinates } from "@/app/lib/mockData";
 import FilterBar from "./components/FilterBar";
 import Legend from "./components/Legend";
@@ -13,12 +13,7 @@ export const MapView = () => {
   const [legendOpen, setLegendOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load flood reports on mount
-  useEffect(() => {
-    loadFloodReports();
-  }, []);
-
-  const loadFloodReports = async () => {
+  const loadFloodReports = useCallback(async () => {
     setIsLoading(true);
 
     // Simulate API delay
@@ -28,7 +23,24 @@ export const MapView = () => {
     // For now, use mock data
     setReports(floodReportsWithCoordinates);
     setIsLoading(false);
-  };
+  }, []);
+
+  // Load flood reports on mount
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchData = async () => {
+      if (mounted) {
+        await loadFloodReports();
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      mounted = false;
+    };
+  }, [loadFloodReports]);
 
   const handleRefresh = async () => {
     await loadFloodReports();
