@@ -78,8 +78,12 @@ export const mapMarkers = [
     description: "Flash flood in commercial area near Mango Square.",
     fullDescription:
       "Flash flooding occurring in the commercial district of Barangay Mabolo, particularly around Mango Square. Water is accumulating rapidly near drainage systems. Business operations have been temporarily suspended. Emergency response teams are on site.",
-    photo:
+    photo: [
       "https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1589820296156-2454bb98a4ba?w=800&h=600&fit=crop",
+    ],
   },
   {
     id: 3,
@@ -89,8 +93,10 @@ export const mapMarkers = [
     description: "Street flooding affecting pedestrian walkways.",
     fullDescription:
       "Heavy rainfall has caused significant street flooding in Barangay Capitol Site. Pedestrian walkways are currently submerged. The Capitol building area is experiencing water accumulation. Maintenance crews are working to restore normal conditions.",
-    photo:
+    photo: [
       "https://images.unsplash.com/photo-1589820296156-2454bb98a4ba?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&h=600&fit=crop",
+    ],
   },
   {
     id: 4,
@@ -100,8 +106,11 @@ export const mapMarkers = [
     description: "Flood water entering residential homes.",
     fullDescription:
       "Critical flooding situation in residential areas of Barangay Guadalupe. Water has begun entering ground-floor homes. Several families have requested evacuation assistance. Emergency shelters have been prepared. Relief operations are underway.",
-    photo:
+    photo: [
       "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1527482797697-8795b05a13fe?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1589820296156-2454bb98a4ba?w=800&h=600&fit=crop",
+    ],
   },
   {
     id: 5,
@@ -112,7 +121,7 @@ export const mapMarkers = [
     fullDescription:
       "Significant road closure implemented in Barangay Kamputhaw due to severe flooding conditions. Main thoroughfares are impassable. Traffic is being diverted to alternative routes. Expected clearance time is 3-4 hours pending weather improvement.",
     photo:
-      "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1547683905-f686c993aae5?w=800&h=600&fit=crop", // This one stays single to test single image too
   },
 ];
 

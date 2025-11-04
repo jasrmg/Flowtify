@@ -2,7 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 
+import { ImageGallery } from "./ImageGallery";
+import { ImageLightbox } from "./ImageLightbox";
+
 export const MapDescModal = ({ isOpen, onClose, report }) => {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
+
   const scrollPosition = useRef(0);
 
   // Prevent scrolling when modal is open
@@ -62,15 +68,14 @@ export const MapDescModal = ({ isOpen, onClose, report }) => {
           </button>
         </div>
         <div className="modal-body">
-          {photoUrl && (
+          {report.photo && (
             <div className="modal-field">
-              <img
-                src={photoUrl}
+              <ImageGallery
+                images={report.photo}
                 alt={report.location}
-                style={{
-                  width: "100%",
-                  borderRadius: "8px",
-                  marginBottom: "1rem",
+                onImageClick={(index) => {
+                  setLightboxStartIndex(index);
+                  setLightboxOpen(true);
                 }}
               />
             </div>
@@ -97,6 +102,14 @@ export const MapDescModal = ({ isOpen, onClose, report }) => {
           </div>
         </div>
       </div>
+      {/* Image Lightbox */}
+      {lightboxOpen && (
+        <ImageLightbox
+          images={report.photo}
+          initialIndex={lightboxStartIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
+      )}
     </div>
   );
 };
