@@ -36,6 +36,9 @@ export const ImageGallery = ({ images, alt, onImageClick }) => {
           src={imageArray[currentIndex]}
           alt={`${alt} - ${currentIndex + 1}`}
           className="gallery-image"
+          fill
+          sizes="(max-width: 768px) 100vw, 600px"
+          priority={currentIndex === 0}
         />
 
         {/* Navigation Arrows - Only show if more than 1 image */}

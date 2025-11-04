@@ -1,12 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import Image from "next/image";
 
 export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   // Ensure images is an array
-  const imageArray = Array.isArray(images) ? images : [images];
+  const imageArray = useMemo(() => {
+    return Array.isArray(images) ? images : [images];
+  }, [images]);
+
+  const goToPrevious = useCallback(() => {
+    setCurrentIndex((prev) => (prev === 0 ? imageArray.length - 1 : prev - 1));
+  }, [imageArray]);
+
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
+  }, [imageArray]);
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
 
   // Prevent body scroll when lightbox is open
   useEffect(() => {
@@ -26,19 +41,7 @@ export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentIndex]);
-
-  const goToPrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? imageArray.length - 1 : prev - 1));
-  };
-
-  const goToNext = () => {
-    setCurrentIndex((prev) => (prev === imageArray.length - 1 ? 0 : prev + 1));
-  };
-
-  const goToSlide = (index) => {
-    setCurrentIndex(index);
-  };
+  }, [onClose, goToPrevious, goToNext]);
 
   return (
     <div className="lightbox-overlay" onClick={onClose}>
@@ -58,10 +61,14 @@ export const ImageLightbox = ({ images, initialIndex = 0, onClose }) => {
 
         {/* Image */}
         <div className="lightbox-image-container">
-          <img
+          <Image
             src={imageArray[currentIndex]}
             alt={`Image ${currentIndex + 1}`}
             className="lightbox-image"
+            width={1200}
+            height={800}
+            style={{ objectFit: "contain" }}
+            priority
           />
         </div>
 

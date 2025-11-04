@@ -531,8 +531,6 @@ body.dark-mode .leaflet-control-zoom-out {
 }
 
 .gallery-image {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
@@ -668,11 +666,12 @@ body.dark-mode .leaflet-control-zoom-out {
 }
 
 .lightbox-image {
-  max-width: 100%;
-  max-height: 90vh;
-  object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  width: auto !important;
+  height: auto !important;
+  max-width: 90vw;
+  max-height: 90vh;
 }
 
 .lightbox-close {
