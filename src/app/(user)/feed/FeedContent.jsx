@@ -1,14 +1,24 @@
 "use client";
 import { useState } from "react";
-import { floodReports } from "@/app/lib/mockData";
+import { floodReportsWithCoordinates } from "@/app/lib/mockData";
 import { ReportCard } from "../components/ReportCard/ReportCard";
 import { RightSidebar } from "../components/RightSidebar/RightSidebar";
 import { ReportModal } from "./components/ReportModal";
+import { ReportDetailsModal } from "./components/ReportDetailsModal";
 import "./feed.css";
 
 export function FeedContent() {
-  const [filteredReports] = useState(floodReports);
+  const [filteredReports] = useState(floodReportsWithCoordinates);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState(null);
+
+  const handleReportClick = (report) => {
+    setSelectedReport(report);
+  };
+
+  const handleCloseDetails = () => {
+    setSelectedReport(null);
+  };
 
   return (
     <>
@@ -36,7 +46,11 @@ export function FeedContent() {
 
         <div className="reports-grid" id="reportsGrid">
           {filteredReports.map((report) => (
-            <ReportCard key={report.id} report={report} />
+            <ReportCard
+              key={report.id}
+              report={report}
+              onClick={handleReportClick}
+            />
           ))}
         </div>
       </main>
@@ -46,6 +60,12 @@ export function FeedContent() {
       <ReportModal
         isOpen={isReportModalOpen}
         onClose={() => setIsReportModalOpen(false)}
+      />
+
+      <ReportDetailsModal
+        report={selectedReport}
+        isOpen={!!selectedReport}
+        onClose={handleCloseDetails}
       />
     </>
   );

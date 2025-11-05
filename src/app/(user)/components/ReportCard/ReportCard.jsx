@@ -1,22 +1,38 @@
 "use client";
 import "./ReportCard.css";
 
-export const ReportCard = ({ report }) => {
+export const ReportCard = ({ report, onClick }) => {
   const statusClass = `status-${report.status}`;
   const statusText =
     report.status.charAt(0).toUpperCase() + report.status.slice(1);
 
+  // Get the first photo if photo is an array, otherwise use photo directly
+  const getReportImage = () => {
+    if (!report.photo) return null;
+    return Array.isArray(report.photo) ? report.photo[0] : report.photo;
+  };
+
+  const reportImage = getReportImage();
+
   return (
-    <article className="report-card">
+    <article className="report-card" onClick={() => onClick(report)}>
       <div className="report-image">
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-        </svg>
+        {reportImage ? (
+          <img
+            src={reportImage}
+            alt={`Flood report at ${report.location}`}
+            className="report-photo"
+          />
+        ) : (
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+          </svg>
+        )}
       </div>
       <div className="report-content">
         <div className="report-header">
