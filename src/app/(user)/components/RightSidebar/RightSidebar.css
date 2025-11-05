@@ -43,6 +43,126 @@
   font-weight: 600;
 }
 
+/* Weather Section */
+.weather-section {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  color: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.weather-section h4 {
+  color: var(--bg-primary);
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.weather-loading,
+.weather-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  opacity: 0.9;
+}
+
+.weather-loading svg,
+.weather-error svg {
+  width: 24px;
+  height: 24px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.weather-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.weather-icon img {
+  width: 80px;
+  height: 80px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.weather-temp {
+  display: flex;
+  align-items: flex-start;
+}
+
+.temp-value {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.temp-unit {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  opacity: 0.9;
+}
+
+.weather-description {
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-align: center;
+  text-transform: capitalize;
+  opacity: 0.95;
+}
+
+.weather-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.weather-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.weather-detail-item svg {
+  width: 16px;
+  height: 16px;
+}
+
+.weather-location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.875rem;
+  opacity: 0.9;
+}
+
+.weather-location svg {
+  width: 14px;
+  height: 14px;
+}
+
 .alert-item {
   padding: 1rem;
   border-radius: 12px;

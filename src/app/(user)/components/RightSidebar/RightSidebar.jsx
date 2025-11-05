@@ -4,6 +4,9 @@ import "./RightSidebar.css";
 
 export const RightSidebar = () => {
   const [currentTip, setCurrentTip] = useState(0);
+  const [weather, setWeather] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
+  const [weatherError, setWeatherError] = useState(null);
 
   const safetyTips = [
     {
@@ -51,6 +54,79 @@ export const RightSidebar = () => {
     },
   ];
 
+  // Fetch weather data
+  useEffect(() => {
+    const fetchWeather = async (latitude, longitude) => {
+      try {
+        const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+
+        if (!API_KEY) {
+          throw new Error("API key not configured");
+        }
+
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`;
+        console.log("Fetching weather for location:", latitude, longitude);
+
+        const response = await fetch(url);
+
+        console.log("Response status:", response.status);
+        console.log("Response ok:", response.ok);
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("API Error:", errorData);
+          throw new Error(
+            `Failed to fetch weather data: ${
+              errorData.message || response.statusText
+            }`
+          );
+        }
+
+        const data = await response.json();
+        setWeather(data);
+        setWeatherLoading(false);
+      } catch (error) {
+        console.error("Weather fetch error:", error);
+        setWeatherError(error.message);
+        setWeatherLoading(false);
+      }
+    };
+
+    // Get user's location
+    const getUserLocationAndFetchWeather = () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            // User allowed location access
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+            console.log("Using user location:", userLat, userLon);
+            fetchWeather(userLat, userLon);
+          },
+          (error) => {
+            // User denied or error occurred, fallback to Cebu City
+            console.log("Geolocation error, using Cebu City:", error.message);
+            const cebuLat = 10.3157;
+            const cebuLon = 123.8854;
+            fetchWeather(cebuLat, cebuLon);
+          }
+        );
+      } else {
+        // Browser doesn't support geolocation, fallback to Cebu City
+        console.log("Geolocation not supported, using Cebu City");
+        const cebuLat = 10.3157;
+        const cebuLon = 123.8854;
+        fetchWeather(cebuLat, cebuLon);
+      }
+    };
+
+    getUserLocationAndFetchWeather();
+
+    // Refresh weather every 10 minutes
+    const interval = setInterval(getUserLocationAndFetchWeather, 600000);
+
+    return () => clearInterval(interval);
+  }, []);
   // Auto-rotate tips
   useEffect(() => {
     const interval = setInterval(() => {
@@ -64,6 +140,114 @@ export const RightSidebar = () => {
     <aside className="sidebar-right" id="sidebarRight">
       <div className="sidebar-section">
         <h3>Emergency & Safety Info</h3>
+
+        {/* Weather Section - NEW */}
+        <div className="sidebar-section weather-section">
+          <h4>Current Weather</h4>
+          {weatherLoading ? (
+            <div className="weather-loading">
+              <svg
+                style={{
+                  width: "24px",
+                  height: "24px",
+                  animation: "spin 1s linear infinite",
+                }}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+              </svg>
+              <span>Loading weather...</span>
+            </div>
+          ) : weatherError ? (
+            <div className="weather-error">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span>Unable to load weather</span>
+            </div>
+          ) : weather ? (
+            <div className="weather-content">
+              <div className="weather-main">
+                <div className="weather-icon">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                    alt={weather.weather[0].description}
+                  />
+                </div>
+                <div className="weather-temp">
+                  <span className="temp-value">
+                    {Math.round(weather.main.temp)}°
+                  </span>
+                  <span className="temp-unit">C</span>
+                </div>
+              </div>
+              <div className="weather-description">
+                {weather.weather[0].description.charAt(0).toUpperCase() +
+                  weather.weather[0].description.slice(1)}
+              </div>
+              <div className="weather-details">
+                <div className="weather-detail-item">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                  </svg>
+                  <span>
+                    Feels like {Math.round(weather.main.feels_like)}°C
+                  </span>
+                </div>
+                <div className="weather-detail-item">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                  </svg>
+                  <span>Humidity {weather.main.humidity}%</span>
+                </div>
+                <div className="weather-detail-item">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path>
+                  </svg>
+                  <span>Wind {Math.round(weather.wind.speed)} m/s</span>
+                </div>
+              </div>
+              <div className="weather-location">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <span>{weather.name}</span>
+              </div>
+            </div>
+          ) : null}
+        </div>
       </div>
 
       <div className="sidebar-section">
