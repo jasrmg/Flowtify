@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-import "./ReportDetailsModal.css";
+import styles from "./ReportDetailsModal.module.css";
 
 export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   if (!isOpen || !report) return null;
 
@@ -11,7 +12,6 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
   const statusText =
     report.status.charAt(0).toUpperCase() + report.status.slice(1);
 
-  // Handle photo array or single photo
   const photos = report.photo
     ? Array.isArray(report.photo)
       ? report.photo
@@ -28,10 +28,27 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
     setCurrentImageIndex((prev) => (prev - 1 + photos.length) % photos.length);
   };
 
+  const openFullscreen = () => {
+    setIsFullscreen(true);
+  };
+
+  const closeFullscreen = () => {
+    setIsFullscreen(false);
+  };
+
+  const handleFullscreenNav = (e, direction) => {
+    e.stopPropagation();
+    if (direction === "next") {
+      nextImage();
+    } else {
+      previousImage();
+    }
+  };
+
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.modalClose} onClick={onClose}>
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -43,49 +60,57 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
           </svg>
         </button>
 
-        <div className="modal-body">
-          {/* Image Gallery Section */}
-          <div className="modal-image-section">
+        <div className={styles.modalBody}>
+          <div className={styles.modalImageSection}>
             {photos.length > 0 ? (
-              <div className="image-gallery">
+              <div className={styles.imageGallery}>
                 <img
                   src={photos[currentImageIndex]}
                   alt={`Flood report at ${report.location}`}
-                  className="modal-image"
+                  className={styles.modalImage}
+                  onClick={openFullscreen}
+                  style={{ cursor: "pointer" }}
                 />
                 {hasMultiplePhotos && (
                   <>
-                    <button
-                      className="gallery-nav prev"
-                      onClick={previousImage}
-                    >
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
+                    {currentImageIndex > 0 && (
+                      <button
+                        className={`${styles.galleryNav} ${styles.prev}`}
+                        onClick={previousImage}
                       >
-                        <polyline points="15 18 9 12 15 6"></polyline>
-                      </svg>
-                    </button>
-                    <button className="gallery-nav next" onClick={nextImage}>
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                      </button>
+                    )}
+                    {currentImageIndex < photos.length - 1 && (
+                      <button
+                        className={`${styles.galleryNav} ${styles.next}`}
+                        onClick={nextImage}
                       >
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
-                    </button>
-                    <div className="gallery-indicator">
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                        >
+                          <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                      </button>
+                    )}
+                    <div className={styles.galleryIndicator}>
                       {currentImageIndex + 1} / {photos.length}
                     </div>
                   </>
                 )}
               </div>
             ) : (
-              <div className="modal-placeholder">
+              <div className={styles.modalPlaceholder}>
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -98,18 +123,17 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
             )}
           </div>
 
-          {/* Details Section */}
-          <div className="modal-details">
-            <div className="modal-header">
-              <span className={`report-status ${statusClass}`}>
+          <div className={styles.modalDetails}>
+            <div className={styles.modalHeader}>
+              <span className={`${styles.reportStatus} ${styles[statusClass]}`}>
                 {statusText}
               </span>
             </div>
 
-            <h2 className="modal-location">{report.location}</h2>
+            <h2 className={styles.modalLocation}>{report.location}</h2>
 
-            <div className="modal-meta">
-              <div className="meta-item">
+            <div className={styles.modalMeta}>
+              <div className={styles.metaItem}>
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -121,7 +145,7 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
                 </svg>
                 <span>{report.timestamp}</span>
               </div>
-              <div className="meta-item">
+              <div className={styles.metaItem}>
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -135,13 +159,13 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
               </div>
             </div>
 
-            <div className="modal-description">
+            <div className={styles.modalDescription}>
               <h3>Description</h3>
               <p>{report.fullDescription || report.description}</p>
             </div>
 
             {report.date && (
-              <div className="modal-date">
+              <div className={styles.modalDate}>
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -159,6 +183,79 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
           </div>
         </div>
       </div>
+
+      {isFullscreen && photos.length > 0 && (
+        <div
+          className={styles.fullscreenOverlay}
+          onClick={(e) => {
+            e.stopPropagation();
+            closeFullscreen();
+          }}
+        >
+          <button
+            className={styles.fullscreenClose}
+            onClick={(e) => {
+              e.stopPropagation();
+              closeFullscreen();
+            }}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+
+          <img
+            src={photos[currentImageIndex]}
+            alt={`Flood report at ${report.location}`}
+            className={styles.fullscreenImage}
+            onClick={(e) => e.stopPropagation()}
+          />
+
+          {hasMultiplePhotos && (
+            <>
+              {currentImageIndex > 0 && (
+                <button
+                  className={`${styles.fullscreenNav} ${styles.prev}`}
+                  onClick={(e) => handleFullscreenNav(e, "prev")}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+              )}
+              {currentImageIndex < photos.length - 1 && (
+                <button
+                  className={`${styles.fullscreenNav} ${styles.next}`}
+                  onClick={(e) => handleFullscreenNav(e, "next")}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              )}
+              <div className={styles.fullscreenIndicator}>
+                {currentImageIndex + 1} / {photos.length}
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };
