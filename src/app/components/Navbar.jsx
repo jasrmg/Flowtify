@@ -2,10 +2,25 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
+import { useNotifications } from "@/hooks/useNotifications";
+import {
+  getNotificationIcon,
+  getNotificationIconClass,
+  formatNotificationTime,
+} from "@/utils/notificationHelpers";
+
 import "./Navbar.css";
 
 export const Navbar = () => {
   const { currentUser, logout, loading } = useAuth();
+  const {
+    notifications,
+    loading: notificationsLoading,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+  } = useNotifications(currentUser?.uid);
+
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -301,9 +316,11 @@ export const Navbar = () => {
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
             </svg>
-            <span className="notification-badge" id="notificationBadge">
-              2
-            </span>
+            {unreadCount > 0 && (
+              <span className="notification-badge" id="notificationBadge">
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
           </button>
 
           <div
@@ -329,59 +346,12 @@ export const Navbar = () => {
                 </svg>
               </button>
               <h4>Notifications</h4>
-            </div>
-            <div className="notification-list">
-              <div className="notification-item unread">
-                <div className="notification-icon warning">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                  </svg>
-                </div>
-                <div className="notification-content">
-                  <div className="notification-title">
-                    Flood Alert - Barangay Lahug
-                  </div>
-                  <div className="notification-text">
-                    Severe flooding reported at Gorordo Ave. Water level rising.
-                  </div>
-                  <div className="notification-time">10 minutes ago</div>
-                </div>
-              </div>
-
-              <div className="notification-item unread">
-                <div className="notification-icon info">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="8.5" cy="7" r="4"></circle>
-                    <line x1="20" y1="8" x2="20" y2="14"></line>
-                    <line x1="23" y1="11" x2="17" y2="11"></line>
-                  </svg>
-                </div>
-                <div className="notification-content">
-                  <div className="notification-title">
-                    New User Registration
-                  </div>
-                  <div className="notification-text">
-                    15 new users registered in the last 24 hours.
-                  </div>
-                  <div className="notification-time">2 hours ago</div>
-                </div>
-              </div>
-
-              <div className="notification-item">
-                <div className="notification-icon success">
+              {unreadCount > 0 && (
+                <button
+                  className="mark-all-read-btn"
+                  onClick={markAllAsRead}
+                  title="Mark all as read"
+                >
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -391,17 +361,59 @@ export const Navbar = () => {
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg>
+                </button>
+              )}
+            </div>
+            <div className="notification-list">
+              {notificationsLoading ? (
+                <div className="notification-loading">
+                  <div className="spinner-large"></div>
+                  <p>Loading notifications...</p>
                 </div>
-                <div className="notification-content">
-                  <div className="notification-title">
-                    System Backup Complete
-                  </div>
-                  <div className="notification-text">
-                    Daily backup completed successfully. All data secured.
-                  </div>
-                  <div className="notification-time">4 hours ago</div>
+              ) : notifications.length === 0 ? (
+                <div className="notification-empty">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                  <p>No notifications yet</p>
+                  <span>You're all caught up!</span>
                 </div>
-              </div>
+              ) : (
+                notifications.map((notification) => (
+                  <div
+                    key={notification.id}
+                    className={`notification-item ${
+                      !notification.isRead ? "unread" : ""
+                    }`}
+                    onClick={() => markAsRead(notification.id)}
+                  >
+                    <div
+                      className={`notification-icon ${getNotificationIconClass(
+                        notification.type
+                      )}`}
+                    >
+                      {getNotificationIcon(notification.type)}
+                    </div>
+                    <div className="notification-content">
+                      <div className="notification-title">
+                        {notification.title}
+                      </div>
+                      <div className="notification-text">
+                        {notification.body}
+                      </div>
+                      <div className="notification-time">
+                        {formatNotificationTime(notification.createdAt)}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>
