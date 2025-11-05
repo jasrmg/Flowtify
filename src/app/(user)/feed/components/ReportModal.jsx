@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { MapPicker } from "./MapPicker";
+import Image from "next/image";
 import "@/app/components/Modals/modals.css";
 
 export const ReportModal = ({ isOpen, onClose }) => {
@@ -8,13 +10,9 @@ export const ReportModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     description: "",
     severity: "moderate",
-    location: {
-      lat: "",
-      lng: "",
-      barangay: "",
-      city: "Cebu City",
-    },
+    location: null,
   });
+
   const [photos, setPhotos] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,16 +57,12 @@ export const ReportModal = ({ isOpen, onClose }) => {
     }));
   };
 
-  const handleLocationChange = (e) => {
-    const { name, value } = e.target;
+  const handleLocationSelect = useCallback((locationData) => {
     setFormData((prev) => ({
       ...prev,
-      location: {
-        ...prev.location,
-        [name]: value,
-      },
+      location: locationData,
     }));
-  };
+  }, []);
 
   const handlePhotoUpload = (e) => {
     const files = Array.from(e.target.files);
@@ -84,6 +78,13 @@ export const ReportModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validate location is selected
+    if (!formData.location) {
+      alert("Please select a location on the map");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -112,12 +113,7 @@ export const ReportModal = ({ isOpen, onClose }) => {
       setFormData({
         description: "",
         severity: "moderate",
-        location: {
-          lat: "",
-          lng: "",
-          barangay: "",
-          city: "Cebu City",
-        },
+        location: null,
       });
       setPhotos([]);
       onClose();
@@ -167,66 +163,13 @@ export const ReportModal = ({ isOpen, onClose }) => {
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                   <circle cx="12" cy="10" r="3"></circle>
                 </svg>
-                Location Details
+                Select Flood Location *
               </h3>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="lat">Latitude *</label>
-                  <input
-                    type="number"
-                    id="lat"
-                    name="lat"
-                    step="any"
-                    value={formData.location.lat}
-                    onChange={handleLocationChange}
-                    placeholder="e.g., 10.3157"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="lng">Longitude *</label>
-                  <input
-                    type="number"
-                    id="lng"
-                    name="lng"
-                    step="any"
-                    value={formData.location.lng}
-                    onChange={handleLocationChange}
-                    placeholder="e.g., 123.8854"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label htmlFor="barangay">Barangay *</label>
-                  <input
-                    type="text"
-                    id="barangay"
-                    name="barangay"
-                    value={formData.location.barangay}
-                    onChange={handleLocationChange}
-                    placeholder="e.g., Lahug"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="city">City *</label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.location.city}
-                    onChange={handleLocationChange}
-                    placeholder="Cebu City"
-                    required
-                  />
-                </div>
-              </div>
+              <MapPicker
+                onLocationSelect={handleLocationSelect}
+                initialLocation={formData.location}
+              />
             </div>
 
             {/* Severity */}
@@ -303,7 +246,18 @@ export const ReportModal = ({ isOpen, onClose }) => {
                 <div className="photo-preview-grid">
                   {photos.map((photo, index) => (
                     <div key={index} className="photo-preview-item">
-                      <img src={photo} alt={`Preview ${index + 1}`} />
+                      <Image
+                        src={photo}
+                        alt={`Preview ${index + 1}`}
+                        width={100}
+                        height={100}
+                        unoptimized
+                        style={{
+                          objectFit: "cover",
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      />
                       <button
                         type="button"
                         className="photo-remove-btn"
