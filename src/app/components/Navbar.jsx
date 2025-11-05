@@ -1,13 +1,52 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 import "./Navbar.css";
 
 export const Navbar = () => {
+  const { currentUser, logout, loading } = useAuth();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // Show loading state while auth is initializing
+  if (loading) {
+    return (
+      <nav className="navbar">
+        <a href="#" className="navbar-brand">
+          <svg
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 25C5 25 10 15 20 15C30 15 35 25 35 25"
+              stroke="#3FA9F5"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <path
+              d="M8 30C8 30 12 22 20 22C28 22 32 30 32 30"
+              stroke="#32B67A"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <circle cx="15" cy="10" r="2" fill="#3FA9F5" />
+            <circle cx="25" cy="8" r="2" fill="#3FA9F5" />
+            <circle cx="20" cy="12" r="1.5" fill="#3FA9F5" />
+          </svg>
+          <span>Flowtify</span>
+        </a>
+        <div className="navbar-right">
+          <div className="user-profile">
+            <div className="profile-avatar loading-skeleton"></div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -103,8 +142,44 @@ export const Navbar = () => {
     }
   }, [isNotificationOpen]);
 
-  const handleLogout = () => {
-    console.log("logout");
+  const handleLogout = async () => {
+    await logout();
+  };
+
+  // Get user initials for avatar fallback
+  const getUserInitials = () => {
+    if (!currentUser) return "U";
+
+    const firstName = currentUser.firstName || "";
+    const lastName = currentUser.lastName || "";
+
+    if (firstName && lastName) {
+      return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    } else if (firstName) {
+      return firstName.charAt(0).toUpperCase();
+    } else if (currentUser.email) {
+      return currentUser.email.charAt(0).toUpperCase();
+    }
+
+    return "U";
+  };
+
+  // Get user display name
+  const getUserDisplayName = () => {
+    if (!currentUser) return "User";
+
+    const firstName = currentUser.firstName || "";
+    const lastName = currentUser.lastName || "";
+
+    if (firstName && lastName) {
+      return `${firstName} ${lastName}`;
+    } else if (firstName) {
+      return firstName;
+    } else if (currentUser.email) {
+      return currentUser.email.split("@")[0];
+    }
+
+    return "User";
   };
 
   const toggleMobileMenu = () => {
@@ -337,7 +412,15 @@ export const Navbar = () => {
             id="profileBtn"
             onClick={() => setIsProfileOpen(!isProfileOpen)}
           >
-            <div className="profile-avatar">JS</div>
+            {currentUser?.avatarUrl ? (
+              <img
+                src={currentUser.avatarUrl}
+                alt={getUserDisplayName()}
+                className="profile-avatar-img"
+              />
+            ) : (
+              <div className="profile-avatar">{getUserInitials()}</div>
+            )}
             <svg
               width="16"
               height="16"
@@ -354,6 +437,22 @@ export const Navbar = () => {
             className={`profile-dropdown ${isProfileOpen ? "active" : ""}`}
             id="profileDropdown"
           >
+            <div className="dropdown-user-info">
+              {currentUser?.avatarUrl ? (
+                <img
+                  src={currentUser.avatarUrl}
+                  alt={getUserDisplayName()}
+                  className="dropdown-avatar-img"
+                />
+              ) : (
+                <div className="dropdown-avatar">{getUserInitials()}</div>
+              )}
+              <div className="dropdown-user-text">
+                <div className="dropdown-user-name">{getUserDisplayName()}</div>
+                <div className="dropdown-user-email">{currentUser?.email}</div>
+              </div>
+            </div>
+            <div className="dropdown-divider"></div>
             <a href="#" className="dropdown-item">
               <svg
                 viewBox="0 0 24 24"

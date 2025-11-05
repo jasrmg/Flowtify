@@ -34,21 +34,6 @@
   transform-origin: center;
 }
 
-@keyframes rainFall {
-  0% {
-    transform: translateY(0px) translateX(0px) scale(1);
-    opacity: 0.8;
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(60px) translateX(1px) scale(1.05);
-  }
-  100% {
-    transform: translateY(120px) translateX(-1px) scale(1);
-    opacity: 0;
-  }
-}
-
 .raindrop:nth-child(1) {
   animation-duration: 1.8s;
 }
@@ -71,17 +56,6 @@
   animation-duration: 1.7s;
 }
 
-/* Water Wave Animation */
-@keyframes waveMotion {
-  0%,
-  100% {
-    transform: scaleY(1) translateY(0);
-  }
-  50% {
-    transform: scaleY(1.1) translateY(-3px);
-  }
-}
-
 .water-waves {
   animation: waveMotion 2.5s ease-in-out infinite;
   transform-origin: center;
@@ -97,45 +71,9 @@
   animation-duration: 3.5s;
 }
 
-/* Circle Pulse Animation */
-@keyframes circlePulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.9;
-  }
-  50% {
-    transform: scale(1.1);
-    opacity: 0.7;
-  }
-}
-
 .circle-pulse {
   animation: circlePulse 2s ease-in-out infinite;
   transform-origin: 350px 280px;
-}
-
-/* Phone Vibration Animation */
-@keyframes phoneVibrate {
-  0%,
-  100% {
-    transform: rotate(0deg);
-  }
-  10% {
-    transform: rotate(-8deg);
-  }
-  20% {
-    transform: rotate(8deg);
-  }
-  30% {
-    transform: rotate(-8deg);
-  }
-  40% {
-    transform: rotate(8deg);
-  }
-  50% {
-    transform: rotate(0deg);
-  }
 }
 
 .phone-vibrate {
@@ -271,6 +209,124 @@
   text-decoration: underline;
 }
 
+/* Error Alert */
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  animation: slideDown 0.3s ease;
+}
+
+.error-alert svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+/* Disabled State */
+.form-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ANIMATION */
+@keyframes rainFall {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(60px) translateX(1px) scale(1.05);
+  }
+  100% {
+    transform: translateY(120px) translateX(-1px) scale(1);
+    opacity: 0;
+  }
+}
+
+/* Water Wave Animation */
+@keyframes waveMotion {
+  0%,
+  100% {
+    transform: scaleY(1) translateY(0);
+  }
+  50% {
+    transform: scaleY(1.1) translateY(-3px);
+  }
+}
+
+/* Circle Pulse Animation */
+@keyframes circlePulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.7;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Phone Vibration Animation */
+@keyframes phoneVibrate {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(-8deg);
+  }
+  20% {
+    transform: rotate(8deg);
+  }
+  30% {
+    transform: rotate(-8deg);
+  }
+  40% {
+    transform: rotate(8deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -280,7 +336,13 @@
   }
 }
 
-/* Responsive */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE */
 @media (max-width: 968px) {
   .auth-illustration {
     display: none;

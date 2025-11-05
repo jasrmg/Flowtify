@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { validateLogin, emailExists } from "../lib/mockUsers";
+import { useAuth } from "@/contexts/AuthContext";
 import ThemeToggle from "../components/ThemeToggle";
 import "./auth.css";
 
 export default function AuthPage() {
   const router = useRouter();
+  const { login, currentUser, userRole } = useAuth();
   const [activeTab, setActiveTab] = useState("login");
   const [loginData, setLoginData] = useState({
     email: "",
@@ -19,45 +20,61 @@ export default function AuthPage() {
     email: "",
     password: "",
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (currentUser && userRole) {
+      if (userRole === "admin") {
+        router.push("/dashboard");
+      } else {
+        router.push("/feed");
+      }
+    }
+  }, [currentUser, userRole, router]);
 
   // Switch between login and signup tabs
   const switchTab = (tab) => {
     setActiveTab(tab);
+    setError("");
   };
 
   // Handle login form submission
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
-    const result = validateLogin(loginData.email, loginData.password);
+    if (!loginData.email || !loginData.password) {
+      setError("Please fill in all fields");
+      setLoading(false);
+      return;
+    }
+
+    const result = await login(loginData.email, loginData.password);
 
     if (result.success) {
-      const user = result.user;
-      alert(`Welcome back, ${user.firstName}!`);
-
       // Redirect based on role
-      if (user.role === "admin") {
+      if (result.role === "admin") {
         router.push("/dashboard");
       } else {
         router.push("/feed");
       }
     } else {
-      alert(result.error);
+      setError(
+        result.error || "Failed to login. Please check your credentials."
+      );
     }
+
+    setLoading(false);
   };
 
   // Handle signup form submission
   const handleSignup = (e) => {
     e.preventDefault();
-
-    // Check if email already exists
-    if (emailExists(signupData.email)) {
-      alert("This email is already registered. Please login instead.");
-      return;
-    }
-
-    alert(
-      `Signup functionality would create account here!\nName: ${signupData.name}\nEmail: ${signupData.email}\n\nFor now, use mock accounts to login.`
+    setError(
+      "Registration is currently disabled. Please contact your administrator for an account."
     );
   };
 
@@ -296,6 +313,23 @@ export default function AuthPage() {
                 </button>
               </div>
 
+              {/* Error Message */}
+              {error && (
+                <div className="error-alert">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                  </svg>
+                  {error}
+                </div>
+              )}
+
               {/* Login Form */}
               <div
                 id="loginForm"
@@ -314,6 +348,7 @@ export default function AuthPage() {
                       onChange={(e) =>
                         setLoginData({ ...loginData, email: e.target.value })
                       }
+                      disabled={loading}
                       required
                     />
                   </div>
@@ -327,6 +362,7 @@ export default function AuthPage() {
                       onChange={(e) =>
                         setLoginData({ ...loginData, password: e.target.value })
                       }
+                      disabled={loading}
                       required
                     />
                   </div>
@@ -334,8 +370,16 @@ export default function AuthPage() {
                     type="submit"
                     className="btn btn-primary"
                     style={{ width: "100%" }}
+                    disabled={loading}
                   >
-                    Login
+                    {loading ? (
+                      <>
+                        <span className="spinner"></span>
+                        Logging in...
+                      </>
+                    ) : (
+                      "Login"
+                    )}
                   </button>
                 </form>
                 <div className="form-footer">

@@ -1,3 +1,5 @@
+import { AuthProvider } from "@/contexts/AuthContext";
+
 import { Poppins, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -26,7 +28,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/svg+xml" href="favicon.svg" />
       </head>
       <body className={`${poppins.variable} ${inter.variable}`}>
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

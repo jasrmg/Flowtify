@@ -1,3 +1,4 @@
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Navbar from "../components/Navbar";
 import ThemeToggle from "../components/ThemeToggle";
 import { UserSidebar } from "@/app/(user)/components/UserSidebar/UserSidebar";
@@ -6,16 +7,18 @@ import { UserSidebar } from "@/app/(user)/components/UserSidebar/UserSidebar";
 export default function UserLayout({ children }) {
   return (
     <>
-      {/* Theme Toggle */}
-      <ThemeToggle />
-      {/* Navbar */}
-      <Navbar />
+      <ProtectedRoute allowedRoles={["resident"]}>
+        {/* Theme Toggle */}
+        <ThemeToggle />
+        {/* Navbar */}
+        <Navbar />
 
-      {/* Page Content */}
-      <div className="layout-container">
-        <UserSidebar />
-        {children}
-      </div>
+        {/* Page Content */}
+        <div className="layout-container">
+          <UserSidebar />
+          {children}
+        </div>
+      </ProtectedRoute>
     </>
   );
 }
