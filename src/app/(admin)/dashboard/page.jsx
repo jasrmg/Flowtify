@@ -19,12 +19,9 @@ import { HotlineModal } from "@/app/(admin)/dashboard/components/Modals/HotlineM
 import { useStatistics } from "@/hooks/useStatistics";
 import { useMonthlyReports } from "@/hooks/useMonthlyReports";
 import { useSystemLogs } from "@/hooks/useSystemLogs";
+import { useReports } from "@/hooks/useReports";
 
-import {
-  emergencyHotlines,
-  mapMarkers,
-  pendingReports,
-} from "@/app/lib/mockData";
+import { emergencyHotlines, mapMarkers } from "@/app/lib/mockData";
 
 import "@/app/(admin)/dashboard/components/Modals/modals.css";
 import "./dashboard.css";
@@ -46,9 +43,18 @@ export default function DashboardPage() {
 
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [isMapDescModalOpen, setIsMapDescModalOpen] = useState(false);
-  const [reports, setReports] = useState(pendingReports);
+
+  const {
+    reports,
+    loading: reportsLoading,
+    approveReport,
+    rejectReport,
+  } = useReports("pending");
+
   const [selectedReport, setSelectedReport] = useState(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isReportProcessing, setIsReportProcessing] = useState(false);
+
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [isAlertSubmitting, setIsAlertSubmitting] = useState(false);
 
@@ -81,14 +87,32 @@ export default function DashboardPage() {
     setSelectedReport(null);
   };
 
-  const handleApproveReport = (reportId) => {
-    alert(`Report #${reportId} approved!`);
-    setReports((prev) => prev.filter((r) => r.id !== reportId));
+  const handleApproveReport = async (reportId) => {
+    setIsReportProcessing(true);
+    const result = await approveReport(reportId, currentUser.uid);
+    setIsReportProcessing(false);
+
+    if (result.success) {
+      alert("Report approved successfully!");
+      setIsReportModalOpen(false);
+      setSelectedReport(null);
+    } else {
+      alert(`Failed to approve report: ${result.error}`);
+    }
   };
 
-  const handleRejectReport = (reportId) => {
-    alert(`Report #${reportId} rejected!`);
-    setReports((prev) => prev.filter((r) => r.id !== reportId));
+  const handleRejectReport = async (reportId) => {
+    setIsReportProcessing(true);
+    const result = await rejectReport(reportId, currentUser.uid);
+    setIsReportProcessing(false);
+
+    if (result.success) {
+      alert("Report rejected successfully!");
+      setIsReportModalOpen(false);
+      setSelectedReport(null);
+    } else {
+      alert(`Failed to reject report: ${result.error}`);
+    }
   };
 
   const handleAddAlert = async (alertData) => {
@@ -155,6 +179,7 @@ export default function DashboardPage() {
         <div className="table-container">
           <ReportsTable
             reports={reports}
+            loading={reportsLoading}
             onViewDetails={handleViewReportDetails}
           />
         </div>
@@ -262,6 +287,7 @@ export default function DashboardPage() {
         report={selectedReport}
         onApprove={handleApproveReport}
         onReject={handleRejectReport}
+        isProcessing={isReportProcessing}
       />
 
       {/* Alert Modal */}

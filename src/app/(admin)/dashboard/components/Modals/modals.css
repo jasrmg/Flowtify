@@ -486,6 +486,102 @@ label.photo-upload-btn {
   margin-right: 0.5rem;
 }
 
+/* Report Status Bar */
+.report-status-bar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--shadow);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.375rem 0.875rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-pending {
+  background-color: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.status-verified {
+  background-color: rgba(50, 182, 122, 0.15);
+  color: var(--accent);
+}
+
+.status-resolved {
+  background-color: rgba(63, 169, 245, 0.15);
+  color: var(--secondary);
+}
+
+.status-rejected {
+  background-color: rgba(255, 107, 107, 0.15);
+  color: #ff6b6b;
+}
+
+/* Location Display */
+.location-display {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.location-display svg {
+  width: 20px;
+  height: 20px;
+  color: var(--secondary);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.location-display small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+/* Comments List */
+.comments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.comment-item {
+  padding: 0.75rem;
+  background-color: var(--bg-primary);
+  border-radius: 8px;
+  border-left: 3px solid var(--secondary);
+}
+
+.comment-item p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.comment-item small {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+/* Disabled Buttons */
+.modal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-btn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 /* DARK MODE */
 
 body.dark-mode .leaflet-container {
