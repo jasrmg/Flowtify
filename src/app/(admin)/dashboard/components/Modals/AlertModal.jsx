@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
+export const AlertModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
   const scrollPosition = useRef(0);
 
   const [formData, setFormData] = useState({
@@ -58,9 +58,9 @@ export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
     }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (formData.title && formData.location && formData.message) {
-      onSubmit(formData);
+      await onSubmit(formData);
       // Reset form
       setFormData({
         title: "",
@@ -68,7 +68,6 @@ export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
         severity: "low",
         message: "",
       });
-      onClose();
     } else {
       alert("Please fill in all fields!");
     }
@@ -91,7 +90,11 @@ export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
       <div className="modal-content">
         <div className="modal-header">
           <h2>Add New Alert</h2>
-          <button className="modal-close" onClick={handleCancel}>
+          <button
+            className="modal-close"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -113,6 +116,7 @@ export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
               value={formData.title}
               onChange={handleChange}
               placeholder="e.g., Severe Flooding Warning"
+              disabled={isSubmitting}
             />
           </div>
           <div className="form-group">
@@ -123,7 +127,8 @@ export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
               name="location"
               value={formData.location}
               onChange={handleChange}
-              placeholder="e.g., Barangay Lahug"
+              placeholder="e.g., Barangay Lahug, Gorordo Ave"
+              disabled={isSubmitting}
             />
           </div>
           <div className="form-group">
@@ -133,10 +138,12 @@ export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
               name="severity"
               value={formData.severity}
               onChange={handleChange}
+              disabled={isSubmitting}
             >
               <option value="low">Low</option>
-              <option value="medium">Medium</option>
+              <option value="moderate">Moderate</option>
               <option value="high">High</option>
+              <option value="critical">Critical</option>
             </select>
           </div>
           <div className="form-group">
@@ -147,16 +154,32 @@ export const AlertModal = ({ isOpen, onClose, onSubmit }) => {
               value={formData.message}
               onChange={handleChange}
               rows="4"
-              placeholder="Enter alert message..."
+              placeholder="Enter detailed alert message..."
+              disabled={isSubmitting}
             ></textarea>
           </div>
         </div>
         <div className="modal-footer">
-          <button className="modal-btn cancel-btn" onClick={handleCancel}>
+          <button
+            className="modal-btn cancel-btn"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
             Cancel
           </button>
-          <button className="modal-btn submit-btn" onClick={handleSubmit}>
-            Create Alert
+          <button
+            className="modal-btn submit-btn"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="spinner"></span>
+                Creating...
+              </>
+            ) : (
+              "Create Alert"
+            )}
           </button>
         </div>
       </div>

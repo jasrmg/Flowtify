@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useAlerts } from "@/hooks/useAlerts";
 
 import { StatCard } from "@/app/(admin)/dashboard/components/StatCard/StatCard";
 import { HotlinesGrid } from "@/app/(admin)/dashboard/components/HotLinesGrid/HotlinesGrid";
@@ -18,24 +20,33 @@ import "@/app/(admin)/dashboard/components/Modals/modals.css";
 
 import {
   statsData,
-  activeAlerts,
   emergencyHotlines,
-  systemLogs,
   monthlyReportData,
   mapMarkers,
   pendingReports,
 } from "@/app/lib/mockData";
 
 import "./dashboard.css";
+import { useSystemLogs } from "@/hooks/useSystemLogs";
 
 export default function DashboardPage() {
+  const { currentUser } = useAuth();
+  const {
+    alerts,
+    loading: alertsLoading,
+    createAlert,
+    deactivateAlert,
+  } = useAlerts(true);
+
+  const { logs: systemLogs, loading: logsLoading } = useSystemLogs(50);
+
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [isMapDescModalOpen, setIsMapDescModalOpen] = useState(false);
   const [reports, setReports] = useState(pendingReports);
   const [selectedReport, setSelectedReport] = useState(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [alerts, setAlerts] = useState(activeAlerts);
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
+  const [isAlertSubmitting, setIsAlertSubmitting] = useState(false);
 
   const [hotlines, setHotlines] = useState(emergencyHotlines);
   const [isHotlineModalOpen, setIsHotlineModalOpen] = useState(false);
@@ -68,26 +79,34 @@ export default function DashboardPage() {
 
   const handleApproveReport = (reportId) => {
     alert(`Report #${reportId} approved!`);
-    // Remove from pending reports
     setReports((prev) => prev.filter((r) => r.id !== reportId));
   };
 
   const handleRejectReport = (reportId) => {
     alert(`Report #${reportId} rejected!`);
-    // Remove from pending reports
     setReports((prev) => prev.filter((r) => r.id !== reportId));
   };
 
-  const handleAddAlert = (alertData) => {
-    const newAlert = {
-      id: alerts.length + 1,
-      title: alertData.title,
-      location: alertData.location,
-      severity: alertData.severity,
-      time: "Active now",
-    };
-    setAlerts((prev) => [newAlert, ...prev]);
-    alert("Alert created successfully!");
+  const handleAddAlert = async (alertData) => {
+    setIsAlertSubmitting(true);
+    const result = await createAlert(alertData, currentUser.uid);
+    setIsAlertSubmitting(false);
+
+    if (result.success) {
+      setIsAlertModalOpen(false);
+      alert("Alert created successfully!");
+    } else {
+      alert(`Failed to create alert: ${result.error}`);
+    }
+  };
+
+  const handleDeactivateAlert = async (alertId) => {
+    const result = await deactivateAlert(alertId);
+    if (result.success) {
+      // Alert will be automatically removed from the list due to real-time listener
+    } else {
+      alert(`Failed to deactivate alert: ${result.error}`);
+    }
   };
 
   const handleAddHotline = (hotlineData) => {
@@ -158,7 +177,11 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <AlertsGrid alerts={activeAlerts} />
+        <AlertsGrid
+          alerts={alerts}
+          loading={alertsLoading}
+          onDeactivate={handleDeactivateAlert}
+        />
       </section>
 
       {/* Emergency Hotlines Section */}
@@ -219,7 +242,7 @@ export default function DashboardPage() {
           <p>Recent admin actions and system events</p>
         </div>
 
-        <SystemLogs logs={systemLogs} />
+        <SystemLogs logs={systemLogs} loading={logsLoading} />
       </section>
 
       {/* Map Description Modal */}
@@ -243,6 +266,7 @@ export default function DashboardPage() {
         isOpen={isAlertModalOpen}
         onClose={() => setIsAlertModalOpen(false)}
         onSubmit={handleAddAlert}
+        isSubmitting={isAlertSubmitting}
       />
 
       {/* Hotline Modal */}

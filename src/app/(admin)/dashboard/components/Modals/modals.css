@@ -433,6 +433,60 @@ label.photo-upload-btn {
   text-align: center;
   font-style: italic;
 }
+/* Confirm Modal Specific Styles */
+.modal-confirm {
+  max-width: 450px;
+}
+
+.confirm-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.5rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-icon svg {
+  width: 32px;
+  height: 32px;
+  color: #ef4444;
+}
+
+.modal-confirm .modal-body {
+  text-align: center;
+  padding: 2rem;
+}
+
+.modal-confirm .modal-body p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.danger-btn {
+  background-color: #ef4444;
+  color: white;
+}
+
+.danger-btn:hover:not(:disabled) {
+  background-color: #dc2626;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+/* DARK MODE */
 
 body.dark-mode .leaflet-container {
   background-color: var(--bg-primary);

@@ -1,4 +1,9 @@
 import "./SystemLogs.css";
+import {
+  getLogType,
+  formatLogTime,
+  formatLogMessage,
+} from "@/utils/logHelpers";
 
 const getLogIcon = (type) => {
   const icons = {
@@ -53,19 +58,57 @@ const getLogIcon = (type) => {
   return icons[type] || icons.info;
 };
 
-export const SystemLogs = ({ logs }) => {
+export const SystemLogs = ({ logs, loading }) => {
+  if (loading) {
+    return (
+      <div className="logs-container">
+        <div className="logs-loading">
+          <div className="loading-spinner"></div>
+          <p>Loading system logs...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!logs || logs.length === 0) {
+    return (
+      <div className="logs-container">
+        <div className="logs-empty">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          <p>No system logs available</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="logs-container">
       <div className="log-list" id="logList">
-        {logs.map((log) => (
-          <div key={log.id} className="log-item">
-            <div className={`log-icon ${log.type}`}>{getLogIcon(log.type)}</div>
-            <div className="log-content">
-              <div className="log-message">{log.message}</div>
-              <div className="log-time">{log.time}</div>
+        {logs.map((log) => {
+          const logType = getLogType(log.action);
+          const logMessage = formatLogMessage(log);
+          const logTime = formatLogTime(log.timestamp);
+
+          return (
+            <div key={log.id} className="log-item">
+              <div className={`log-icon ${logType}`}>{getLogIcon(logType)}</div>
+              <div className="log-content">
+                <div className="log-message">{logMessage}</div>
+                <div className="log-time">{logTime}</div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

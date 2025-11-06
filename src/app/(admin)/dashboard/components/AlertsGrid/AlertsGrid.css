@@ -87,6 +87,144 @@
   color: var(--text-secondary);
 }
 
+/* Loading State */
+.alerts-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.alerts-loading svg {
+  color: var(--secondary);
+  margin-bottom: 1rem;
+}
+
+.alerts-loading p {
+  font-size: 1rem;
+}
+
+/* Empty State */
+.alerts-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--bg-primary);
+  border-radius: 16px;
+  border: 2px dashed var(--border);
+}
+
+.alerts-empty svg {
+  width: 64px;
+  height: 64px;
+  color: var(--accent);
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.alerts-empty p {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.alerts-empty span {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* Alert Card with Deactivate Button */
+.alert-card {
+  position: relative;
+  padding: 1.5rem;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.alert-deactivate-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.alert-card:hover .alert-deactivate-btn {
+  opacity: 1;
+}
+
+.alert-deactivate-btn:hover {
+  background-color: #ef4444;
+  color: white;
+  transform: scale(1.1);
+}
+
+.alert-deactivate-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Alert Message */
+.alert-message {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0.75rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-clamp: 2;
+  overflow: hidden;
+}
+
+/* Severity Colors */
+.severity-critical,
+.alert-card.severity-critical {
+  background-color: rgba(220, 38, 38, 0.1);
+  border-left: 4px solid #dc2626;
+}
+
+.severity-badge.severity-critical {
+  background-color: rgba(220, 38, 38, 0.2);
+  color: #dc2626;
+}
+
+.severity-moderate,
+.alert-card.severity-moderate {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-left: 4px solid #f59e0b;
+}
+
+.severity-badge.severity-moderate {
+  background-color: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+}
+
+/* ANIMATION */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* RESPONSIVE */
 @media (max-width: 768px) {
   .alerts-grid {
     grid-template-columns: 1fr;
