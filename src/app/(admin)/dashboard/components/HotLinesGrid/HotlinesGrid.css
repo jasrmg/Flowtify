@@ -56,6 +56,124 @@
   line-height: 1.5;
 }
 
+/* Loading State */
+.hotlines-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+.hotlines-loading svg {
+  color: var(--secondary);
+  margin-bottom: 1rem;
+}
+
+.hotlines-loading p {
+  font-size: 1rem;
+}
+
+/* Empty State */
+.hotlines-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  background-color: var(--bg-primary);
+  border-radius: 16px;
+  border: 2px dashed var(--border);
+}
+
+.hotlines-empty svg {
+  width: 64px;
+  height: 64px;
+  color: #ff6b6b;
+  opacity: 0.5;
+  margin-bottom: 1rem;
+}
+
+.hotlines-empty p {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.hotlines-empty span {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+/* Hotline Card with Action Buttons */
+.hotline-card {
+  position: relative;
+}
+
+.hotline-actions {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
+}
+
+.hotline-card:hover .hotline-actions {
+  opacity: 1;
+}
+
+.hotline-action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.hotline-action-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.edit-btn {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.edit-btn:hover {
+  background-color: #3b82f6;
+  color: white;
+  transform: scale(1.1);
+}
+
+.delete-btn {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.delete-btn:hover {
+  background-color: #ef4444;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Spin animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 768px) {
   .hotlines-grid {
     grid-template-columns: 1fr;

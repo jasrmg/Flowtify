@@ -2,32 +2,48 @@
 
 import { useState, useEffect, useRef } from "react";
 
-export const HotlineModal = ({ isOpen, onClose, onSubmit }) => {
+export const HotlineModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  isSubmitting,
+  hotline = null, // If hotline is provided, we're in edit mode
+}) => {
   const scrollPosition = useRef(0);
+  const isEditMode = !!hotline;
+
   const [formData, setFormData] = useState({
-    name: "",
-    number: "",
+    agencyName: "",
+    contactNumber: "",
     description: "",
   });
+
+  // Populate form when editing
+  useEffect(() => {
+    if (hotline) {
+      setFormData({
+        agencyName: hotline.agencyName || "",
+        contactNumber: hotline.contactNumber || "",
+        description: hotline.description || "",
+      });
+    }
+  }, [hotline]);
 
   // dont allow scroll if the modal is open
   useEffect(() => {
     if (isOpen) {
-      // Save current scroll position
       scrollPosition.current = window.scrollY;
       document.body.style.position = "fixed";
       document.body.style.top = `-${scrollPosition.current}px`;
       document.body.style.width = "100%";
       document.body.classList.add("modal-open");
     } else if (scrollPosition.current !== 0) {
-      // Restore scroll position
       const savedPosition = scrollPosition.current;
       document.body.style.position = "";
       document.body.style.top = "";
       document.body.style.width = "";
       document.body.classList.remove("modal-open");
 
-      // Use requestAnimationFrame to ensure styles are applied before scrolling
       requestAnimationFrame(() => {
         window.scrollTo({
           top: savedPosition,
@@ -56,16 +72,15 @@ export const HotlineModal = ({ isOpen, onClose, onSubmit }) => {
     }));
   };
 
-  const handleSubmit = () => {
-    if (formData.name && formData.number && formData.description) {
-      onSubmit(formData);
+  const handleSubmit = async () => {
+    if (formData.agencyName && formData.contactNumber && formData.description) {
+      await onSubmit(formData, hotline?.id);
       // Reset form
       setFormData({
-        name: "",
-        number: "",
+        agencyName: "",
+        contactNumber: "",
         description: "",
       });
-      onClose();
     } else {
       alert("Please fill in all fields!");
     }
@@ -74,8 +89,8 @@ export const HotlineModal = ({ isOpen, onClose, onSubmit }) => {
   const handleCancel = () => {
     // Reset form
     setFormData({
-      name: "",
-      number: "",
+      agencyName: "",
+      contactNumber: "",
       description: "",
     });
     onClose();
@@ -86,8 +101,14 @@ export const HotlineModal = ({ isOpen, onClose, onSubmit }) => {
       <div className="modal-overlay" onClick={handleCancel}></div>
       <div className="modal-content">
         <div className="modal-header">
-          <h2>Add Emergency Hotline</h2>
-          <button className="modal-close" onClick={handleCancel}>
+          <h2>
+            {isEditMode ? "Edit Emergency Hotline" : "Add Emergency Hotline"}
+          </h2>
+          <button
+            className="modal-close"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -105,10 +126,11 @@ export const HotlineModal = ({ isOpen, onClose, onSubmit }) => {
             <input
               type="text"
               id="hotlineName"
-              name="name"
-              value={formData.name}
+              name="agencyName"
+              value={formData.agencyName}
               onChange={handleChange}
               placeholder="e.g., Cebu City Disaster Risk Reduction"
+              disabled={isSubmitting}
             />
           </div>
           <div className="form-group">
@@ -116,10 +138,11 @@ export const HotlineModal = ({ isOpen, onClose, onSubmit }) => {
             <input
               type="tel"
               id="hotlineNumber"
-              name="number"
-              value={formData.number}
+              name="contactNumber"
+              value={formData.contactNumber}
               onChange={handleChange}
               placeholder="e.g., (032) 123-4567"
+              disabled={isSubmitting}
             />
           </div>
           <div className="form-group">
@@ -131,15 +154,33 @@ export const HotlineModal = ({ isOpen, onClose, onSubmit }) => {
               onChange={handleChange}
               rows="3"
               placeholder="Brief description of service..."
+              disabled={isSubmitting}
             ></textarea>
           </div>
         </div>
         <div className="modal-footer">
-          <button className="modal-btn cancel-btn" onClick={handleCancel}>
+          <button
+            className="modal-btn cancel-btn"
+            onClick={handleCancel}
+            disabled={isSubmitting}
+          >
             Cancel
           </button>
-          <button className="modal-btn submit-btn" onClick={handleSubmit}>
-            Add Hotline
+          <button
+            className="modal-btn submit-btn"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <span className="spinner"></span>
+                {isEditMode ? "Updating..." : "Adding..."}
+              </>
+            ) : isEditMode ? (
+              "Update Hotline"
+            ) : (
+              "Add Hotline"
+            )}
           </button>
         </div>
       </div>

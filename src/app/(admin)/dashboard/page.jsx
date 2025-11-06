@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useAlerts } from "@/hooks/useAlerts";
+import { useEmergencyHotlines } from "@/hooks/useEmergencyHotlines";
 
 import { StatCard } from "@/app/(admin)/dashboard/components/StatCard/StatCard";
 import { HotlinesGrid } from "@/app/(admin)/dashboard/components/HotLinesGrid/HotlinesGrid";
@@ -37,6 +38,14 @@ export default function DashboardPage() {
     deactivateAlert,
   } = useAlerts(true);
 
+  const {
+    hotlines,
+    loading: hotlinesLoading,
+    createHotline,
+    updateHotline,
+    deactivateHotline,
+  } = useEmergencyHotlines(true);
+
   const { logs: systemLogs, loading: logsLoading } = useSystemLogs(50);
 
   const { stats: statsData, loading: statsLoading } = useStatistics();
@@ -62,8 +71,9 @@ export default function DashboardPage() {
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
   const [isAlertSubmitting, setIsAlertSubmitting] = useState(false);
 
-  const [hotlines, setHotlines] = useState(emergencyHotlines);
   const [isHotlineModalOpen, setIsHotlineModalOpen] = useState(false);
+  const [isHotlineSubmitting, setIsHotlineSubmitting] = useState(false);
+  const [selectedHotline, setSelectedHotline] = useState(null);
 
   const handleViewDescription = (markerId) => {
     const marker = mapMarkers.find((m) => m.id === markerId);
@@ -141,15 +151,57 @@ export default function DashboardPage() {
     }
   };
 
-  const handleAddHotline = (hotlineData) => {
-    const newHotline = {
-      id: hotlines.length + 1,
-      name: hotlineData.name,
-      number: hotlineData.number,
-      description: hotlineData.description,
-    };
-    setHotlines((prev) => [newHotline, ...prev]);
-    showSuccess("Emergency hotline added successfully!");
+  const handleAddHotline = async (hotlineData, hotlineId) => {
+    setIsHotlineSubmitting(true);
+
+    let result;
+    if (hotlineId) {
+      // Edit mode
+      result = await updateHotline(
+        hotlineId,
+        hotlineData,
+        currentUser.uid,
+        "admin"
+      );
+    } else {
+      // Add mode
+      result = await createHotline(hotlineData, currentUser.uid, "admin");
+    }
+
+    setIsHotlineSubmitting(false);
+
+    if (result.success) {
+      setIsHotlineModalOpen(false);
+      setSelectedHotline(null);
+      showSuccess(
+        hotlineId
+          ? "Hotline updated successfully!"
+          : "Hotline added successfully!"
+      );
+    } else {
+      showError(
+        `Failed to ${hotlineId ? "update" : "add"} hotline: ${result.error}`
+      );
+    }
+  };
+
+  const handleEditHotline = (hotline) => {
+    setSelectedHotline(hotline);
+    setIsHotlineModalOpen(true);
+  };
+
+  const handleDeactivateHotline = async (hotlineId) => {
+    const result = await deactivateHotline(hotlineId, currentUser.uid, "admin");
+    if (result.success) {
+      showSuccess("Hotline deleted successfully!");
+    } else {
+      showError(`Failed to delete hotline: ${result.error}`);
+    }
+  };
+
+  const handleCloseHotlineModal = () => {
+    setIsHotlineModalOpen(false);
+    setSelectedHotline(null);
   };
 
   return (
@@ -223,7 +275,10 @@ export default function DashboardPage() {
           <h2>Emergency Hotlines</h2>
           <button
             className="create-btn"
-            onClick={() => setIsHotlineModalOpen(true)}
+            onClick={() => {
+              setSelectedHotline(null);
+              setIsHotlineModalOpen(true);
+            }}
           >
             <svg
               viewBox="0 0 24 24"
@@ -238,7 +293,12 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        <HotlinesGrid hotlines={emergencyHotlines} />
+        <HotlinesGrid
+          hotlines={hotlines}
+          loading={hotlinesLoading}
+          onEdit={handleEditHotline}
+          onDeactivate={handleDeactivateHotline}
+        />
       </section>
 
       {/* Statistics Section */}
@@ -305,8 +365,10 @@ export default function DashboardPage() {
       {/* Hotline Modal */}
       <HotlineModal
         isOpen={isHotlineModalOpen}
-        onClose={() => setIsHotlineModalOpen(false)}
+        onClose={handleCloseHotlineModal}
         onSubmit={handleAddHotline}
+        isSubmitting={isHotlineSubmitting}
+        hotline={selectedHotline}
       />
 
       {/* Toast Notifications */}
