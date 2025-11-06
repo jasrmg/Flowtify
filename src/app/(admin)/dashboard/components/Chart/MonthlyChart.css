@@ -53,6 +53,42 @@
   color: var(--text-primary);
 }
 
+/* Loading States */
+.chart-loading .chart-bar {
+  background: linear-gradient(
+    90deg,
+    var(--bg-primary) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    var(--bg-primary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  cursor: default;
+}
+
+.chart-loading .chart-bar:hover {
+  opacity: 1;
+  transform: none;
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 @media (max-width: 480px) {
   .simple-chart {
     height: 200px;

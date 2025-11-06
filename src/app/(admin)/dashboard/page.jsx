@@ -16,18 +16,18 @@ import { ReportModal } from "@/app/(admin)/dashboard/components/Modals/ReportMod
 import { AlertModal } from "@/app/(admin)/dashboard/components/Modals/AlertModal";
 import { HotlineModal } from "@/app/(admin)/dashboard/components/Modals/HotlineModal";
 
-import "@/app/(admin)/dashboard/components/Modals/modals.css";
+import { useStatistics } from "@/hooks/useStatistics";
+import { useMonthlyReports } from "@/hooks/useMonthlyReports";
+import { useSystemLogs } from "@/hooks/useSystemLogs";
 
 import {
-  statsData,
   emergencyHotlines,
-  monthlyReportData,
   mapMarkers,
   pendingReports,
 } from "@/app/lib/mockData";
 
+import "@/app/(admin)/dashboard/components/Modals/modals.css";
 import "./dashboard.css";
-import { useSystemLogs } from "@/hooks/useSystemLogs";
 
 export default function DashboardPage() {
   const { currentUser } = useAuth();
@@ -39,6 +39,10 @@ export default function DashboardPage() {
   } = useAlerts(true);
 
   const { logs: systemLogs, loading: logsLoading } = useSystemLogs(50);
+
+  const { stats: statsData, loading: statsLoading } = useStatistics();
+
+  const { monthlyData, loading: chartLoading } = useMonthlyReports();
 
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [isMapDescModalOpen, setIsMapDescModalOpen] = useState(false);
@@ -216,23 +220,22 @@ export default function DashboardPage() {
         </div>
 
         <div className="stats-grid">
-          <div className="stats-grid">
-            {statsData.map((stat) => (
-              <StatCard
-                key={stat.id}
-                title={stat.title}
-                value={stat.value}
-                change={stat.change}
-                changeType={stat.changeType}
-                period={stat.period}
-                icon={stat.icon}
-                iconType={stat.iconType}
-              />
-            ))}
-          </div>
+          {statsData.map((stat) => (
+            <StatCard
+              key={stat.id}
+              title={stat.title}
+              value={stat.value}
+              change={stat.change}
+              changeType={stat.changeType}
+              period={stat.period}
+              icon={stat.icon}
+              iconType={stat.iconType}
+              loading={statsLoading}
+            />
+          ))}
         </div>
 
-        <MonthlyChart data={monthlyReportData} />
+        <MonthlyChart data={monthlyData} loading={chartLoading} />
       </section>
 
       {/* System Logs Section */}

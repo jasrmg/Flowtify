@@ -89,3 +89,47 @@
 .stat-change.negative {
   color: #ff6b6b;
 }
+
+/* Loading States */
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bg-primary) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    var(--bg-primary) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+.loading-text-sm {
+  height: 14px;
+  width: 80px;
+  margin-bottom: 0.5rem;
+}
+
+.loading-text-lg {
+  height: 32px;
+  width: 60px;
+  margin-bottom: 0.5rem;
+}
+
+.loading-text-xs {
+  height: 12px;
+  width: 100px;
+}
+
+.stat-icon.loading-shimmer {
+  width: 56px;
+  height: 56px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
