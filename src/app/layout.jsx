@@ -25,7 +25,7 @@ import RouteLoader from "@/components/RouteLoader/RouteLoader";
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" data-scroll-behavior="smooth">
       <head>
         <link rel="icon" type="image/svg+xml" href="favicon.svg" />
       </head>
