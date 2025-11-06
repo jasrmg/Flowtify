@@ -11,6 +11,7 @@ import {
   updateDoc,
   doc,
   serverTimestamp,
+  Timestamp,
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 
@@ -61,7 +62,7 @@ export function useAlerts(activeOnly = true) {
       const newAlert = {
         ...alertData,
         createdBy: userId,
-        createdAt: Timestamp.now(),
+        timestamp: Timestamp.now(),
         isActive: true,
       };
 
