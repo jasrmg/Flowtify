@@ -7,7 +7,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 
 import "./map.css";
-import "@/app/components/Modals/modals.css";
+import "@/app/(admin)/dashboard/components/Modals/modals.css";
 
 // Dynamically import with SSR disabled
 const MapView = dynamic(() => import("./MapView"), {
