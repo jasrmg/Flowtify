@@ -1,5 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useAlerts } from "@/hooks/useAlerts";
+import { getAlertClass, formatAlertTime } from "@/utils/alertHelpers";
+
 import "./RightSidebar.css";
 
 export const RightSidebar = () => {
@@ -7,6 +10,7 @@ export const RightSidebar = () => {
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(true);
   const [weatherError, setWeatherError] = useState(null);
+  const { alerts, loading: alertsLoading } = useAlerts();
 
   const safetyTips = [
     {
@@ -252,21 +256,73 @@ export const RightSidebar = () => {
 
       <div className="sidebar-section">
         <h4>Official Alerts</h4>
-        <div className="alert-item alert-warning">
-          <div className="alert-title">Heavy Rain Warning</div>
-          <div className="alert-time">Active now</div>
-          <p>
-            Expect continuous rainfall in Metro Cebu. Stay alert for possible
-            flooding.
-          </p>
-        </div>
-        <div className="alert-item alert-info">
-          <div className="alert-title">Weather Update</div>
-          <div className="alert-time">2 hours ago</div>
-          <p>
-            Low pressure area detected east of Visayas. Monitor local updates.
-          </p>
-        </div>
+        {alertsLoading ? (
+          <div className="alerts-loading">
+            <svg
+              style={{
+                width: "24px",
+                height: "24px",
+                animation: "spin 1s linear infinite",
+              }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+            </svg>
+            <span>Loading alerts...</span>
+          </div>
+        ) : alerts.length === 0 ? (
+          <div className="alerts-empty">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+            <p>No active alerts</p>
+            <span>All clear for now</span>
+          </div>
+        ) : (
+          alerts.map((alert) => (
+            <div
+              key={alert.id}
+              className={`alert-item ${getAlertClass(alert.severity)}`}
+            >
+              <div className="alert-header">
+                <div className="alert-title">{alert.title}</div>
+                {alert.severity && (
+                  <span className={`alert-severity ${alert.severity}`}>
+                    {alert.severity.toUpperCase()}
+                  </span>
+                )}
+              </div>
+              {alert.location && (
+                <div className="alert-location">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <span>{alert.location}</span>
+                </div>
+              )}
+              <div className="alert-time">
+                {formatAlertTime(alert.timestamp)}
+              </div>
+              <p>{alert.message}</p>
+            </div>
+          ))
+        )}
       </div>
 
       <div className="sidebar-section">
