@@ -1,5 +1,5 @@
 import { Navbar } from "@/app/components/Navbar";
-import { Sidebar } from "./dashboard/components/Sidebar";
+import { Sidebar } from "./dashboard/components/Sidebar/Sidebar";
 import { ThemeToggle } from "../components/ThemeToggle";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 

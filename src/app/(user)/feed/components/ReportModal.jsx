@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MapPicker } from "./MapPicker";
 import Image from "next/image";
-import "@/app/components/Modals/modals.css";
+import "@/app/(admin)/dashboard/components/Modals/modals.css";
 
 export const ReportModal = ({ isOpen, onClose }) => {
   const scrollPosition = useRef(0);

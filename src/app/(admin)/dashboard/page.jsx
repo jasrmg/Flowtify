@@ -2,19 +2,19 @@
 
 import { useState } from "react";
 
-import { StatCard } from "@/app/components/StatCard/StatCard";
-import { HotlinesGrid } from "@/app/components/HotLinesGrid/HotlinesGrid";
-import { SystemLogs } from "@/app/components/SystemLogs/SystemLogs";
-import { MonthlyChart } from "@/app/components/Chart/MonthlyChart";
-import { AlertsGrid } from "@/app/components/AlertsGrid/AlertsGrid";
-import { FloodMapWrapper } from "@/app/components/Map/FloodMapWrapper";
-import { MapDescModal } from "@/app/components/Modals/MapDescModal";
-import { ReportsTable } from "@/app/components/ReportsTable/ReportsTable";
-import { ReportModal } from "@/app/components/Modals/ReportModal";
-import { AlertModal } from "@/app/components/Modals/AlertModal";
-import { HotlineModal } from "@/app/components/Modals/HotlineModal";
+import { StatCard } from "@/app/(admin)/dashboard/components/StatCard/StatCard";
+import { HotlinesGrid } from "@/app/(admin)/dashboard/components/HotLinesGrid/HotlinesGrid";
+import { SystemLogs } from "@/app/(admin)/dashboard/components/SystemLogs/SystemLogs";
+import { MonthlyChart } from "@/app/(admin)/dashboard/components/Chart/MonthlyChart";
+import { AlertsGrid } from "@/app/(admin)/dashboard/components/AlertsGrid/AlertsGrid";
+import { FloodMapWrapper } from "@/app/(admin)/dashboard/components/Map/FloodMapWrapper";
+import { MapDescModal } from "@/app/(admin)/dashboard/components/Modals/MapDescModal";
+import { ReportsTable } from "@/app/(admin)/dashboard/components/ReportsTable/ReportsTable";
+import { ReportModal } from "@/app/(admin)/dashboard/components/Modals/ReportModal";
+import { AlertModal } from "@/app/(admin)/dashboard/components/Modals/AlertModal";
+import { HotlineModal } from "@/app/(admin)/dashboard/components/Modals/HotlineModal";
 
-import "@/app/components/Modals/modals.css";
+import "@/app/(admin)/dashboard/components/Modals/modals.css";
 
 import {
   statsData,

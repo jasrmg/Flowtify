@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import LandingNavbar from "./components/LandingNavbar";
 import ThemeToggle from "./components/ThemeToggle";
-import Modal from "./components/Modals/Modal";
+import Modal from "./(admin)/dashboard/components/Modals/Modal";
 import "./landing.css";
 
 export default function LandingPage() {

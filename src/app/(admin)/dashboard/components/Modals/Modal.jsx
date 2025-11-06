@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import "../Modals/modals.css";
+import "./modals.css";
 
 export default function Modal({ isOpen, onClose, title, children }) {
   // Prevent body scroll when modal is open
