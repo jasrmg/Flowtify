@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
 import {
+  logReportApproval,
+  logReportRejection,
+  logReportDeletion,
+  logReportResolution,
+} from "@/utils/systemLogger";
+import { formatLocation } from "@/utils/reportHelpers";
+import {
   collection,
   query,
   where,
@@ -8,7 +15,6 @@ import {
   doc,
   updateDoc,
   deleteDoc,
-  arrayUnion,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../../lib/firebase";
@@ -57,14 +63,24 @@ export const useReports = (statusFilter = "pending") => {
   }, [statusFilter]);
 
   // Approve/Verify a report
-  const approveReport = async (reportId, adminId) => {
+  const approveReport = async (reportId, adminId, adminRole = "admin") => {
     try {
+      // Get the report data first for logging
+      const reportToApprove = reports.find((r) => r.id === reportId);
+      const reportLocation = reportToApprove
+        ? formatLocation(reportToApprove.location)
+        : "Unknown location";
+
       const reportRef = doc(db, "reports", reportId);
       await updateDoc(reportRef, {
         status: "verified",
         verifiedAt: Timestamp.now(),
         verifiedBy: adminId,
       });
+
+      // Log the action
+      await logReportApproval(reportId, reportLocation, adminId, adminRole);
+
       return { success: true };
     } catch (error) {
       console.error("Error approving report:", error);
@@ -73,8 +89,19 @@ export const useReports = (statusFilter = "pending") => {
   };
 
   // Reject a report
-  const rejectReport = async (reportId, adminId, reason = "") => {
+  const rejectReport = async (
+    reportId,
+    adminId,
+    adminRole = "admin",
+    reason = ""
+  ) => {
     try {
+      // Get the report data first for logging
+      const reportToReject = reports.find((r) => r.id === reportId);
+      const reportLocation = reportToReject
+        ? formatLocation(reportToReject.location)
+        : "Unknown location";
+
       const reportRef = doc(db, "reports", reportId);
       await updateDoc(reportRef, {
         status: "rejected",
@@ -82,6 +109,10 @@ export const useReports = (statusFilter = "pending") => {
         rejectedBy: adminId,
         rejectionReason: reason,
       });
+
+      // Log the action
+      await logReportRejection(reportId, reportLocation, adminId, adminRole);
+
       return { success: true };
     } catch (error) {
       console.error("Error rejecting report:", error);
@@ -90,9 +121,19 @@ export const useReports = (statusFilter = "pending") => {
   };
 
   // Delete a report
-  const deleteReport = async (reportId) => {
+  const deleteReport = async (reportId, adminId, adminRole = "admin") => {
     try {
+      // Get the report data first for logging
+      const reportToDelete = reports.find((r) => r.id === reportId);
+      const reportLocation = reportToDelete
+        ? formatLocation(reportToDelete.location)
+        : "Unknown location";
+
       await deleteDoc(doc(db, "reports", reportId));
+
+      // Log the action
+      await logReportDeletion(reportId, reportLocation, adminId, adminRole);
+
       return { success: true };
     } catch (error) {
       console.error("Error deleting report:", error);
@@ -100,33 +141,25 @@ export const useReports = (statusFilter = "pending") => {
     }
   };
 
-  // Add admin comment to report
-  const addComment = async (reportId, adminId, message) => {
-    try {
-      const reportRef = doc(db, "reports", reportId);
-      await updateDoc(reportRef, {
-        comments: arrayUnion({
-          adminId,
-          message,
-          timestamp: Timestamp.now(),
-        }),
-      });
-      return { success: true };
-    } catch (error) {
-      console.error("Error adding comment:", error);
-      return { success: false, error: error.message };
-    }
-  };
-
   // Mark report as resolved
-  const resolveReport = async (reportId, adminId) => {
+  const resolveReport = async (reportId, adminId, adminRole = "admin") => {
     try {
+      // Get the report data first for logging
+      const reportToResolve = reports.find((r) => r.id === reportId);
+      const reportLocation = reportToResolve
+        ? formatLocation(reportToResolve.location)
+        : "Unknown location";
+
       const reportRef = doc(db, "reports", reportId);
       await updateDoc(reportRef, {
         status: "resolved",
         resolvedAt: Timestamp.now(),
         resolvedBy: adminId,
       });
+
+      // Log the action
+      await logReportResolution(reportId, reportLocation, adminId, adminRole);
+
       return { success: true };
     } catch (error) {
       console.error("Error resolving report:", error);
@@ -141,7 +174,6 @@ export const useReports = (statusFilter = "pending") => {
     approveReport,
     rejectReport,
     deleteReport,
-    addComment,
     resolveReport,
   };
 };

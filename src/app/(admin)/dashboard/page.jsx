@@ -19,6 +19,8 @@ import { HotlineModal } from "@/app/(admin)/dashboard/components/Modals/HotlineM
 import { useStatistics } from "@/hooks/useStatistics";
 import { useMonthlyReports } from "@/hooks/useMonthlyReports";
 import { useSystemLogs } from "@/hooks/useSystemLogs";
+import { useToast } from "@/hooks/useToast";
+import { Toast } from "@/components/Toast/Toast";
 import { useReports } from "@/hooks/useReports";
 
 import { emergencyHotlines, mapMarkers } from "@/app/lib/mockData";
@@ -50,6 +52,8 @@ export default function DashboardPage() {
     approveReport,
     rejectReport,
   } = useReports("pending");
+
+  const { toast, showSuccess, showError, hideToast } = useToast();
 
   const [selectedReport, setSelectedReport] = useState(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
@@ -89,51 +93,51 @@ export default function DashboardPage() {
 
   const handleApproveReport = async (reportId) => {
     setIsReportProcessing(true);
-    const result = await approveReport(reportId, currentUser.uid);
+    const result = await approveReport(reportId, currentUser.uid, "admin");
     setIsReportProcessing(false);
 
     if (result.success) {
-      alert("Report approved successfully!");
+      showSuccess("Report approved successfully!");
       setIsReportModalOpen(false);
       setSelectedReport(null);
     } else {
-      alert(`Failed to approve report: ${result.error}`);
+      showError(`Failed to approve report: ${result.error}`);
     }
   };
 
   const handleRejectReport = async (reportId) => {
     setIsReportProcessing(true);
-    const result = await rejectReport(reportId, currentUser.uid);
+    const result = await rejectReport(reportId, currentUser.uid, "admin");
     setIsReportProcessing(false);
 
     if (result.success) {
-      alert("Report rejected successfully!");
+      showSuccess("Report rejected successfully!");
       setIsReportModalOpen(false);
       setSelectedReport(null);
     } else {
-      alert(`Failed to reject report: ${result.error}`);
+      showError(`Failed to reject report: ${result.error}`);
     }
   };
 
   const handleAddAlert = async (alertData) => {
     setIsAlertSubmitting(true);
-    const result = await createAlert(alertData, currentUser.uid);
+    const result = await createAlert(alertData, currentUser.uid, "admin");
     setIsAlertSubmitting(false);
 
     if (result.success) {
       setIsAlertModalOpen(false);
-      alert("Alert created successfully!");
+      showSuccess("Alert created successfully!");
     } else {
-      alert(`Failed to create alert: ${result.error}`);
+      showError(`Failed to create alert: ${result.error}`);
     }
   };
 
   const handleDeactivateAlert = async (alertId) => {
-    const result = await deactivateAlert(alertId);
+    const result = await deactivateAlert(alertId, currentUser.uid, "admin");
     if (result.success) {
-      // Alert will be automatically removed from the list due to real-time listener
+      showSuccess("Alert deactivated successfully!");
     } else {
-      alert(`Failed to deactivate alert: ${result.error}`);
+      showError(`Failed to deactivate alert: ${result.error}`);
     }
   };
 
@@ -145,7 +149,7 @@ export default function DashboardPage() {
       description: hotlineData.description,
     };
     setHotlines((prev) => [newHotline, ...prev]);
-    alert("Emergency hotline added successfully!");
+    showSuccess("Emergency hotline added successfully!");
   };
 
   return (
@@ -303,6 +307,14 @@ export default function DashboardPage() {
         isOpen={isHotlineModalOpen}
         onClose={() => setIsHotlineModalOpen(false)}
         onSubmit={handleAddHotline}
+      />
+
+      {/* Toast Notifications */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
       />
     </>
   );

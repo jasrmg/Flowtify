@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { logAlertCreation, logAlertDeactivation } from "@/utils/systemLogger";
 import {
   collection,
   query,
@@ -55,18 +56,21 @@ export function useAlerts(activeOnly = true) {
   }, [activeOnly]);
 
   // Create new alert
-  const createAlert = async (alertData, userId) => {
+  const createAlert = async (alertData, userId, userRole = "admin") => {
     try {
-      await addDoc(collection(db, "alerts"), {
-        title: alertData.title,
-        location: alertData.location,
-        severity: alertData.severity,
-        message: alertData.message,
+      const newAlert = {
+        ...alertData,
+        createdBy: userId,
+        createdAt: Timestamp.now(),
         isActive: true,
-        reportedBy: userId,
-        timestamp: serverTimestamp(),
-      });
-      return { success: true };
+      };
+
+      const docRef = await addDoc(collection(db, "alerts"), newAlert);
+
+      // Log the action
+      await logAlertCreation(docRef.id, alertData.title, userId, userRole);
+
+      return { success: true, id: docRef.id };
     } catch (error) {
       console.error("Error creating alert:", error);
       return { success: false, error: error.message };
@@ -74,11 +78,24 @@ export function useAlerts(activeOnly = true) {
   };
 
   // Deactivate alert
-  const deactivateAlert = async (alertId) => {
+  const deactivateAlert = async (alertId, userId, userRole = "admin") => {
     try {
-      await updateDoc(doc(db, "alerts", alertId), {
+      // Get the alert data first for logging
+      const alertToDeactivate = alerts.find((a) => a.id === alertId);
+      const alertTitle = alertToDeactivate
+        ? alertToDeactivate.title
+        : "Unknown alert";
+
+      const alertRef = doc(db, "alerts", alertId);
+      await updateDoc(alertRef, {
         isActive: false,
+        deactivatedAt: Timestamp.now(),
+        deactivatedBy: userId,
       });
+
+      // Log the action
+      await logAlertDeactivation(alertId, alertTitle, userId, userRole);
+
       return { success: true };
     } catch (error) {
       console.error("Error deactivating alert:", error);

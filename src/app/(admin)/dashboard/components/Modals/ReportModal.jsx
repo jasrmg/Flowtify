@@ -137,24 +137,24 @@ export const ReportModal = ({
             <p>{formatReportDate(report.createdAt)}</p>
           </div>
 
+          {report.photoUrl && report.photoUrl.length > 0 && (
+            <div className="modal-field">
+              <label>Photos ({report.photoUrl.length})</label>
+              <ImageGallery
+                images={report.photoUrl}
+                alt="Flood report photo"
+                onImageClick={(index) => {
+                  setLightboxStartIndex(index);
+                  setLightboxOpen(true);
+                }}
+              />
+            </div>
+          )}
+
           {report.verifiedAt && (
             <div className="modal-field">
               <label>Verified At</label>
               <p>{formatReportDate(report.verifiedAt)}</p>
-            </div>
-          )}
-
-          {report.comments && report.comments.length > 0 && (
-            <div className="modal-field">
-              <label>Admin Comments</label>
-              <div className="comments-list">
-                {report.comments.map((comment, index) => (
-                  <div key={index} className="comment-item">
-                    <p>{comment.message}</p>
-                    <small>{formatReportDate(comment.timestamp)}</small>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </div>
@@ -203,9 +203,9 @@ export const ReportModal = ({
         </div>
 
         {/* Image Lightbox */}
-        {lightboxOpen && (
+        {lightboxOpen && report.photoUrl && (
           <ImageLightbox
-            images={report.photo}
+            images={report.photoUrl}
             initialIndex={lightboxStartIndex}
             onClose={() => setLightboxOpen(false)}
           />
