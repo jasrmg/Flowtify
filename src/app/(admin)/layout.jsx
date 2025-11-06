@@ -15,7 +15,7 @@ export const AdminLayout = ({ children }) => {
         {/* Page Content */}
         <div className="layout-container">
           <Sidebar />
-          <main className="main-content">{children}</main>
+          <main className="main-content main-content--admin">{children}</main>
         </div>
       </ProtectedRoute>
     </>

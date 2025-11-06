@@ -1,0 +1,134 @@
+/* Overlay */
+.route-loader-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(245, 245, 245, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-in;
+}
+
+body.dark-mode .route-loader-overlay {
+  background-color: rgba(11, 12, 16, 0.95);
+}
+
+/* Content Container */
+.route-loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+/* Ripple SVG Container */
+.ripple-container {
+  width: 120px;
+  height: 120px;
+  position: relative;
+}
+
+.ripple-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Ripple Circles */
+.ripple-circle {
+  fill: none;
+  stroke: var(--secondary);
+  stroke-width: 2;
+  opacity: 0;
+  animation: ripple 2s ease-out infinite;
+}
+
+.ripple-1 {
+  animation-delay: 0s;
+}
+
+.ripple-2 {
+  animation-delay: 0.6s;
+}
+
+.ripple-3 {
+  animation-delay: 1.2s;
+}
+
+/* Core Circle (Central Dot) */
+.ripple-core {
+  fill: var(--secondary);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Loading Text */
+.route-loader-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  animation: textPulse 2s ease-in-out infinite;
+}
+
+/* Fade Out Animation */
+.route-loader-overlay.fade-out {
+  animation: fadeOut 0.2s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    r: 20;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.8;
+  }
+  100% {
+    r: 80;
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+}
+
+@keyframes textPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

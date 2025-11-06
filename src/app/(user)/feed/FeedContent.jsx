@@ -22,7 +22,7 @@ export function FeedContent() {
 
   return (
     <>
-      <main className="main-content">
+      <main className="main-content main-content--user">
         <div className="content-header">
           <div className="content-header-text">
             <h1>Flood Reports</h1>

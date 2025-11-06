@@ -146,3 +146,21 @@ h6 {
   margin-top: 64px;
   min-height: calc(100vh - 64px);
 }
+
+.main-content {
+  flex: 1;
+  min-height: calc(100vh - 64px);
+  margin-left: 250px;
+  padding: 2rem;
+  transition: margin 0.3s;
+}
+
+/* Admin variant - no right sidebar */
+.main-content--admin {
+  margin-right: 0;
+}
+
+/* User variant - has right sidebar */
+.main-content--user {
+  margin-right: 320px;
+}
