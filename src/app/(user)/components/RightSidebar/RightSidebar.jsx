@@ -1,6 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useAlerts } from "@/hooks/useAlerts";
+import { useEmergencyHotlines } from "@/hooks/useEmergencyHotlines";
+
 import { getAlertClass, formatAlertTime } from "@/utils/alertHelpers";
 
 import "./RightSidebar.css";
@@ -11,6 +13,7 @@ export const RightSidebar = () => {
   const [weatherLoading, setWeatherLoading] = useState(true);
   const [weatherError, setWeatherError] = useState(null);
   const { alerts, loading: alertsLoading } = useAlerts();
+  const { hotlines, loading: hotlinesLoading } = useEmergencyHotlines();
 
   const safetyTips = [
     {
@@ -327,50 +330,68 @@ export const RightSidebar = () => {
 
       <div className="sidebar-section">
         <h4>Emergency Hotlines</h4>
-        <ul className="hotline-list">
-          <li className="hotline-item">
-            <div className="hotline-info">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-              <span className="hotline-name">NDRRMC</span>
-            </div>
-            <span className="hotline-number">911</span>
-          </li>
-          <li className="hotline-item">
-            <div className="hotline-info">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-              <span className="hotline-name">Red Cross</span>
-            </div>
-            <span className="hotline-number">143</span>
-          </li>
-          <li className="hotline-item">
-            <div className="hotline-info">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-              </svg>
-              <span className="hotline-name">Cebu CDRRMO</span>
-            </div>
-            <span className="hotline-number">(032) 261-9696</span>
-          </li>
-        </ul>
+        {hotlinesLoading ? (
+          <div className="hotlines-loading">
+            <svg
+              style={{
+                width: "24px",
+                height: "24px",
+                animation: "spin 1s linear infinite",
+              }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+            </svg>
+            <span>Loading hotlines...</span>
+          </div>
+        ) : hotlines.length === 0 ? (
+          <div className="hotlines-empty">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            <p>No hotlines available</p>
+            <span>Check back later</span>
+          </div>
+        ) : (
+          <ul className="hotline-list">
+            {hotlines.map((hotline) => (
+              <li key={hotline.id} className="hotline-item">
+                <div className="hotline-info">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                  </svg>
+                  <div className="hotline-text">
+                    <span className="hotline-name">{hotline.agencyName}</span>
+                    {hotline.description && (
+                      <span className="hotline-description">
+                        {hotline.description}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <a
+                  href={`tel:${hotline.contactNumber}`}
+                  className="hotline-number"
+                >
+                  {hotline.contactNumber}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="sidebar-section">
