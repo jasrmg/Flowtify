@@ -40,43 +40,6 @@ export const Navbar = () => {
     type: "info",
   });
 
-  // Show loading state while auth is initializing
-  if (loading) {
-    return (
-      <nav className="navbar">
-        <a href="#" className="navbar-brand">
-          <svg
-            viewBox="0 0 40 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M5 25C5 25 10 15 20 15C30 15 35 25 35 25"
-              stroke="#3FA9F5"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            <path
-              d="M8 30C8 30 12 22 20 22C28 22 32 30 32 30"
-              stroke="#32B67A"
-              strokeWidth="3"
-              strokeLinecap="round"
-            />
-            <circle cx="15" cy="10" r="2" fill="#3FA9F5" />
-            <circle cx="25" cy="8" r="2" fill="#3FA9F5" />
-            <circle cx="20" cy="12" r="1.5" fill="#3FA9F5" />
-          </svg>
-          <span>Flowtify</span>
-        </a>
-        <div className="navbar-right">
-          <div className="user-profile">
-            <div className="profile-avatar loading-skeleton"></div>
-          </div>
-        </div>
-      </nav>
-    );
-  }
-
   useEffect(() => {
     const handleClickOutside = (e) => {
       // close profile dropdown
@@ -170,6 +133,43 @@ export const Navbar = () => {
       document.body.classList.remove("overlay-open", "notification-open");
     }
   }, [isNotificationOpen]);
+
+  // Show loading state while auth is initializing
+  if (loading) {
+    return (
+      <nav className="navbar">
+        <a href="#" className="navbar-brand">
+          <svg
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M5 25C5 25 10 15 20 15C30 15 35 25 35 25"
+              stroke="#3FA9F5"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <path
+              d="M8 30C8 30 12 22 20 22C28 22 32 30 32 30"
+              stroke="#32B67A"
+              strokeWidth="3"
+              strokeLinecap="round"
+            />
+            <circle cx="15" cy="10" r="2" fill="#3FA9F5" />
+            <circle cx="25" cy="8" r="2" fill="#3FA9F5" />
+            <circle cx="20" cy="12" r="1.5" fill="#3FA9F5" />
+          </svg>
+          <span>Flowtify</span>
+        </a>
+        <div className="navbar-right">
+          <div className="user-profile">
+            <div className="profile-avatar loading-skeleton"></div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   const handleLogout = async () => {
     await logout();
