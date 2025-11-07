@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -489,10 +490,12 @@ export const Navbar = () => {
               onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
               {currentUser?.avatarUrl ? (
-                <img
+                <Image
                   src={currentUser.avatarUrl}
                   alt={getUserDisplayName()}
                   className="profile-avatar-img"
+                  width={36}
+                  height={36}
                 />
               ) : (
                 <div className="profile-avatar">{getUserInitials()}</div>
@@ -515,10 +518,12 @@ export const Navbar = () => {
             >
               <div className="dropdown-user-info">
                 {currentUser?.avatarUrl ? (
-                  <img
+                  <Image
                     src={currentUser.avatarUrl}
                     alt={getUserDisplayName()}
                     className="dropdown-avatar-img"
+                    width={48}
+                    height={48}
                   />
                 ) : (
                   <div className="dropdown-avatar">{getUserInitials()}</div>
