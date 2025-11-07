@@ -48,3 +48,32 @@ export const uploadToCloudinary = async (
     throw error;
   }
 };
+
+/**
+ * Upload multiple images to Cloudinary
+ * @param {File[]} files - Array of image files to upload
+ * @param {string} folder - Cloudinary folder path (default: "flowtify/reports")
+ * @returns {Promise<{success: boolean, urls?: string[], error?: string}>}
+ */
+export const uploadImagesToCloudinary = async (
+  files,
+  folder = "flowtify/reports"
+) => {
+  try {
+    if (!files || files.length === 0) {
+      return { success: true, urls: [] };
+    }
+
+    // Upload all files in parallel
+    const uploadPromises = files.map((file, index) =>
+      uploadToCloudinary(file, folder, `report_${Date.now()}_${index}`)
+    );
+
+    const urls = await Promise.all(uploadPromises);
+
+    return { success: true, urls };
+  } catch (error) {
+    console.error("Error uploading multiple images:", error);
+    return { success: false, error: error.message };
+  }
+};

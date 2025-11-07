@@ -89,7 +89,11 @@
 }
 
 .content-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 2rem;
+  align-items: center;
 }
 
 .content-header h1 {
@@ -106,6 +110,38 @@
 .content-section {
   margin-bottom: 3rem;
   scroll-margin-top: 80px;
+}
+
+.report-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.report-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.report-btn:hover {
+  background-color: #2991db;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(63, 169, 245, 0.3);
+}
+
+.report-btn:active {
+  transform: translateY(0);
 }
 
 /* Section Headers */
@@ -654,33 +690,6 @@
 }
 
 /* Modal Styles */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.modal.active {
-  display: flex;
-}
-
-.modal-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  animation: fadeIn 0.3s ease;
-}
 
 @keyframes fadeIn {
   from {
@@ -689,19 +698,6 @@
   to {
     opacity: 1;
   }
-}
-
-.modal-content {
-  position: relative;
-  background-color: var(--bg-secondary);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px var(--shadow);
-  max-width: 600px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideUp 0.3s ease;
-  z-index: 1;
 }
 
 @keyframes slideUp {
@@ -713,20 +709,6 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--shadow);
-}
-
-.modal-header h2 {
-  font-size: 1.5rem;
-  color: var(--text-primary);
-  margin: 0;
 }
 
 .modal-close {
@@ -747,10 +729,6 @@
 .modal-close svg {
   width: 24px;
   height: 24px;
-}
-
-.modal-body {
-  padding: 1.5rem;
 }
 
 .modal-field {
@@ -856,6 +834,10 @@
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
+}
+
+label.photo-upload-btn {
+  display: flex;
 }
 
 .form-group input,

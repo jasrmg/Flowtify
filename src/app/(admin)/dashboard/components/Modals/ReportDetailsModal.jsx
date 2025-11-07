@@ -13,7 +13,7 @@ import {
   formatStatus,
 } from "@/utils/reportHelpers";
 
-export const ReportModal = ({
+export const ReportDetailsModal = ({
   isOpen,
   onClose,
   report,

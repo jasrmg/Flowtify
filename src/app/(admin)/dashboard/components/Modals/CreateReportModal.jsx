@@ -1,11 +1,24 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { MapPicker } from "./MapPicker";
 import Image from "next/image";
-import "@/app/(admin)/dashboard/components/Modals/modals.css";
 
-export const ReportModal = ({ isOpen, onClose }) => {
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+
+import { MapPicker } from "./MapPicker";
+import { uploadImagesToCloudinary } from "@/utils/cloudinaryHelpers";
+import { logSystemAction } from "@/utils/systemLogger";
+
+import "./modals.css";
+
+export const CreateReportModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  onError,
+  currentUser,
+}) => {
   const scrollPosition = useRef(0);
   const [formData, setFormData] = useState({
     description: "",
@@ -14,6 +27,7 @@ export const ReportModal = ({ isOpen, onClose }) => {
   });
 
   const [photos, setPhotos] = useState([]);
+  const [photoFiles, setPhotoFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Prevent scrolling when modal is open
@@ -58,6 +72,7 @@ export const ReportModal = ({ isOpen, onClose }) => {
   };
 
   const handleLocationSelect = useCallback((locationData) => {
+    console.log("📍 Selected location data:", locationData);
     setFormData((prev) => ({
       ...prev,
       location: locationData,
@@ -66,48 +81,81 @@ export const ReportModal = ({ isOpen, onClose }) => {
 
   const handlePhotoUpload = (e) => {
     const files = Array.from(e.target.files);
-    // TODO: Upload to storage and get URLs
-    // For now, just create object URLs for preview
-    const photoUrls = files.map((file) => URL.createObjectURL(file));
-    setPhotos((prev) => [...prev, ...photoUrls].slice(0, 5)); // Max 5 photos
+    const newPhotoFiles = [...photoFiles, ...files].slice(0, 5);
+    const photoUrls = newPhotoFiles.map((file) => URL.createObjectURL(file));
+
+    setPhotoFiles(newPhotoFiles);
+    setPhotos(photoUrls);
   };
 
   const removePhoto = (index) => {
     setPhotos((prev) => prev.filter((_, i) => i !== index));
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate location is selected
     if (!formData.location) {
-      alert("Please select a location on the map");
+      onError("Please select a location on the map");
+      return;
+    }
+
+    if (!currentUser) {
+      onError("You must be logged in to create a report");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement Firestore submission
-      // const reportData = {
-      //   userId: auth.currentUser.uid,
-      //   description: formData.description,
-      //   photoUrl: photos,
-      //   location: formData.location,
-      //   severity: formData.severity,
-      //   status: 'pending',
-      //   createdAt: serverTimestamp(),
-      //   resolvedAt: null,
-      //   verifiedBy: null,
-      //   verifiedAt: null,
-      //   comments: []
-      // };
-      // await addDoc(collection(db, 'reports'), reportData);
+      // Upload photos to Cloudinary if any
+      let photoUrls = [];
+      if (photoFiles.length > 0) {
+        const uploadResult = await uploadImagesToCloudinary(photoFiles);
+        if (uploadResult.success) {
+          photoUrls = uploadResult.urls;
+        } else {
+          throw new Error("Failed to upload images");
+        }
+      }
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      // Create report document
+      const reportData = {
+        userId: currentUser.uid,
+        description: formData.description,
+        photoUrl: photoUrls,
+        location: {
+          lat: parseFloat(formData.location.lat),
+          lng: parseFloat(formData.location.lng),
+          brg: formData.location.barangay || "",
+          city: formData.location.city || "",
+        },
+        geohash: formData.location.geohash || "",
+        severity: formData.severity,
+        status: "verified", // Admin reports are auto-verified
+        createdAt: serverTimestamp(),
+        verifiedAt: serverTimestamp(),
+        verifiedBy: currentUser.uid,
+        rejectedAt: null,
+        rejectedBy: null,
+        rejectionReason: "",
+        comments: [],
+      };
 
-      console.log("Report submitted:", { ...formData, photos });
+      const docRef = await addDoc(collection(db, "reports"), reportData);
+
+      // Log the action
+      await logSystemAction({
+        action: "Report Created",
+        description: `Admin created a flood report for ${
+          reportData.location.brg ? `Barangay ${reportData.location.brg}, ` : ""
+        }${reportData.location.city}`,
+        targetCollection: "reports",
+        targetId: docRef.id,
+        userId: currentUser.uid,
+        userRole: "admin",
+      });
 
       // Reset form and close modal
       setFormData({
@@ -116,13 +164,15 @@ export const ReportModal = ({ isOpen, onClose }) => {
         location: null,
       });
       setPhotos([]);
+      setPhotoFiles([]);
       onClose();
 
-      // TODO: Show success notification
-      alert("Report submitted successfully!");
+      if (onSuccess) {
+        onSuccess("Report created successfully!");
+      }
     } catch (error) {
       console.error("Error submitting report:", error);
-      alert("Failed to submit report. Please try again.");
+      onError("Failed to submit report. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -135,7 +185,7 @@ export const ReportModal = ({ isOpen, onClose }) => {
       <div className="modal-overlay" onClick={onClose}></div>
       <div className="modal-content">
         <div className="modal-header">
-          <h2>Report Flooding</h2>
+          <h2>Create Flood Report</h2>
           <button className="modal-close" onClick={onClose}>
             <svg
               viewBox="0 0 24 24"
@@ -183,9 +233,7 @@ export const ReportModal = ({ isOpen, onClose }) => {
                 required
               >
                 <option value="low">Low - Minor water accumulation</option>
-                <option value="moderate">
-                  Moderate - Passable with caution
-                </option>
+                <option value="moderate">Medium - Passable with caution</option>
                 <option value="high">High - Road partially blocked</option>
                 <option value="severe">
                   Severe - Road completely impassable
@@ -296,16 +344,8 @@ export const ReportModal = ({ isOpen, onClose }) => {
             >
               {isSubmitting ? (
                 <>
-                  <svg
-                    className="spinning"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
-                  </svg>
-                  Submitting...
+                  <div className="spinner"></div>
+                  Creating Report...
                 </>
               ) : (
                 <>
@@ -318,7 +358,7 @@ export const ReportModal = ({ isOpen, onClose }) => {
                     <polyline points="9 11 12 14 22 4"></polyline>
                     <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                   </svg>
-                  Submit Report
+                  Create Report
                 </>
               )}
             </button>

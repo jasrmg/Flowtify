@@ -11,7 +11,8 @@ import { AlertsGrid } from "@/app/(admin)/dashboard/components/AlertsGrid/Alerts
 import { FloodMapWrapper } from "@/app/(admin)/dashboard/components/Map/FloodMapWrapper";
 import { MapDescModal } from "@/app/(admin)/dashboard/components/Modals/MapDescModal";
 import { ReportsTable } from "@/app/(admin)/dashboard/components/ReportsTable/ReportsTable";
-import { ReportModal } from "@/app/(admin)/dashboard/components/Modals/ReportModal";
+import { ReportDetailsModal } from "@/app/(admin)/dashboard/components/Modals/ReportDetailsModal";
+import { CreateReportModal } from "@/app/(admin)/dashboard/components/Modals/CreateReportModal";
 import { RejectionModal } from "@/app/(admin)/dashboard/components/Modals/RejectionModal";
 import { AlertModal } from "@/app/(admin)/dashboard/components/Modals/AlertModal";
 import { HotlineModal } from "@/app/(admin)/dashboard/components/Modals/HotlineModal";
@@ -61,9 +62,11 @@ export default function DashboardPage() {
 
   const { toast, showSuccess, showError, hideToast } = useToast();
 
-  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
   const [reportToReject, setReportToReject] = useState(null);
+  const [isReportDetailsModalOpen, setIsReportDetailsModalOpen] =
+    useState(false);
+  const [isCreateReportModalOpen, setIsCreateReportModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
   const [isReportProcessing, setIsReportProcessing] = useState(false);
 
@@ -95,13 +98,17 @@ export default function DashboardPage() {
     const report = reports.find((r) => r.id === reportId);
     if (report) {
       setSelectedReport(report);
-      setIsReportModalOpen(true);
+      setIsReportDetailsModalOpen(true);
     }
   };
 
-  const handleCloseReportModal = () => {
-    setIsReportModalOpen(false);
+  const handleCloseReportDetailsModal = () => {
+    setIsReportDetailsModalOpen(false);
     setSelectedReport(null);
+  };
+
+  const handleCloseCreateReportModal = () => {
+    setIsCreateReportModalOpen(false);
   };
 
   const handleApproveReport = async (reportId) => {
@@ -111,7 +118,7 @@ export default function DashboardPage() {
 
     if (result.success) {
       showSuccess("Report approved successfully!");
-      setIsReportModalOpen(false);
+      setIsReportDetailsModalOpen(false);
       setSelectedReport(null);
     } else {
       showError(`Failed to approve report: ${result.error}`);
@@ -140,7 +147,7 @@ export default function DashboardPage() {
     if (result.success) {
       showSuccess("Report rejected successfully!");
       setIsRejectionModalOpen(false);
-      setIsReportModalOpen(false);
+      setIsReportDetailsModalOpen(false);
       setSelectedReport(null);
       setReportToReject(null);
     } else {
@@ -234,8 +241,24 @@ export default function DashboardPage() {
     <>
       {/* Page Header */}
       <div className="content-header">
-        <h1>Admin Dashboard</h1>
-        <p>Overview and system management</p>
+        <div className="content-header-text">
+          <h1>Admin Dashboard</h1>
+          <p>Overview and system management</p>
+        </div>
+        <button
+          className="report-btn"
+          onClick={() => setIsCreateReportModalOpen(true)}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+          </svg>
+          Report Flooding
+        </button>
       </div>
 
       {/* Map Section */}
@@ -445,16 +468,24 @@ export default function DashboardPage() {
         marker={selectedMarker}
       />
 
-      {/* Report Modal */}
-      <ReportModal
-        isOpen={isReportModalOpen}
-        onClose={handleCloseReportModal}
+      {/* Report Details Modal */}
+      <ReportDetailsModal
+        isOpen={isReportDetailsModalOpen}
+        onClose={handleCloseReportDetailsModal}
         report={selectedReport}
         onApprove={handleApproveReport}
         onReject={handleRejectReport}
         isProcessing={isReportProcessing}
       />
-
+      {/* Create Report Modal */}
+      <CreateReportModal
+        isOpen={isCreateReportModalOpen}
+        onClose={handleCloseCreateReportModal}
+        onSuccess={showSuccess}
+        onError={showError}
+        currentUser={currentUser}
+      />
+      {/* Rejection Modal */}
       <RejectionModal
         isOpen={isRejectionModalOpen}
         onClose={handleCloseRejectionModal}
