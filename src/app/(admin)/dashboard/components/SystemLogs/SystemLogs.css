@@ -3,12 +3,36 @@
   border-radius: 16px;
   padding: 1.5rem;
   box-shadow: 0 2px 10px var(--shadow);
+
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .log-list {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.logs-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.logs-container::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+  border-radius: 10px;
+  margin: 16px 0;
+}
+
+.logs-container::-webkit-scrollbar-thumb {
+  background: var(--text-secondary);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+.logs-container::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
 }
 
 .log-item {
