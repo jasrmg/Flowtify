@@ -11,10 +11,17 @@
   justify-content: center;
   z-index: 9999;
   animation: fadeIn 0.2s ease-in;
+  pointer-events: all; /* Block all clicks when visible */
 }
 
 body.dark-mode .route-loader-overlay {
   background-color: rgba(11, 12, 16, 0.95);
+}
+
+/* Fade Out Animation - Allow clicks to pass through */
+.route-loader-overlay.fade-out {
+  animation: fadeOut 0.2s ease-out forwards;
+  pointer-events: none; /* CRITICAL: Allow clicks when fading out */
 }
 
 /* Content Container */
@@ -23,6 +30,7 @@ body.dark-mode .route-loader-overlay {
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
+  pointer-events: none; /* Content itself doesn't block clicks */
 }
 
 /* Ripple SVG Container */
@@ -73,9 +81,14 @@ body.dark-mode .route-loader-overlay {
   animation: textPulse 2s ease-in-out infinite;
 }
 
-/* Fade Out Animation */
-.route-loader-overlay.fade-out {
-  animation: fadeOut 0.2s ease-out forwards;
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOut {
@@ -84,16 +97,6 @@ body.dark-mode .route-loader-overlay {
   }
   to {
     opacity: 0;
-  }
-}
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }
 

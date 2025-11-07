@@ -11,41 +11,60 @@ export default function RouteLoader() {
   const searchParams = useSearchParams();
   const prevPathname = useRef(pathname);
   const prevSearchParams = useRef(searchParams?.toString());
+  const timersRef = useRef({ raf: null, hide: null, remove: null });
 
   useEffect(() => {
     const currentSearch = searchParams?.toString();
     const pathChanged = prevPathname.current !== pathname;
     const searchChanged = prevSearchParams.current !== currentSearch;
 
-    // Only show loader if route actually changed (not on initial mount)
+    // Only show loader if route actually changed
     if (pathChanged || searchChanged) {
-      // Use requestAnimationFrame to avoid cascading renders
-      const raf = requestAnimationFrame(() => {
+      // Clear any existing timers first
+      if (timersRef.current.raf) cancelAnimationFrame(timersRef.current.raf);
+      if (timersRef.current.hide) clearTimeout(timersRef.current.hide);
+      if (timersRef.current.remove) clearTimeout(timersRef.current.remove);
+
+      // Show loader
+      timersRef.current.raf = requestAnimationFrame(() => {
         setShouldRender(true);
         setIsLoading(true);
       });
 
-      // Hide loader after delay
-      const hideTimer = setTimeout(() => {
+      // CRITICAL: Always hide loader after timeout, no matter what
+      timersRef.current.hide = setTimeout(() => {
         setIsLoading(false);
-      }, 800);
+      }, 600);
 
-      // Remove from DOM after fade-out
-      const removeTimer = setTimeout(() => {
+      // CRITICAL: Always remove from DOM, no matter what
+      timersRef.current.remove = setTimeout(() => {
         setShouldRender(false);
-      }, 1000);
+      }, 800);
 
       // Update refs
       prevPathname.current = pathname;
       prevSearchParams.current = currentSearch;
-
-      return () => {
-        cancelAnimationFrame(raf);
-        clearTimeout(hideTimer);
-        clearTimeout(removeTimer);
-      };
     }
+
+    // Cleanup on unmount or when dependencies change
+    return () => {
+      if (timersRef.current.raf) cancelAnimationFrame(timersRef.current.raf);
+      if (timersRef.current.hide) clearTimeout(timersRef.current.hide);
+      if (timersRef.current.remove) clearTimeout(timersRef.current.remove);
+    };
   }, [pathname, searchParams]);
+
+  // Force cleanup on unmount (when user logs out)
+  useEffect(() => {
+    return () => {
+      // Ensure loader is fully cleaned up when component unmounts
+      setShouldRender(false);
+      setIsLoading(false);
+      if (timersRef.current.raf) cancelAnimationFrame(timersRef.current.raf);
+      if (timersRef.current.hide) clearTimeout(timersRef.current.hide);
+      if (timersRef.current.remove) clearTimeout(timersRef.current.remove);
+    };
+  }, []);
 
   if (!shouldRender) return null;
 
