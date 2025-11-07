@@ -447,7 +447,7 @@ export const Navbar = () => {
                       <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                     </svg>
                     <p>No notifications yet</p>
-                    <span>You're all caught up!</span>
+                    <span>You&apos;re all caught up!</span>
                   </div>
                 ) : (
                   notifications.map((notification) => (
