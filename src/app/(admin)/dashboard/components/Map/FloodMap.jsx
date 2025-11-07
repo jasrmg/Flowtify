@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./FloodMap.css";
@@ -8,24 +8,51 @@ export const FloodMap = ({ markers = [], onViewDescription }) => {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersLayerRef = useRef(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   useEffect(() => {
-    // Only initialize once
-    if (mapInstanceRef.current) return;
+    // helper function to initialize the map
+    const initializeMap = (lat, lng, zoom) => {
+      // check to only initialize it once, this prevents race condition caused by react strict mode
+      if (mapInstanceRef.current) return;
+      // initialize map
+      const map = L.map(mapRef.current).setView([lat, lng], zoom);
+      // Add tile layer
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
 
-    // Initialize map
-    const map = L.map(mapRef.current).setView([10.3157, 123.8854], 13);
+      mapInstanceRef.current = map;
 
-    // Add tile layer
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+      // Initialize markers layer group
+      markersLayerRef.current = L.layerGroup().addTo(map);
 
-    mapInstanceRef.current = map;
+      setIsMapReady(true);
+    };
 
-    // Initialize markers layer group
-    markersLayerRef.current = L.layerGroup().addTo(map);
+    // geolocation logic
+    const defaultLat = 10.3157;
+    const defaultLng = 123.8854;
+    const defaultZoom = 13;
+
+    // Check if geolocation is available
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          // success: the user allowed the location
+          const { latitude, longitude } = position.coords;
+          initializeMap(latitude, longitude, defaultZoom);
+        },
+        (error) => {
+          // error: user denied
+          initializeMap(defaultLat, defaultLng, defaultZoom);
+        }
+      );
+    } else {
+      // geolocation not supported by the browser:
+      initializeMap(defaultLat, defaultLng, defaultZoom);
+    }
 
     // Cleanup on unmount
     return () => {
@@ -38,7 +65,8 @@ export const FloodMap = ({ markers = [], onViewDescription }) => {
 
   // Update markers when they change
   useEffect(() => {
-    if (!mapInstanceRef.current || !markersLayerRef.current) return;
+    if (!isMapReady || !mapInstanceRef.current || !markersLayerRef.current)
+      return;
 
     // Clear existing markers
     markersLayerRef.current.clearLayers();
@@ -56,7 +84,8 @@ export const FloodMap = ({ markers = [], onViewDescription }) => {
       const popupContent = `
         <div class="popup-container">
           ${
-            marker.photo
+            marker.photo &&
+            (Array.isArray(marker.photo) ? marker.photo[0] : marker.photo)
               ? `
             <div class="popup-image-container">
               <img src="${
@@ -65,10 +94,13 @@ export const FloodMap = ({ markers = [], onViewDescription }) => {
             </div>
           `
               : `
-            <div class="popup-image">
+            <div class="popup-image-placeholder">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
               </svg>
+              <p>No Photo Available</p>
             </div>
           `
           }
@@ -99,7 +131,7 @@ export const FloodMap = ({ markers = [], onViewDescription }) => {
     if (typeof window !== "undefined") {
       window.handleViewDescription = onViewDescription;
     }
-  }, [markers, onViewDescription]);
+  }, [markers, onViewDescription, isMapReady]);
 
   return (
     <div className="map-container">
