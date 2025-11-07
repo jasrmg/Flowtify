@@ -24,7 +24,7 @@ import { useToast } from "@/hooks/useToast";
 import { Toast } from "@/components/Toast/Toast";
 import { useReports } from "@/hooks/useReports";
 
-import { emergencyHotlines, mapMarkers } from "@/app/lib/mockData";
+import { useMapReports } from "@/hooks/useMapReports";
 
 import "@/app/(admin)/dashboard/components/Modals/modals.css";
 import "./dashboard.css";
@@ -52,9 +52,6 @@ export default function DashboardPage() {
 
   const { monthlyData, loading: chartLoading } = useMonthlyReports();
 
-  const [selectedMarker, setSelectedMarker] = useState(null);
-  const [isMapDescModalOpen, setIsMapDescModalOpen] = useState(false);
-
   const {
     reports,
     loading: reportsLoading,
@@ -74,6 +71,10 @@ export default function DashboardPage() {
   const [isHotlineModalOpen, setIsHotlineModalOpen] = useState(false);
   const [isHotlineSubmitting, setIsHotlineSubmitting] = useState(false);
   const [selectedHotline, setSelectedHotline] = useState(null);
+
+  const { markers: mapMarkers, loading: mapLoading } = useMapReports();
+  const [selectedMarker, setSelectedMarker] = useState(null);
+  const [isMapDescModalOpen, setIsMapDescModalOpen] = useState(false);
 
   const handleViewDescription = (markerId) => {
     const marker = mapMarkers.find((m) => m.id === markerId);
@@ -219,10 +220,85 @@ export default function DashboardPage() {
           <p>Interactive view of reported flood locations</p>
         </div>
 
-        <FloodMapWrapper
-          markers={mapMarkers}
-          onViewDescription={handleViewDescription}
-        />
+        {mapLoading ? (
+          <div
+            style={{
+              height: "600px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "var(--bg-secondary)",
+              borderRadius: "16px",
+              color: "var(--text-secondary)",
+            }}
+          >
+            <svg
+              style={{
+                width: "48px",
+                height: "48px",
+                animation: "spin 1s linear infinite",
+                marginBottom: "1rem",
+              }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+            </svg>
+            <p>Loading map data...</p>
+          </div>
+        ) : mapMarkers.length === 0 ? (
+          <div
+            style={{
+              height: "600px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "var(--bg-secondary)",
+              borderRadius: "16px",
+              color: "var(--text-secondary)",
+              textAlign: "center",
+              padding: "2rem",
+            }}
+          >
+            <svg
+              style={{
+                width: "64px",
+                height: "64px",
+                marginBottom: "1rem",
+                opacity: 0.5,
+              }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 16v-4"></path>
+              <path d="M12 8h.01"></path>
+            </svg>
+            <p
+              style={{
+                fontSize: "1.1rem",
+                fontWeight: 600,
+                marginBottom: "0.5rem",
+              }}
+            >
+              No flood reports to display
+            </p>
+            <span style={{ fontSize: "0.9rem" }}>
+              Pending and verified reports will appear on the map
+            </span>
+          </div>
+        ) : (
+          <FloodMapWrapper
+            markers={mapMarkers}
+            onViewDescription={handleViewDescription}
+          />
+        )}
       </section>
 
       {/* Reports Section */}

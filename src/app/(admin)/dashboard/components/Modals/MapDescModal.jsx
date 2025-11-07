@@ -4,6 +4,50 @@ import { useState, useEffect, useRef } from "react";
 
 import { ImageGallery } from "../ImageGallery/ImageGallery";
 import { ImageLightbox } from "../ImageLightBox/ImageLightbox";
+import { formatDistanceToNow } from "date-fns";
+
+// Helper function to format timestamp
+const formatReportTime = (timestamp) => {
+  if (!timestamp) return "Unknown time";
+  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+  try {
+    return formatDistanceToNow(date, { addSuffix: true });
+  } catch (error) {
+    return "Unknown time";
+  }
+};
+
+// Helper function to get status badge class
+const getStatusClass = (status) => {
+  switch (status) {
+    case "verified":
+      return "status-verified";
+    case "pending":
+      return "status-pending";
+    case "resolved":
+      return "status-resolved";
+    case "rejected":
+      return "status-rejected";
+    default:
+      return "";
+  }
+};
+
+// Helper function to get severity badge class
+const getSeverityClass = (severity) => {
+  switch (severity) {
+    case "critical":
+      return "severity-critical";
+    case "high":
+      return "severity-high";
+    case "moderate":
+      return "severity-moderate";
+    case "low":
+      return "severity-low";
+    default:
+      return "";
+  }
+};
 
 export const MapDescModal = ({ isOpen, onClose, marker }) => {
   const scrollPosition = useRef(0);
@@ -67,7 +111,27 @@ export const MapDescModal = ({ isOpen, onClose, marker }) => {
           </button>
         </div>
         <div className="modal-body">
-          {marker.photo && (
+          {/* Status and Severity Badges */}
+          <div className="modal-field">
+            <div className="badges-row">
+              <span className={`status-badge ${getStatusClass(marker.status)}`}>
+                {marker.status?.charAt(0).toUpperCase() +
+                  marker.status?.slice(1)}
+              </span>
+              {marker.severity && (
+                <span
+                  className={`severity-badge ${getSeverityClass(
+                    marker.severity
+                  )}`}
+                >
+                  {marker.severity?.charAt(0).toUpperCase() +
+                    marker.severity?.slice(1)}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {marker.photo && marker.photo.length > 0 && (
             <div className="modal-field">
               <ImageGallery
                 images={marker.photo}
@@ -85,9 +149,24 @@ export const MapDescModal = ({ isOpen, onClose, marker }) => {
             <p>{marker.location}</p>
           </div>
 
+          {marker.createdAt && (
+            <div className="modal-field">
+              <label>Reported</label>
+              <p>{formatReportTime(marker.createdAt)}</p>
+            </div>
+          )}
+
           <div className="modal-field">
-            <label>Full Description</label>
-            <p>{marker.fullDescription}</p>
+            <label>Description</label>
+            <p>{marker.fullDescription || marker.description}</p>
+          </div>
+
+          <div className="modal-field">
+            <label>Coordinates</label>
+            <p>
+              Latitude: {marker.lat?.toFixed(6)}, Longitude:{" "}
+              {marker.lng?.toFixed(6)}
+            </p>
           </div>
         </div>
       </div>
