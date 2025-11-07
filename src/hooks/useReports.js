@@ -6,6 +6,9 @@ import {
   logReportResolution,
 } from "@/utils/systemLogger";
 import { formatLocation } from "@/utils/reportHelpers";
+
+import { createReportStatusNotification } from "@/utils/notificationHelpers";
+
 import {
   collection,
   query,
@@ -17,7 +20,7 @@ import {
   deleteDoc,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "../lib/firebase";
+import { db } from "@/lib/firebase";
 
 export const useReports = (statusFilter = "pending") => {
   const [reports, setReports] = useState([]);
@@ -25,41 +28,54 @@ export const useReports = (statusFilter = "pending") => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
+    let unsubscribe;
 
-    let reportsQuery;
+    const fetchReports = async () => {
+      setLoading(true);
 
-    if (statusFilter === "all") {
-      reportsQuery = query(
-        collection(db, "reports"),
-        orderBy("createdAt", "desc")
-      );
-    } else {
-      reportsQuery = query(
-        collection(db, "reports"),
-        where("status", "==", statusFilter),
-        orderBy("createdAt", "desc")
-      );
-    }
+      try {
+        let reportsQuery;
+        if (statusFilter === "all") {
+          reportsQuery = query(
+            collection(db, "reports"),
+            orderBy("createdAt", "desc")
+          );
+        } else {
+          reportsQuery = query(
+            collection(db, "reports"),
+            where("status", "==", statusFilter),
+            orderBy("createdAt", "desc")
+          );
+        }
 
-    const unsubscribe = onSnapshot(
-      reportsQuery,
-      (snapshot) => {
-        const reportsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setReports(reportsData);
-        setLoading(false);
-      },
-      (err) => {
-        console.error("Error fetching reports:", err);
-        setError(err.message);
+        unsubscribe = onSnapshot(
+          reportsQuery,
+          (snapshot) => {
+            const reportsData = snapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            setReports(reportsData);
+            setLoading(false);
+          },
+          (err) => {
+            console.error("Error fetching reports:", err);
+            setError(err.message);
+            setLoading(false);
+          }
+        );
+      } catch (error) {
+        console.error("Error setting up listener:", error);
+        setError(error.message);
         setLoading(false);
       }
-    );
+    };
 
-    return () => unsubscribe();
+    fetchReports();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, [statusFilter]);
 
   // Approve/Verify a report
@@ -80,6 +96,21 @@ export const useReports = (statusFilter = "pending") => {
 
       // Log the action
       await logReportApproval(reportId, reportLocation, adminId, adminRole);
+
+      // Create notification for the report creator
+      if (reportToApprove) {
+        console.log(
+          "Creating notification for userId:",
+          reportToApprove.userId
+        );
+        await createReportStatusNotification({
+          reportId,
+          userId: reportToApprove.userId,
+          status: "approved",
+          reportDescription: reportToApprove.description,
+          location: reportLocation,
+        });
+      }
 
       return { success: true };
     } catch (error) {
@@ -112,6 +143,19 @@ export const useReports = (statusFilter = "pending") => {
 
       // Log the action
       await logReportRejection(reportId, reportLocation, adminId, adminRole);
+
+      // Create notification for the report creator
+      if (reportToReject) {
+        console.log("Creating notification for userId:", reportToReject.userId);
+        await createReportStatusNotification({
+          reportId,
+          userId: reportToReject.userId,
+          status: "rejected",
+          reportDescription: reportToReject.description,
+          location: reportLocation,
+          rejectionReason: reason,
+        });
+      }
 
       return { success: true };
     } catch (error) {

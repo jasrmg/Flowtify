@@ -70,7 +70,6 @@ export const ReportModal = ({
 
   const handleReject = () => {
     onReject(report.id);
-    onClose();
   };
 
   return (

@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAlerts } from "@/hooks/useAlerts";
-import { useEmergencyHotlines } from "@/hooks/useEmergencyHotlines";
 
 import { StatCard } from "@/app/(admin)/dashboard/components/StatCard/StatCard";
 import { HotlinesGrid } from "@/app/(admin)/dashboard/components/HotLinesGrid/HotlinesGrid";
@@ -14,16 +12,18 @@ import { FloodMapWrapper } from "@/app/(admin)/dashboard/components/Map/FloodMap
 import { MapDescModal } from "@/app/(admin)/dashboard/components/Modals/MapDescModal";
 import { ReportsTable } from "@/app/(admin)/dashboard/components/ReportsTable/ReportsTable";
 import { ReportModal } from "@/app/(admin)/dashboard/components/Modals/ReportModal";
+import { RejectionModal } from "@/app/(admin)/dashboard/components/Modals/RejectionModal";
 import { AlertModal } from "@/app/(admin)/dashboard/components/Modals/AlertModal";
 import { HotlineModal } from "@/app/(admin)/dashboard/components/Modals/HotlineModal";
+import { Toast } from "@/components/Toast/Toast";
 
+import { useAlerts } from "@/hooks/useAlerts";
+import { useEmergencyHotlines } from "@/hooks/useEmergencyHotlines";
 import { useStatistics } from "@/hooks/useStatistics";
 import { useMonthlyReports } from "@/hooks/useMonthlyReports";
 import { useSystemLogs } from "@/hooks/useSystemLogs";
 import { useToast } from "@/hooks/useToast";
-import { Toast } from "@/components/Toast/Toast";
 import { useReports } from "@/hooks/useReports";
-
 import { useMapReports } from "@/hooks/useMapReports";
 
 import "@/app/(admin)/dashboard/components/Modals/modals.css";
@@ -61,8 +61,10 @@ export default function DashboardPage() {
 
   const { toast, showSuccess, showError, hideToast } = useToast();
 
-  const [selectedReport, setSelectedReport] = useState(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
+  const [reportToReject, setReportToReject] = useState(null);
+  const [selectedReport, setSelectedReport] = useState(null);
   const [isReportProcessing, setIsReportProcessing] = useState(false);
 
   const [isAlertModalOpen, setIsAlertModalOpen] = useState(false);
@@ -116,17 +118,40 @@ export default function DashboardPage() {
     }
   };
 
+  // open reject modal
   const handleRejectReport = async (reportId) => {
+    setReportToReject(reportId);
+    setIsRejectionModalOpen(true);
+  };
+
+  const handleConfirmReject = async (reason) => {
+    console.log("Rejection reason from modal:", reason);
+    if (!reportToReject) return;
+
     setIsReportProcessing(true);
-    const result = await rejectReport(reportId, currentUser.uid, "admin");
+    const result = await rejectReport(
+      reportToReject,
+      currentUser.uid,
+      "admin",
+      reason
+    );
     setIsReportProcessing(false);
 
     if (result.success) {
       showSuccess("Report rejected successfully!");
+      setIsRejectionModalOpen(false);
       setIsReportModalOpen(false);
       setSelectedReport(null);
+      setReportToReject(null);
     } else {
       showError(`Failed to reject report: ${result.error}`);
+    }
+  };
+
+  const handleCloseRejectionModal = () => {
+    if (!isReportProcessing) {
+      setIsRejectionModalOpen(false);
+      setReportToReject(null);
     }
   };
 
@@ -427,6 +452,13 @@ export default function DashboardPage() {
         report={selectedReport}
         onApprove={handleApproveReport}
         onReject={handleRejectReport}
+        isProcessing={isReportProcessing}
+      />
+
+      <RejectionModal
+        isOpen={isRejectionModalOpen}
+        onClose={handleCloseRejectionModal}
+        onConfirm={handleConfirmReject}
         isProcessing={isReportProcessing}
       />
 

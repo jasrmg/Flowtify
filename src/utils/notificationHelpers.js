@@ -1,4 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
+import { db } from "@/lib/firebase";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 export function getNotificationIcon(type) {
   switch (type) {
@@ -94,5 +96,47 @@ export function formatNotificationTime(timestamp) {
     return formatDistanceToNow(date, { addSuffix: true });
   } catch (error) {
     return "Just now";
+  }
+}
+
+// Create a notification for report status change
+export async function createReportStatusNotification({
+  reportId,
+  userId,
+  status, // 'approved' or 'rejected'
+  reportDescription,
+  location,
+  rejectionReason = "",
+}) {
+  try {
+    const notificationsRef = collection(db, "notifications");
+
+    const title =
+      status === "approved" ? "Report Approved ✓" : "Report Rejected";
+
+    const body =
+      status === "approved"
+        ? `Your report for ${location} has been approved and is now visible to the community.`
+        : rejectionReason
+        ? `Your report for ${location} was rejected. Reason: ${rejectionReason}`
+        : `Your report for ${location} was rejected.`;
+
+    const notificationData = {
+      title,
+      body,
+      type: "report",
+      reportId,
+      receiverId: userId,
+      isRead: false,
+      createdAt: serverTimestamp(),
+    };
+
+    console.log("Creating notification with data:", notificationData);
+
+    await addDoc(notificationsRef, notificationData);
+    return { success: true };
+  } catch (error) {
+    console.error("Error creating notification:", error);
+    return { success: false, error: error.message };
   }
 }
