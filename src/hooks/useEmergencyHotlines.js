@@ -16,7 +16,7 @@ import {
   doc,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { db } from "../lib/firebase";
 
 export function useEmergencyHotlines(activeOnly = true) {
   const [hotlines, setHotlines] = useState([]);

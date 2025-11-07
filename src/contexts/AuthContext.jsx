@@ -6,8 +6,9 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { auth, db } from "../../lib/firebase";
+import { auth, db } from "../lib/firebase";
 import { useRouter } from "next/navigation";
+import { logSystemAction } from "@/utils/systemLogger";
 
 const AuthContext = createContext();
 
@@ -41,6 +42,23 @@ export function AuthProvider({ children }) {
           lastLogin: serverTimestamp(),
         });
 
+        // log the login action (only for admin)
+        if (userData.role === "admin") {
+          const userName =
+            userData.firstName && userData.lastName
+              ? `${userData.firstName} ${userData.lastName}`
+              : userData.email;
+
+          await logSystemAction({
+            action: "Admin Login",
+            description: `Admin ${userName} has logged into the system`,
+            targetCollection: "users",
+            targetId: user.uid,
+            userId: user.uid,
+            userRole: userData.role,
+          });
+        }
+
         return { success: true, role: userData.role };
       } else {
         throw new Error("User data not found");
@@ -54,12 +72,45 @@ export function AuthProvider({ children }) {
   // Logout function
   async function logout() {
     try {
+      // Log the logout action before signing out (only for admins)
+      if (currentUser && userRole === "admin") {
+        const userName =
+          currentUser.firstName && currentUser.lastName
+            ? `${currentUser.firstName} ${currentUser.lastName}`
+            : currentUser.email;
+
+        await logSystemAction({
+          action: "Admin Logout",
+          description: `Admin ${userName} has logged out of the system`,
+          targetCollection: "users",
+          targetId: currentUser.uid,
+          userId: currentUser.uid,
+          userRole: userRole,
+        });
+      }
+
       await signOut(auth);
       setCurrentUser(null);
       setUserRole(null);
       router.push("/auth");
     } catch (error) {
       console.error("Logout error:", error);
+    }
+  }
+
+  // refresh user data function
+  async function refreshUser() {
+    try {
+      if (auth.currentUser) {
+        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setCurrentUser({ ...auth.currentUser, ...userData });
+          setUserRole(userData.role);
+        }
+      }
+    } catch (error) {
+      console.error("Refresh user error.", error);
     }
   }
 
@@ -89,6 +140,7 @@ export function AuthProvider({ children }) {
     userRole,
     login,
     logout,
+    refreshUser,
     loading,
   };
 

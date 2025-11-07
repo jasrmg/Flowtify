@@ -13,7 +13,7 @@ import {
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { db } from "../lib/firebase";
 
 export function useAlerts(activeOnly = true) {
   const [alerts, setAlerts] = useState([]);

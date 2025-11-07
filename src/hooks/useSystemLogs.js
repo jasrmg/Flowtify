@@ -6,7 +6,7 @@ import {
   limit,
   onSnapshot,
 } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { db } from "../lib/firebase";
 
 export const useSystemLogs = (limitCount = 50) => {
   const [logs, setLogs] = useState([]);

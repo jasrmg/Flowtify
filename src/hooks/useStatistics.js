@@ -6,7 +6,7 @@ import {
   onSnapshot,
   getDocs,
 } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { db } from "../lib/firebase";
 
 export const useStatistics = () => {
   const [stats, setStats] = useState({

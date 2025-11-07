@@ -17,7 +17,7 @@ import {
   deleteDoc,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { db } from "../lib/firebase";
 
 export const useReports = (statusFilter = "pending") => {
   const [reports, setReports] = useState([]);

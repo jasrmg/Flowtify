@@ -1,5 +1,5 @@
 import { collection, addDoc, Timestamp } from "firebase/firestore";
-import { db } from "../../lib/firebase";
+import { db } from "../lib/firebase";
 
 /**
  * Log an action to the systemLogs collection
