@@ -79,7 +79,7 @@ export const FloodMap = ({ markers = [], onViewDescription }) => {
             <p class="popup-description">${marker.description}</p>
             <button 
               class="popup-button" 
-              onclick="window.handleViewDescription(${marker.id})"
+              onclick="window.handleViewDescription('${marker.id}')"
             >
               View Full Description
             </button>

@@ -237,6 +237,8 @@ export default function DashboardPage() {
     setSelectedHotline(null);
   };
 
+  console.log(mapMarkers);
+
   return (
     <>
       {/* Page Header */}
