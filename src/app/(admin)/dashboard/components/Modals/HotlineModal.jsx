@@ -7,7 +7,9 @@ export const HotlineModal = ({
   onClose,
   onSubmit,
   isSubmitting,
-  hotline = null, // If hotline is provided, we're in edit mode
+  hotline = null,
+  showSuccess,
+  showError,
 }) => {
   const scrollPosition = useRef(0);
   const isEditMode = !!hotline;
@@ -73,16 +75,34 @@ export const HotlineModal = ({
   };
 
   const handleSubmit = async () => {
-    if (formData.agencyName && formData.contactNumber && formData.description) {
-      await onSubmit(formData, hotline?.id);
+    const { agencyName, contactNumber, description } = formData;
+    if (!agencyName || !contactNumber || !description) {
+      showError("Please fill in all fields!");
+      return;
+    }
+
+    const cleanNumber = contactNumber.replace(/\D/g, "");
+
+    if (cleanNumber.length < 7 || cleanNumber.length > 11) {
+      showError("Please enter a valid contact number (7 to 11 digits).");
+      return;
+    }
+
+    try {
+      const formDataSubmit = {
+        ...formData,
+        contactNumber: cleanNumber,
+      };
+      await onSubmit(formDataSubmit, hotline?.id);
+
       // Reset form
       setFormData({
         agencyName: "",
         contactNumber: "",
         description: "",
       });
-    } else {
-      alert("Please fill in all fields!");
+    } catch (error) {
+      showError("Failed to submit. Please try again.");
     }
   };
 

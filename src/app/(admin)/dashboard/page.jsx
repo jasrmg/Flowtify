@@ -594,6 +594,8 @@ export default function DashboardPage() {
         onSubmit={handleAddHotline}
         isSubmitting={isHotlineSubmitting}
         hotline={selectedHotline}
+        showSuccess={showSuccess}
+        showError={showError}
       />
 
       {/* Toast Notifications */}
