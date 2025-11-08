@@ -17,6 +17,7 @@ import { RejectionModal } from "@/app/(admin)/dashboard/components/Modals/Reject
 import { AlertModal } from "@/app/(admin)/dashboard/components/Modals/AlertModal";
 import { HotlineModal } from "@/app/(admin)/dashboard/components/Modals/HotlineModal";
 import { Toast } from "@/components/Toast/Toast";
+import { ResolveConfirmModal } from "@/app/(admin)/dashboard/components/Modals/ResolveConfirmModal";
 
 import { useAlerts } from "@/hooks/useAlerts";
 import { useEmergencyHotlines } from "@/hooks/useEmergencyHotlines";
@@ -31,6 +32,7 @@ import "@/app/(admin)/dashboard/components/Modals/modals.css";
 import "./dashboard.css";
 
 export default function DashboardPage() {
+  // CUSTOM HOOKS
   const { currentUser } = useAuth();
   const {
     alerts,
@@ -60,7 +62,15 @@ export default function DashboardPage() {
     rejectReport,
   } = useReports("pending");
 
+  const {
+    reports: verifiedReports,
+    loading: verifiedLoading,
+    resolveReport,
+  } = useReports("verified");
+
   const { toast, showSuccess, showError, hideToast } = useToast();
+  const { markers: mapMarkers, loading: mapLoading } = useMapReports();
+  // END OF CUSTOM HOOKS
 
   const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
   const [reportToReject, setReportToReject] = useState(null);
@@ -77,10 +87,13 @@ export default function DashboardPage() {
   const [isHotlineSubmitting, setIsHotlineSubmitting] = useState(false);
   const [selectedHotline, setSelectedHotline] = useState(null);
 
-  const { markers: mapMarkers, loading: mapLoading } = useMapReports();
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [isMapDescModalOpen, setIsMapDescModalOpen] = useState(false);
+  const [isResolveModalOpen, setIsResolveModalOpen] = useState(false);
+  const [reportToResolve, setReportToResolve] = useState(null);
+  const [isResolveProcessing, setIsResolveProcessing] = useState(false);
 
+  // EVENT HANDLERS
   const handleViewDescription = (markerId) => {
     const marker = mapMarkers.find((m) => m.id === markerId);
     if (marker) {
@@ -95,7 +108,13 @@ export default function DashboardPage() {
   };
 
   const handleViewReportDetails = (reportId) => {
-    const report = reports.find((r) => r.id === reportId);
+    // Search in both pending and verified reports
+    let report = reports.find((r) => r.id === reportId);
+
+    if (!report) {
+      report = verifiedReports.find((r) => r.id === reportId);
+    }
+
     if (report) {
       setSelectedReport(report);
       setIsReportDetailsModalOpen(true);
@@ -237,7 +256,53 @@ export default function DashboardPage() {
     setSelectedHotline(null);
   };
 
-  console.log(mapMarkers);
+  const handleResolveReport = (reportId) => {
+    console.log("Resolve button clicked, reportId:", reportId);
+    setReportToResolve(reportId);
+    setIsResolveModalOpen(true);
+
+    console.log("Modal should open, isResolveModalOpen:", true);
+  };
+
+  const handleConfirmResolve = async () => {
+    console.log("handleConfirmResolve called!");
+    console.log("reportToResolve:", reportToResolve);
+
+    if (!reportToResolve) {
+      console.log("No report to resolve!");
+      return;
+    }
+
+    setIsResolveProcessing(true);
+    console.log("Calling resolveReport...");
+
+    const result = await resolveReport(
+      reportToResolve,
+      currentUser.uid,
+      "admin"
+    );
+
+    console.log("Resolve result:", result);
+    setIsResolveProcessing(false);
+
+    if (result.success) {
+      showSuccess("Report marked as resolved!");
+      setIsResolveModalOpen(false);
+      setIsReportDetailsModalOpen(false);
+      setSelectedReport(null);
+      setReportToResolve(null);
+    } else {
+      showError(`Failed to resolve report: ${result.error}`);
+    }
+  };
+
+  const handleCloseResolveModal = () => {
+    if (!isResolveProcessing) {
+      setIsResolveModalOpen(false);
+      setReportToResolve(null);
+    }
+  };
+  // END OF EVENT HANDLERS
 
   return (
     <>
@@ -367,6 +432,22 @@ export default function DashboardPage() {
         </div>
       </section>
 
+      {/* Verified Reports Section */}
+      <section className="content-section" id="verifiedReportsSection">
+        <div className="section-header">
+          <h2>Verified / Unresolved Reports</h2>
+          <p>Manage verified flood reports awaiting resolution</p>
+        </div>
+
+        <div className="table-container">
+          <ReportsTable
+            reports={verifiedReports}
+            loading={verifiedLoading}
+            onViewDetails={handleViewReportDetails}
+          />
+        </div>
+      </section>
+
       {/* Alerts Section */}
       <section className="content-section" id="alertsSection">
         <div className="section-header">
@@ -477,6 +558,7 @@ export default function DashboardPage() {
         report={selectedReport}
         onApprove={handleApproveReport}
         onReject={handleRejectReport}
+        onResolve={handleResolveReport}
         isProcessing={isReportProcessing}
       />
       {/* Create Report Modal */}
@@ -518,6 +600,14 @@ export default function DashboardPage() {
         type={toast.type}
         isVisible={toast.isVisible}
         onClose={hideToast}
+      />
+
+      {/* Resolve Confirmation Modal */}
+      <ResolveConfirmModal
+        isOpen={isResolveModalOpen}
+        onClose={handleCloseResolveModal}
+        onConfirm={handleConfirmResolve}
+        isProcessing={isResolveProcessing}
       />
     </>
   );

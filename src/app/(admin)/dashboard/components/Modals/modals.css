@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10000;
+  z-index: 100;
   display: none;
   align-items: center;
   justify-content: center;
@@ -23,6 +23,7 @@
   background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   animation: fadeIn 0.3s ease;
+  z-index: 100;
 }
 
 .modal-content {
@@ -35,7 +36,7 @@
   max-height: 90vh;
   overflow-y: auto;
   animation: slideUp 0.3s ease;
-  z-index: 1;
+  z-index: 100;
 }
 
 /* Custom Scrollbar for Modal */
@@ -715,7 +716,7 @@ label.photo-upload-btn {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10001;
+  z-index: 100;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -740,7 +741,7 @@ label.photo-upload-btn {
   border-radius: 8px;
   object-fit: contain;
   animation: zoomIn 0.3s ease;
-  z-index: 1;
+  z-index: 100;
 }
 
 .avatar-lightbox-close {
@@ -757,7 +758,7 @@ label.photo-upload-btn {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  z-index: 2;
+  z-index: 100;
 }
 
 .avatar-lightbox-close:hover {
@@ -788,7 +789,7 @@ label.photo-upload-btn {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  z-index: 2;
+  z-index: 100;
 }
 
 .avatar-lightbox-change:hover {

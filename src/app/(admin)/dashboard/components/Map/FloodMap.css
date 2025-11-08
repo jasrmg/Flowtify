@@ -189,28 +189,24 @@
   transform: translateY(0);
 }
 
-/* Add this to your FloodMap.css */
-
 .popup-image-placeholder {
   display: flex;
-  flex-direction: column; /* Stack icon and text vertically */
-  align-items: center; /* Center them horizontally */
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  height: 120px; /* Or match the height of your actual image container */
-  background-color: var(--bg-secondary); /* A subtle background */
-  color: var(--text-secondary); /* Lighter text color */
+  height: 120px;
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
   border-radius: 8px;
-  font-size: 0.9em;
   text-align: center;
-  gap: 8px; /* Space between icon and text */
-  margin-bottom: 10px; /* Space below the placeholder */
+  gap: 8px;
+  margin-top: 1rem;
 }
 
 .popup-image-placeholder svg {
-  width: 40px; /* Adjust icon size */
+  width: 40px;
   height: 40px;
-  color: var(--text-secondary); /* Color of the icon */
-  opacity: 0.7; /* Make the icon a bit subtle */
+  color: var(--text-secondary);
 }
 
 /* Dark mode adjustments for Leaflet Map */
