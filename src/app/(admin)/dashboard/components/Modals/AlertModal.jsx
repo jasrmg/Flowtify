@@ -2,7 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 
-export const AlertModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
+export const AlertModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  isSubmitting,
+  showSuccess,
+  showError,
+}) => {
   const scrollPosition = useRef(0);
 
   const [formData, setFormData] = useState({
@@ -61,6 +68,8 @@ export const AlertModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
   const handleSubmit = async () => {
     if (formData.title && formData.location && formData.message) {
       await onSubmit(formData);
+
+      showSuccess("Alert added successfully!");
       // Reset form
       setFormData({
         title: "",
@@ -69,7 +78,7 @@ export const AlertModal = ({ isOpen, onClose, onSubmit, isSubmitting }) => {
         message: "",
       });
     } else {
-      alert("Please fill in all fields!");
+      showError("Please fill in all fields!");
     }
   };
 

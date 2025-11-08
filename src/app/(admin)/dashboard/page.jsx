@@ -583,6 +583,8 @@ export default function DashboardPage() {
         onClose={() => setIsAlertModalOpen(false)}
         onSubmit={handleAddAlert}
         isSubmitting={isAlertSubmitting}
+        showSuccess={showSuccess}
+        showError={showError}
       />
 
       {/* Hotline Modal */}
