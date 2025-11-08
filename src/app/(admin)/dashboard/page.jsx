@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { StatCard } from "@/app/(admin)/dashboard/components/StatCard/StatCard";
@@ -27,9 +27,11 @@ import { useSystemLogs } from "@/hooks/useSystemLogs";
 import { useToast } from "@/hooks/useToast";
 import { useReports } from "@/hooks/useReports";
 import { useMapReports } from "@/hooks/useMapReports";
+import { useSearch } from "@/hooks/useSearch";
 
 import "@/app/(admin)/dashboard/components/Modals/modals.css";
 import "./dashboard.css";
+import "@/app/(admin)/dashboard/search-highlight.css";
 
 export default function DashboardPage() {
   // CUSTOM HOOKS
@@ -70,6 +72,8 @@ export default function DashboardPage() {
 
   const { toast, showSuccess, showError, hideToast } = useToast();
   const { markers: mapMarkers, loading: mapLoading } = useMapReports();
+
+  const { highlightText, clearHighlights } = useSearch();
   // END OF CUSTOM HOOKS
 
   const [isRejectionModalOpen, setIsRejectionModalOpen] = useState(false);
@@ -302,7 +306,35 @@ export default function DashboardPage() {
       setReportToResolve(null);
     }
   };
+
+  const handleSearch = (searchTerm) => {
+    if (!searchTerm || searchTerm.trim() === "") {
+      clearHighlights();
+      return;
+    }
+
+    const { count } = highlightText(searchTerm);
+
+    if (count === 0) {
+      showError("No results found");
+    } else {
+      showSuccess(`Found ${count} match${count !== 1 ? "es" : ""}`);
+    }
+  };
   // END OF EVENT HANDLERS
+
+  useEffect(() => {
+    const handleSearchEvent = (e) => {
+      handleSearch(e.detail.searchTerm);
+    };
+
+    window.addEventListener("dashboardSearch", handleSearchEvent);
+
+    return () => {
+      window.removeEventListener("dashboardSearch", handleSearchEvent);
+      clearHighlights();
+    };
+  }, []);
 
   return (
     <>

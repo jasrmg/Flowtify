@@ -10,7 +10,7 @@ export const AdminLayout = ({ children }) => {
         {/* ThemeToggle */}
         <ThemeToggle />
         {/* Navbar */}
-        <Navbar />
+        <Navbar onSearch={undefined} isAdmin={true} />
 
         {/* Page Content */}
         <div className="layout-container">

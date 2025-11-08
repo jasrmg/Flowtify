@@ -18,7 +18,7 @@ import {
 
 import "./Navbar.css";
 
-export const Navbar = () => {
+export const Navbar = ({ onSearch, isAdmin = false }) => {
   const { currentUser, logout, refreshUser, loading } = useAuth();
   const {
     notifications,
@@ -39,6 +39,8 @@ export const Navbar = () => {
     message: "",
     type: "info",
   });
+
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -268,6 +270,14 @@ export const Navbar = () => {
     setToast((prev) => ({ ...prev, isVisible: false }));
   };
 
+  const handleSearchClose = () => {
+    setSearchValue("");
+    setIsSearchOpen(false);
+    if (onSearch && isAdmin) {
+      onSearch(""); // Clear highlights
+    }
+  };
+
   return (
     <>
       <nav className="navbar">
@@ -344,14 +354,39 @@ export const Navbar = () => {
           </svg>
           <input
             type="text"
-            placeholder="Search by location or baranggay..."
+            placeholder={
+              isAdmin
+                ? "Search dashboard content..."
+                : "Search by location or baranggay..."
+            }
             id="searchInput"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && isAdmin && searchValue.trim()) {
+                window.dispatchEvent(
+                  new CustomEvent("dashboardSearch", {
+                    detail: { searchTerm: searchValue },
+                  })
+                );
+              }
+            }}
           />
           <button
             className="search-close-btn"
             id="searchCloseBtn"
             aria-label="Close search"
-            onClick={() => setIsSearchOpen(false)}
+            onClick={() => {
+              setSearchValue("");
+              setIsSearchOpen(false);
+              if (isAdmin) {
+                window.dispatchEvent(
+                  new CustomEvent("dashboardSearch", {
+                    detail: { searchTerm: "" },
+                  })
+                );
+              }
+            }}
           >
             <svg
               viewBox="0 0 24 24"
