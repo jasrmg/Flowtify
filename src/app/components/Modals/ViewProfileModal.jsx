@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { Toast } from "@/components/Toast/Toast";
 
 export default function ViewProfileModal({ isOpen, onClose, user, onSave }) {
@@ -230,7 +231,12 @@ export default function ViewProfileModal({ isOpen, onClose, user, onSave }) {
                 style={{ cursor: avatarPreview ? "zoom-in" : "pointer" }}
               >
                 {avatarPreview ? (
-                  <img src={avatarPreview} alt="Profile" />
+                  <Image
+                    src={avatarPreview}
+                    alt="Profile"
+                    width={120}
+                    height={120}
+                  />
                 ) : (
                   <div className="profile-avatar-placeholder">
                     {getInitials()}
@@ -376,10 +382,12 @@ export default function ViewProfileModal({ isOpen, onClose, user, onSave }) {
               />
             </svg>
           </button>
-          <img
+          <Image
             src={avatarPreview}
             alt="Profile Full Size"
             className="avatar-lightbox-image"
+            width={400}
+            height={400}
           />
           <button
             className="avatar-lightbox-change"

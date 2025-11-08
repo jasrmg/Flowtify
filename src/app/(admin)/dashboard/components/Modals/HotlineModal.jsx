@@ -15,18 +15,17 @@ export const HotlineModal = ({
   const isEditMode = !!hotline;
 
   const [formData, setFormData] = useState({
-    agencyName: "",
-    contactNumber: "",
-    description: "",
+    agencyName: hotline?.agencyName || "",
+    contactNumber: hotline?.contactNumber || "",
+    description: hotline?.description || "",
   });
-
   // Populate form when editing
   useEffect(() => {
     if (hotline) {
       setFormData({
-        agencyName: hotline.agencyName || "",
-        contactNumber: hotline.contactNumber || "",
-        description: hotline.description || "",
+        agencyName: hotline?.agencyName || "",
+        contactNumber: hotline?.contactNumber || "",
+        description: hotline?.description || "",
       });
     }
   }, [hotline]);
