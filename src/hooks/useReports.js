@@ -204,6 +204,23 @@ export const useReports = (statusFilter = "pending") => {
       // Log the action
       await logReportResolution(reportId, reportLocation, adminId, adminRole);
 
+      // Create notification for the report creator (only if not the admin who resolved it)
+      if (reportToResolve && reportToResolve.userId !== adminId) {
+        console.log(
+          "Creating resolved notification for userId:",
+          reportToResolve.userId
+        );
+        await createReportStatusNotification({
+          reportId,
+          userId: reportToResolve.userId,
+          status: "resolved",
+          reportDescription: reportToResolve.description,
+          location: reportLocation,
+        });
+      } else if (reportToResolve && reportToResolve.userId === adminId) {
+        console.log("Skipping notification - admin resolved their own report");
+      }
+
       return { success: true };
     } catch (error) {
       console.error("Error resolving report:", error);

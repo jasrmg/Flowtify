@@ -103,7 +103,7 @@ export function formatNotificationTime(timestamp) {
 export async function createReportStatusNotification({
   reportId,
   userId,
-  status, // 'approved' or 'rejected'
+  status, // 'approved', 'rejected' or 'resolved'
   reportDescription,
   location,
   rejectionReason = "",
@@ -111,15 +111,21 @@ export async function createReportStatusNotification({
   try {
     const notificationsRef = collection(db, "notifications");
 
-    const title =
-      status === "approved" ? "Report Approved ✓" : "Report Rejected";
-
-    const body =
-      status === "approved"
-        ? `Your report for ${location} has been approved and is now visible to the community.`
-        : rejectionReason
+    let title,
+      body = "";
+    if (status === "approved") {
+      title = "Report Approved";
+      body = `Your report for ${location} has been approved and is now visible to the community.`;
+    } else if (status === "resolved") {
+      title = "Report Resolved";
+      body = `Your report for ${location} has been marked as resolved. Thank you for helping keep the community informed!`;
+    } else {
+      // rejected
+      title = "Report Rejected";
+      body = rejectionReason
         ? `Your report for ${location} was rejected. Reason: ${rejectionReason}`
         : `Your report for ${location} was rejected.`;
+    }
 
     const notificationData = {
       title,
