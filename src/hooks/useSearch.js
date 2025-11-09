@@ -9,43 +9,54 @@ export const useSearch = () => {
   const lastSearchTermRef = useRef("");
 
   const highlightInNode = useCallback((node, searchTerm, elements) => {
-    const text = node.textContent;
-    const textLower = text.toLowerCase();
+    const walker = document.createTreeWalker(
+      node,
+      NodeFilter.SHOW_TEXT,
+      null,
+      false
+    );
+    const textNodes = [];
+    let currentNode;
 
-    if (!textLower.includes(searchTerm)) return;
+    while ((currentNode = walker.nextNode())) {
+      const text = currentNode.textContent;
+      const textLower = text.toLowerCase();
 
-    // Create a document fragment to build the new content
-    const fragment = document.createDocumentFragment();
-    let lastIndex = 0;
-    let index = textLower.indexOf(searchTerm);
+      if (!textLower.includes(searchTerm)) continue;
 
-    while (index !== -1) {
-      // Add text before match
-      if (index > lastIndex) {
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+      let index = textLower.indexOf(searchTerm);
+
+      while (index !== -1) {
+        // Add text before match
+        if (index > lastIndex) {
+          fragment.appendChild(
+            document.createTextNode(text.substring(lastIndex, index))
+          );
+        }
+
+        // Add highlighted match
+        const mark = document.createElement("mark");
+        mark.className = "search-highlight";
+        mark.textContent = text.substring(index, index + searchTerm.length);
+        fragment.appendChild(mark);
+        elements.push(mark);
+
+        lastIndex = index + searchTerm.length;
+        index = textLower.indexOf(searchTerm, lastIndex);
+      }
+
+      // Add remaining text
+      if (lastIndex < text.length) {
         fragment.appendChild(
-          document.createTextNode(text.substring(lastIndex, index))
+          document.createTextNode(text.substring(lastIndex))
         );
       }
 
-      // Add highlighted match
-      const mark = document.createElement("mark");
-      mark.className = "search-highlight";
-      mark.textContent = text.substring(index, index + searchTerm.length);
-      fragment.appendChild(mark);
-      elements.push(mark);
-
-      lastIndex = index + searchTerm.length;
-      index = textLower.indexOf(searchTerm, lastIndex);
+      // Replace only the text node
+      currentNode.parentNode.replaceChild(fragment, currentNode);
     }
-
-    // Add remaining text
-    if (lastIndex < text.length) {
-      fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
-    }
-
-    // Replace node content
-    node.textContent = "";
-    node.appendChild(fragment);
   }, []);
 
   const highlightText = useCallback(

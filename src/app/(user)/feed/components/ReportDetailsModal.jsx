@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import styles from "./ReportDetailsModal.module.css";
 
 export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
@@ -12,10 +13,37 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
   const statusText =
     report.status.charAt(0).toUpperCase() + report.status.slice(1);
 
-  const photos = report.photo
-    ? Array.isArray(report.photo)
-      ? report.photo
-      : [report.photo]
+  // Format location from Firestore structure
+  const formatLocation = (location) => {
+    if (typeof location === "object" && location !== null) {
+      if (location.brg && location.city) {
+        return `${location.brg}, ${location.city}`;
+      }
+      return "Unknown location";
+    }
+    return location || "Unknown location";
+  };
+
+  // Format timestamp from Firestore
+  const formatTimestamp = () => {
+    if (report.createdAt?.toDate) {
+      const date = report.createdAt.toDate();
+      return date.toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+    }
+    return report.timestamp || "Unknown time";
+  };
+
+  const photos = report.photoUrl
+    ? Array.isArray(report.photoUrl)
+      ? report.photoUrl
+      : [report.photoUrl]
     : [];
 
   const hasMultiplePhotos = photos.length > 1;
@@ -64,12 +92,14 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
           <div className={styles.modalImageSection}>
             {photos.length > 0 ? (
               <div className={styles.imageGallery}>
-                <img
+                <Image
                   src={photos[currentImageIndex]}
-                  alt={`Flood report at ${report.location}`}
+                  alt={`Flood report at ${formatLocation(report.location)}`}
                   className={styles.modalImage}
                   onClick={openFullscreen}
                   style={{ cursor: "pointer" }}
+                  width={400}
+                  height={400}
                 />
                 {hasMultiplePhotos && (
                   <>
@@ -128,9 +158,22 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
               <span className={`${styles.reportStatus} ${styles[statusClass]}`}>
                 {statusText}
               </span>
+              {report.severity && (
+                <span
+                  className={`${styles.severityBadge} ${
+                    styles[`severity-${report.severity}`]
+                  }`}
+                >
+                  {report.severity.charAt(0).toUpperCase() +
+                    report.severity.slice(1)}{" "}
+                  Severity
+                </span>
+              )}
             </div>
 
-            <h2 className={styles.modalLocation}>{report.location}</h2>
+            <h2 className={styles.modalLocation}>
+              {formatLocation(report.location)}
+            </h2>
 
             <div className={styles.modalMeta}>
               <div className={styles.metaItem}>
@@ -143,7 +186,7 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
                   <circle cx="12" cy="12" r="10"></circle>
                   <polyline points="12 6 12 12 16 14"></polyline>
                 </svg>
-                <span>{report.timestamp}</span>
+                <span>{formatTimestamp()}</span>
               </div>
               <div className={styles.metaItem}>
                 <svg
@@ -155,7 +198,7 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
-                <span>Reported by {report.reporter}</span>
+                <span>Reported by {report.reporterName || "Anonymous"}</span>
               </div>
             </div>
 
@@ -210,11 +253,13 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
             </svg>
           </button>
 
-          <img
+          <Image
             src={photos[currentImageIndex]}
-            alt={`Flood report at ${report.location}`}
+            alt={`Flood report at ${formatLocation(report.location)}`}
             className={styles.fullscreenImage}
             onClick={(e) => e.stopPropagation()}
+            width={800}
+            height={600}
           />
 
           {hasMultiplePhotos && (
