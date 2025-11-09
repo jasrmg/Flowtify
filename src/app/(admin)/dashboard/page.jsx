@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 
 import { StatCard } from "@/app/(admin)/dashboard/components/StatCard/StatCard";
@@ -307,25 +307,30 @@ export default function DashboardPage() {
     }
   };
 
-  const handleSearch = (searchTerm) => {
-    if (!searchTerm || searchTerm.trim() === "") {
-      clearHighlights();
-      return;
-    }
+  const handleSearch = useCallback(
+    (searchTerm, moveToNext = false) => {
+      if (!searchTerm || searchTerm.trim() === "") {
+        clearHighlights();
+        return;
+      }
 
-    const { count } = highlightText(searchTerm);
+      const { count, currentIndex } = highlightText(searchTerm, moveToNext);
 
-    if (count === 0) {
-      showError("No results found");
-    } else {
-      showSuccess(`Found ${count} match${count !== 1 ? "es" : ""}`);
-    }
-  };
+      if (count === 0) {
+        showError("No results found");
+      } else if (moveToNext) {
+        showSuccess(`Result ${currentIndex} of ${count}`);
+      } else {
+        showSuccess(`Found ${count} match${count !== 1 ? "es" : ""}`);
+      }
+    },
+    [highlightText, clearHighlights, showError, showSuccess]
+  );
   // END OF EVENT HANDLERS
 
   useEffect(() => {
     const handleSearchEvent = (e) => {
-      handleSearch(e.detail.searchTerm);
+      handleSearch(e.detail.searchTerm, e.detail.moveToNext || false);
     };
 
     window.addEventListener("dashboardSearch", handleSearchEvent);
@@ -334,7 +339,7 @@ export default function DashboardPage() {
       window.removeEventListener("dashboardSearch", handleSearchEvent);
       clearHighlights();
     };
-  }, []);
+  }, [handleSearch, clearHighlights]);
 
   return (
     <>

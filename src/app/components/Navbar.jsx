@@ -41,6 +41,7 @@ export const Navbar = ({ onSearch, isAdmin = false }) => {
   });
 
   const [searchValue, setSearchValue] = useState("");
+  const [lastSearchValue, setLastSearchValue] = useState("");
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -364,11 +365,17 @@ export const Navbar = ({ onSearch, isAdmin = false }) => {
             onChange={(e) => setSearchValue(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter" && isAdmin && searchValue.trim()) {
+                const isSameSearch =
+                  searchValue.trim() === lastSearchValue.trim();
                 window.dispatchEvent(
                   new CustomEvent("dashboardSearch", {
-                    detail: { searchTerm: searchValue },
+                    detail: {
+                      searchTerm: searchValue,
+                      moveToNext: isSameSearch,
+                    },
                   })
                 );
+                setLastSearchValue(searchValue);
               }
             }}
           />
