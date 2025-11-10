@@ -58,7 +58,7 @@ export const useFeedReports = (userLocation, pageSize = 10) => {
         // Build query for unresolved reports OR resolved within 24 hours
         let reportsQuery = query(
           collection(db, "reports"),
-          where("status", "in", ["pending", "verified", "resolved"]),
+          where("status", "in", ["verified", "resolved"]),
           orderBy("createdAt", "desc"),
           limit(pageSize)
         );
@@ -67,7 +67,7 @@ export const useFeedReports = (userLocation, pageSize = 10) => {
         if (!isInitial && lastDoc) {
           reportsQuery = query(
             collection(db, "reports"),
-            where("status", "in", ["pending", "verified", "resolved"]),
+            where("status", "in", ["verified", "resolved"]),
             orderBy("createdAt", "desc"),
             startAfter(lastDoc),
             limit(pageSize)

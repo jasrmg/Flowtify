@@ -7,7 +7,6 @@ import { useFeedReports } from "@/hooks/useFeedReports";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 import { ReportCard } from "../components/ReportCard/ReportCard";
-import { floodReportsWithCoordinates } from "@/app/lib/mockData"; // kuhaonon
 import { RightSidebar } from "../components/RightSidebar/RightSidebar";
 import { ReportModal } from "./components/ReportModal";
 import { ReportDetailsModal } from "./components/ReportDetailsModal";
@@ -22,7 +21,6 @@ export function FeedContent() {
   //states
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
-  const [filteredReports] = useState(floodReportsWithCoordinates); // kuhaonon
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
 

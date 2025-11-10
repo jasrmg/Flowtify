@@ -9,15 +9,25 @@ export const ReportDetailsModal = ({ report, isOpen, onClose }) => {
 
   if (!isOpen || !report) return null;
 
-  const statusClass = `status-${report.status}`;
+  const statusClass = `status${report.status
+    .charAt(0)
+    .toUpperCase()}${report.status.slice(1)}`;
   const statusText =
     report.status.charAt(0).toUpperCase() + report.status.slice(1);
 
   // Format location from Firestore structure
   const formatLocation = (location) => {
+    console.log("Location object:", location); // Debug log
+    console.log("Location type:", typeof location);
+    console.log("Has brg:", location?.brg);
+    console.log("Has city:", location?.city);
     if (typeof location === "object" && location !== null) {
       if (location.brg && location.city) {
         return `${location.brg}, ${location.city}`;
+      }
+      // If city exists but not brg
+      if (location.city) {
+        return location.city;
       }
       return "Unknown location";
     }

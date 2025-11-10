@@ -3,6 +3,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { MapPicker } from "./MapPicker";
 import Image from "next/image";
+
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from "@/contexts/AuthContext";
+import { uploadImagesToCloudinary } from "@/utils/cloudinaryHelpers";
+import { Toast } from "@/components/Toast/Toast";
 import "@/app/(admin)/dashboard/components/Modals/modals.css";
 
 export const ReportModal = ({ isOpen, onClose }) => {
@@ -14,7 +20,27 @@ export const ReportModal = ({ isOpen, onClose }) => {
   });
 
   const [photos, setPhotos] = useState([]);
+  const [photoFiles, setPhotoFiles] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [toast, setToast] = useState({
+    isVisible: false,
+    message: "",
+    type: "info",
+  });
+
+  const { currentUser } = useAuth();
+
+  // Cleanup object URLs on unmount
+  useEffect(() => {
+    return () => {
+      photos.forEach((url) => {
+        if (url.startsWith("blob:")) {
+          URL.revokeObjectURL(url);
+        }
+      });
+    };
+  }, [photos]);
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -66,14 +92,23 @@ export const ReportModal = ({ isOpen, onClose }) => {
 
   const handlePhotoUpload = (e) => {
     const files = Array.from(e.target.files);
-    // TODO: Upload to storage and get URLs
-    // For now, just create object URLs for preview
-    const photoUrls = files.map((file) => URL.createObjectURL(file));
-    setPhotos((prev) => [...prev, ...photoUrls].slice(0, 5)); // Max 5 photos
+    const remainingSlots = 5 - photos.length;
+    const filesToAdd = files.slice(0, remainingSlots);
+
+    // Create preview URLs
+    const photoUrls = filesToAdd.map((file) => URL.createObjectURL(file));
+
+    // Store both preview URLs and actual File objects
+    setPhotos((prev) => [...prev, ...photoUrls]);
+    setPhotoFiles((prev) => [...prev, ...filesToAdd]);
   };
 
   const removePhoto = (index) => {
+    // Revoke object URL to prevent memory leaks
+    URL.revokeObjectURL(photos[index]);
+
     setPhotos((prev) => prev.filter((_, i) => i !== index));
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -81,48 +116,97 @@ export const ReportModal = ({ isOpen, onClose }) => {
 
     // Validate location is selected
     if (!formData.location) {
-      alert("Please select a location on the map");
+      setToast({
+        isVisible: true,
+        message: "Please select a location on the map",
+        type: "warning",
+      });
+      return;
+    }
+
+    // Validate user is logged in
+    if (!currentUser) {
+      setToast({
+        isVisible: true,
+        message: "You must be logged in to submit a report",
+        type: "error",
+      });
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      // TODO: Implement Firestore submission
-      // const reportData = {
-      //   userId: auth.currentUser.uid,
-      //   description: formData.description,
-      //   photoUrl: photos,
-      //   location: formData.location,
-      //   severity: formData.severity,
-      //   status: 'pending',
-      //   createdAt: serverTimestamp(),
-      //   resolvedAt: null,
-      //   verifiedBy: null,
-      //   verifiedAt: null,
-      //   comments: []
-      // };
-      // await addDoc(collection(db, 'reports'), reportData);
+      // Upload photos to Cloudinary if any
+      let photoUrls = [];
+      if (photoFiles.length > 0) {
+        const uploadResult = await uploadImagesToCloudinary(
+          photoFiles,
+          "flowtify/reports"
+        );
 
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+        if (!uploadResult.success) {
+          throw new Error(uploadResult.error || "Failed to upload images");
+        }
 
-      console.log("Report submitted:", { ...formData, photos });
+        photoUrls = uploadResult.urls;
+      }
 
-      // Reset form and close modal
+      // Transform location data to match Firestore structure
+      const reportData = {
+        userId: currentUser.uid,
+        description: formData.description,
+        severity: formData.severity,
+        location: {
+          lat: parseFloat(formData.location.lat),
+          lng: parseFloat(formData.location.lng),
+          brg: formData.location.barangay || "",
+          city: formData.location.city || "Cebu City",
+        },
+        geohash: formData.location.geohash,
+        photoUrl: photoUrls,
+        status: "pending",
+        createdAt: serverTimestamp(),
+        verifiedAt: null,
+        verifiedBy: null,
+        resolvedAt: null,
+        resolvedBy: null,
+        rejectedAt: null,
+        rejectedBy: null,
+        rejectionReason: "",
+        comments: [],
+      };
+
+      // Save to Firestore
+      await addDoc(collection(db, "reports"), reportData);
+
+      // Show success toast
+      setToast({
+        isVisible: true,
+        message: "Report submitted successfully! Waiting for admin approval.",
+        type: "success",
+      });
+
+      // Reset form
       setFormData({
         description: "",
         severity: "low",
         location: null,
       });
       setPhotos([]);
-      onClose();
+      setPhotoFiles([]);
 
-      // TODO: Show success notification
-      alert("Report submitted successfully!");
+      // Close modal after a short delay to show success message
+      setTimeout(() => {
+        onClose();
+      }, 2000);
     } catch (error) {
       console.error("Error submitting report:", error);
-      alert("Failed to submit report. Please try again.");
+      setToast({
+        isVisible: true,
+        message: error.message || "Failed to submit report. Please try again.",
+        type: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -325,6 +409,15 @@ export const ReportModal = ({ isOpen, onClose }) => {
           </div>
         </form>
       </div>
+
+      {/* Toast Notification */}
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={() => setToast({ ...toast, isVisible: false })}
+        duration={3000}
+      />
     </div>
   );
 };

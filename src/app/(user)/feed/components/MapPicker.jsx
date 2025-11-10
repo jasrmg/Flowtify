@@ -158,6 +158,10 @@ export const MapPicker = ({ onLocationSelect, initialLocation }) => {
               );
               const data = await response.json();
 
+              // 🧠 Log the full response for inspection
+              console.log("📍 Raw reverse geocode result:", data);
+              console.log("📋 display_name:", data.display_name);
+
               let barangay = "";
               let city = "Cebu City";
 
@@ -165,24 +169,52 @@ export const MapPicker = ({ onLocationSelect, initialLocation }) => {
                 barangay =
                   data.address.suburb ||
                   data.address.neighbourhood ||
+                  data.address.quarter ||
                   data.address.hamlet ||
                   data.address.village ||
+                  data.address.residential ||
                   "";
+
                 city =
                   data.address.city ||
                   data.address.town ||
                   data.address.municipality ||
                   "Cebu City";
+
+                // fallback from display_name if barangay missing
+                if (!barangay && data.display_name) {
+                  const parts = data.display_name
+                    .split(",")
+                    .map((p) => p.trim());
+                  // If the first part isn't the same as city or Cebu, assume it's the barangay
+                  const candidate = parts[0];
+                  if (
+                    candidate &&
+                    candidate.toLowerCase() !== city.toLowerCase() &&
+                    !candidate.toLowerCase().includes("cebu")
+                  ) {
+                    barangay = candidate;
+                  }
+                }
+
+                if (!barangay) {
+                  barangay = `Unnamed Area, ${city}`;
+                }
+
+                barangay =
+                  barangay.charAt(0).toUpperCase() +
+                  barangay.slice(1).toLowerCase();
               }
 
               const locationData = {
                 lat: latitude.toFixed(6),
                 lng: longitude.toFixed(6),
-                barangay: barangay,
-                city: city,
+                barangay,
+                city,
                 geohash: generateSimpleGeohash(latitude, longitude),
               };
 
+              console.log("📍 Final locationData:", locationData); // ✅ This shows what gets passed out
               onLocationSelect(locationData);
             } catch (error) {
               console.error("Geocoding error:", error);
@@ -199,7 +231,6 @@ export const MapPicker = ({ onLocationSelect, initialLocation }) => {
               onLocationSelect(locationData);
             }
           };
-
           const getDistance = (lat1, lon1, lat2, lon2) => {
             const R = 6371;
             const dLat = ((lat2 - lat1) * Math.PI) / 180;
