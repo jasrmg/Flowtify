@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import "./ReportCard.css";
 
@@ -6,6 +7,7 @@ export const ReportCard = ({ report, onClick, isMobile = false }) => {
   const statusClass = `status-${report.status}`;
   const statusText =
     report.status.charAt(0).toUpperCase() + report.status.slice(1);
+  const [resolvedLocation, setResolvedLocation] = useState(null);
 
   // Get the first photo from photoUrl array
   const getReportImage = () => {
@@ -17,16 +19,62 @@ export const ReportCard = ({ report, onClick, isMobile = false }) => {
 
   const reportImage = getReportImage();
 
-  // Format location from Firestore structure
-  const formatLocation = () => {
+  const getBaseLocation = () => {
     if (typeof report.location === "object" && report.location !== null) {
-      if (report.location.brg && report.location.city) {
-        return `${report.location.brg}, ${report.location.city}`;
-      }
-      return "Unknown location";
+      const { brg, city } = report.location;
+
+      if (brg && city) return `${brg}, ${city}`;
+      if (city) return city;
+      if (brg) return brg;
     }
-    return report.location || "Unknown location";
+    return null;
   };
+
+  // Fetch readable location from OpenStreetMap if missing
+  useEffect(() => {
+    const baseLocation = getBaseLocation();
+
+    // If lat/lng available, do reverse geocode
+    const { lat, lng } = report.location || {};
+    if (!lat || !lng) {
+      setResolvedLocation("Unknown location");
+      return;
+    }
+
+    const fetchLocationName = async () => {
+      try {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=14&addressdetails=1`,
+          { headers: { "User-Agent": "SmartPortApp/1.0" } } // Nominatim requires this
+        );
+        const data = await res.json();
+
+        // Extract readable location from response
+        const address = data.address;
+        const name =
+          address?.suburb ||
+          address?.village ||
+          address?.neighbourhood ||
+          address?.city ||
+          address?.town ||
+          address?.county ||
+          "Unknown location";
+
+        setResolvedLocation(name);
+      } catch (error) {
+        console.error("Error fetching reverse geocode:", error);
+        setResolvedLocation("Unknown location");
+      }
+    };
+
+    // Use cached or existing info first
+    if (baseLocation) {
+      setResolvedLocation(baseLocation);
+      return;
+    }
+
+    fetchLocationName();
+  }, [report.location]);
 
   // Format distance
   const formatDistance = () => {
@@ -126,7 +174,7 @@ export const ReportCard = ({ report, onClick, isMobile = false }) => {
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
-            <span>{formatLocation()}</span>
+            <span>{resolvedLocation || "Loading..."}</span>
           </div>
           {formatDistance() && (
             <div className="meta-item">
