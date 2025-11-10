@@ -1,5 +1,5 @@
 /* Main Content */
-.main-content {
+.main-content-map-view {
   flex: 1;
   margin-left: 250px;
   margin-right: 0;
@@ -790,7 +790,7 @@ body.dark-mode .leaflet-control-zoom-out {
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .main-content {
+  .main-content-map-view {
     margin-left: 220px;
   }
 
@@ -805,7 +805,7 @@ body.dark-mode .leaflet-control-zoom-out {
 }
 
 @media (max-width: 968px) {
-  .main-content {
+  .main-content-map-view {
     margin-left: 0;
   }
 

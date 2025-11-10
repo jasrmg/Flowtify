@@ -13,7 +13,7 @@ import "@/app/(admin)/dashboard/components/Modals/modals.css";
 const MapView = dynamic(() => import("./MapView"), {
   ssr: false,
   loading: () => (
-    <main className="main-content">
+    <main className="main-content-map-view">
       <div className="map-container">
         <div className="map-loading">
           <div className="loading-spinner"></div>
@@ -27,7 +27,7 @@ const MapView = dynamic(() => import("./MapView"), {
 // This is the component that was in your page.jsx
 export const MapPage = () => {
   return (
-    <main className="main-content">
+    <main className="main-content-map-view">
       <MapView />
     </main>
   );

@@ -5,6 +5,8 @@ import { useAuth } from "@/contexts/AuthContext";
 
 import { useFeedReports } from "@/hooks/useFeedReports";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { useToast } from "@/hooks/useToast";
+import { Toast } from "@/components/Toast/Toast";
 
 import { ReportCard } from "../components/ReportCard/ReportCard";
 import { RightSidebar } from "../components/RightSidebar/RightSidebar";
@@ -18,9 +20,11 @@ export function FeedContent() {
   const { currentUser } = useAuth();
   // hooks
   const isMobile = useIsMobile();
+  const { toast, showToast, hideToast, showWarning, showInfo } = useToast();
   //states
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState(null);
+  const [locationPermissionAsked, setLocationPermissionAsked] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
 
@@ -38,11 +42,13 @@ export function FeedContent() {
       const clientHeight = document.documentElement.clientHeight;
 
       // Trigger when 200px from bottom
+      // Only load more if: has more reports, not currently loading, and actually have reports
       if (
         scrollHeight - scrollTop - clientHeight < 200 &&
         hasMore &&
         !loading &&
-        !isFetchingMore
+        !isFetchingMore &&
+        reports.length > 0
       ) {
         loadMore();
       }
@@ -50,63 +56,76 @@ export function FeedContent() {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasMore, loading, isFetchingMore, loadMore]);
-
+  }, [hasMore, loading, isFetchingMore, loadMore, reports.length]);
   // Get user's location on mount
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log("Location obtained:", position.coords);
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          });
-          setLocationError(null);
-        },
-        (error) => {
-          console.error("Geolocation error code:", error.code);
-          console.error("Geolocation error message:", error.message);
+    if (!locationPermissionAsked) {
+      if (navigator.geolocation) {
+        // Browser will automatically prompt for permission
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            console.log("Location obtained:", position.coords);
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+            setLocationPermissionAsked(true);
+          },
+          (error) => {
+            console.error("Geolocation error code:", error.code);
+            console.error("Geolocation error message:", error.message);
 
-          let errorMessage =
-            "Unable to get your location. Showing reports near Cebu City.";
+            let toastMessage = "";
+            let toastType = "info";
 
-          switch (error.code) {
-            case 1: // PERMISSION_DENIED
-              errorMessage =
-                "Location access denied. Showing reports near Cebu City.";
-              break;
-            case 2: // POSITION_UNAVAILABLE
-              errorMessage =
-                "Location unavailable. Showing reports near Cebu City.";
-              break;
-            case 3: // TIMEOUT
-              errorMessage =
-                "Location request timed out. Showing reports near Cebu City.";
-              break;
+            switch (error.code) {
+              case 1: // PERMISSION_DENIED
+                showWarning(
+                  "Location access denied. For the best experience, please enable location access to see nearby flood reports. Showing reports near Cebu City instead."
+                );
+                break;
+              case 2: // POSITION_UNAVAILABLE
+                showInfo(
+                  "Unable to determine your location. Showing reports near Cebu City."
+                );
+                break;
+              case 3: // TIMEOUT
+                showInfo(
+                  "Location request timed out. Showing reports near Cebu City."
+                );
+                break;
+              default:
+                showInfo(
+                  "Unable to get your location. Showing reports near Cebu City."
+                );
+            }
+            setLocationPermissionAsked(true);
+
+            // Fallback to Cebu City coordinates
+            setUserLocation({
+              lat: 10.3157,
+              lng: 123.8854,
+            });
+          },
+          {
+            enableHighAccuracy: false,
+            timeout: 10000,
+            maximumAge: 300000,
           }
-          setLocationError(errorMessage);
-          // Fallback to Cebu City coordinates
-          setUserLocation({
-            lat: 10.3157,
-            lng: 123.8854,
-          });
-        },
-        {
-          enableHighAccuracy: false,
-          timeout: 10000,
-          maximumAge: 300000, // Allow cached position up to 5 minutes old
-        }
-      );
-    } else {
-      setLocationError("Geolocation is not supported by your browser.");
-      // Fallback to Cebu City coordinates
-      setUserLocation({
-        lat: 10.3157,
-        lng: 123.8854,
-      });
+        );
+      } else {
+        showWarning(
+          "Geolocation is not supported by your browser. Showing reports near Cebu City."
+        );
+        setLocationPermissionAsked(true);
+        // Fallback to Cebu City coordinates
+        setUserLocation({
+          lat: 10.3157,
+          lng: 123.8854,
+        });
+      }
     }
-  }, []);
+  }, [locationPermissionAsked, showToast]);
 
   // handlers
   const handleReportClick = (report) => {
@@ -125,29 +144,44 @@ export function FeedContent() {
             <h1>Flood Reports</h1>
             <p>Real-time flood monitoring across Cebu City</p>
           </div>
-          <button
-            className="report-btn"
-            onClick={() => setIsReportModalOpen(true)}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+
+          <div className="header-actions">
+            <button
+              className="location-btn"
+              onClick={() => {
+                setLocationPermissionAsked(false);
+              }}
+              title="Refresh location"
             >
-              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-            </svg>
-            Report Flooding
-          </button>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              Refresh Location
+            </button>
+            <button
+              className="report-btn"
+              onClick={() => setIsReportModalOpen(true)}
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+              </svg>
+              Report Flooding
+            </button>
+          </div>
         </div>
 
         <div className="reports-grid" id="reportsGrid">
-          {locationError && (
-            <div className="location-warning">
-              <p>{locationError}</p>
-            </div>
-          )}
-
           {loading && reports.length === 0 ? (
             <div className="loading-container">
               <div className="spinner"></div>
@@ -168,7 +202,7 @@ export function FeedContent() {
                 />
               ))}
 
-              {isFetchingMore && (
+              {isFetchingMore && hasMore && (
                 <div className="loading-more">
                   <div className="spinner"></div>
                   <p>Loading more reports...</p>
@@ -196,6 +230,13 @@ export function FeedContent() {
         report={selectedReport}
         isOpen={!!selectedReport}
         onClose={handleCloseDetails}
+      />
+
+      <Toast
+        isVisible={toast.isVisible}
+        message={toast.message}
+        type={toast.type}
+        onClose={hideToast}
       />
     </>
   );

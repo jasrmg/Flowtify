@@ -28,12 +28,26 @@ export function useMapReports() {
         const reportsData = snapshot.docs.map((doc) => {
           const data = doc.data();
 
+          const brg = data.location?.brg || "";
+          const city = data.location?.city || "";
+
+          let location = "";
+          if (brg && city) {
+            location = `${brg}, ${city}`;
+          } else if (brg) {
+            location = brg;
+          } else if (city) {
+            location = city;
+          } else {
+            location = "Unknown Location";
+          }
+
           // Transform Firestore data to marker format
           return {
             id: doc.id,
             lat: data.location?.lat,
             lng: data.location?.lng,
-            location: `${data.location?.brg}, ${data.location?.city}`,
+            location,
             description: data.description,
             fullDescription: data.description,
             photo: data.photoUrl || [],

@@ -72,6 +72,7 @@ export default function DashboardPage() {
 
   const { toast, showSuccess, showError, hideToast } = useToast();
   const { markers: mapMarkers, loading: mapLoading } = useMapReports();
+  console.log("map markers: ", mapMarkers);
 
   const { highlightText, clearHighlights } = useSearch();
   // END OF CUSTOM HOOKS

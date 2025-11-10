@@ -152,7 +152,8 @@ export const useFeedReports = (userLocation, pageSize = 10) => {
         setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
 
         // Check if there are more documents
-        setHasMore(snapshot.docs.length === pageSize);
+        // If we got fewer reports than pageSize, there are no more
+        setHasMore(fetchedReports.length === pageSize);
 
         // Append or replace reports
         if (isInitial) {

@@ -83,10 +83,12 @@ export const ReportCard = ({ report, onClick, isMobile = false }) => {
     <article className="report-card" onClick={() => onClick(report)}>
       <div className="report-image">
         {reportImage ? (
-          <img
+          <Image
             src={reportImage}
             alt={`Flood report at ${report.location}`}
             className="report-photo"
+            width={320}
+            height={210}
           />
         ) : (
           <svg
