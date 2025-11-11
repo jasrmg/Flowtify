@@ -358,24 +358,45 @@ export const Navbar = ({ onSearch, isAdmin = false }) => {
             placeholder={
               isAdmin
                 ? "Search dashboard content..."
-                : "Search by location or baranggay..."
+                : "Search by location or barangay..."
             }
             id="searchInput"
             value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && isAdmin && searchValue.trim()) {
-                const isSameSearch =
-                  searchValue.trim() === lastSearchValue.trim();
+            onChange={(e) => {
+              const value = e.target.value;
+              setSearchValue(value);
+
+              // For map view, search as user types (debounced will be handled in MapContainer)
+              if (!isAdmin) {
                 window.dispatchEvent(
-                  new CustomEvent("dashboardSearch", {
-                    detail: {
-                      searchTerm: searchValue,
-                      moveToNext: isSameSearch,
-                    },
+                  new CustomEvent("mapSearch", {
+                    detail: { searchTerm: value },
                   })
                 );
-                setLastSearchValue(searchValue);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && searchValue.trim()) {
+                if (isAdmin) {
+                  const isSameSearch =
+                    searchValue.trim() === lastSearchValue.trim();
+                  window.dispatchEvent(
+                    new CustomEvent("dashboardSearch", {
+                      detail: {
+                        searchTerm: searchValue,
+                        moveToNext: isSameSearch,
+                      },
+                    })
+                  );
+                  setLastSearchValue(searchValue);
+                } else {
+                  // For map view, trigger search on Enter
+                  window.dispatchEvent(
+                    new CustomEvent("mapSearch", {
+                      detail: { searchTerm: searchValue },
+                    })
+                  );
+                }
               }
             }}
           />
@@ -389,6 +410,13 @@ export const Navbar = ({ onSearch, isAdmin = false }) => {
               if (isAdmin) {
                 window.dispatchEvent(
                   new CustomEvent("dashboardSearch", {
+                    detail: { searchTerm: "" },
+                  })
+                );
+              } else {
+                // Clear map search
+                window.dispatchEvent(
+                  new CustomEvent("mapSearch", {
                     detail: { searchTerm: "" },
                   })
                 );
