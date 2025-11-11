@@ -6,13 +6,15 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import ThemeToggle from "../components/ThemeToggle";
 
+import { useToast } from "@/hooks/useToast";
+
 import styles from "./AuthPage.module.css";
 import formStyles from "./AuthForm.module.css";
 import illustrationStyles from "./AuthIllustration.module.css";
 
 export default function AuthPage() {
   const router = useRouter();
-  const { login, currentUser, userRole } = useAuth();
+  const { login, signup, currentUser, userRole } = useAuth();
   const [activeTab, setActiveTab] = useState("login");
   const [loginData, setLoginData] = useState({
     email: "",
@@ -33,6 +35,8 @@ export default function AuthPage() {
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const { showToast } = useToast();
 
   // Redirect if already logged in
   useEffect(() => {
@@ -99,9 +103,10 @@ export default function AuthPage() {
   };
 
   // Handle signup form submission
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     // Validate all fields are filled
     if (
@@ -112,18 +117,21 @@ export default function AuthPage() {
       !signupData.confirmPassword
     ) {
       setError("Please fill in all fields");
+      setLoading(false);
       return;
     }
 
     // Validate password length
     if (signupData.password.length < 6) {
       setError("Password must be at least 6 characters long");
+      setLoading(false);
       return;
     }
 
     // Validate passwords match
     if (signupData.password !== signupData.confirmPassword) {
       setError("Passwords do not match");
+      setLoading(false);
       return;
     }
 
@@ -131,13 +139,41 @@ export default function AuthPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(signupData.email)) {
       setError("Please enter a valid email address");
+      setLoading(false);
       return;
     }
 
-    // For now, registration is disabled
-    setError(
-      "Registration is currently disabled. Please contact your administrator for an account."
+    // Call signup function
+    const result = await signup(
+      signupData.email,
+      signupData.password,
+      signupData.firstName,
+      signupData.lastName
     );
+
+    if (result.success) {
+      // Show success message
+      showToast(
+        "Account created successfully! Please login with your credentials.",
+        "success"
+      );
+
+      // Clear form
+      setSignupData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      // Switch to login tab
+      switchTab("login");
+    } else {
+      setError(result.error || "Failed to create account. Please try again.");
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -705,8 +741,16 @@ export default function AuthPage() {
                   type="submit"
                   className="btn btn-primary"
                   style={{ width: "100%" }}
+                  disabled={loading}
                 >
-                  Sign Up
+                  {loading ? (
+                    <>
+                      <span className={formStyles.spinner}></span>
+                      Creating account...
+                    </>
+                  ) : (
+                    "Sign Up"
+                  )}
                 </button>
               </form>
               <div className={formStyles.formFooter}>

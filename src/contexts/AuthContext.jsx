@@ -4,8 +4,16 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
-import { doc, getDoc, updateDoc, serverTimestamp } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+} from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import { useRouter } from "next/navigation";
 import { logSystemAction } from "@/utils/systemLogger";
@@ -66,6 +74,63 @@ export function AuthProvider({ children }) {
     } catch (error) {
       console.error("Login error:", error);
       return { success: false, error: error.message };
+    }
+  }
+
+  async function signup(email, password, firstName, lastName) {
+    try {
+      // 1. Create Firebase Auth account createUserWithEmailAndPassword
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+
+      // 2. Update Firebase Auth profile with display name
+      await updateProfile(user, {
+        displayName: `${firstName} ${lastName}`,
+      });
+
+      // 3. Create Firestore user document
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        role: "resident", // Default role
+        avatarUrl: "", // Empty for now
+        createdAt: serverTimestamp(),
+        lastLogin: serverTimestamp(),
+      });
+
+      // 4. Log the signup action
+      await logSystemAction({
+        action: "User Registration",
+        description: `New user ${firstName} ${lastName} (${email}) registered as resident`,
+        targetCollection: "users",
+        targetId: user.uid,
+        userId: user.uid,
+        userRole: "resident",
+      });
+
+      return { success: true };
+    } catch (error) {
+      console.error("Signup error:", error);
+
+      // Handle specific Firebase errors
+      let errorMessage = "Failed to create account. Please try again.";
+
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage =
+          "This email is already registered. Please login instead.";
+      } else if (error.code === "auth/weak-password") {
+        errorMessage = "Password is too weak. Please use a stronger password.";
+      } else if (error.code === "auth/invalid-email") {
+        errorMessage = "Invalid email address format.";
+      }
+
+      return { success: false, error: errorMessage };
     }
   }
 
@@ -140,6 +205,7 @@ export function AuthProvider({ children }) {
     userRole,
     login,
     logout,
+    signup,
     refreshUser,
     loading,
   };
