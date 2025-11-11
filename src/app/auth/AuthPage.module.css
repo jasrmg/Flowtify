@@ -1,0 +1,88 @@
+/* Auth Page Layout */
+.authPage {
+  min-height: 100vh;
+  display: flex;
+  background: var(--bg-primary);
+  transition: background-color 0.3s ease;
+}
+
+.illustrationContainer {
+  flex: 1;
+  background: linear-gradient(
+    135deg,
+    var(--hero-gradient-start) 0%,
+    var(--hero-gradient-end) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+.illustrationContainer svg {
+  max-width: 500px;
+  width: 100%;
+  z-index: 1;
+}
+
+.formContainer {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  transition: background-color 0.3s ease;
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 450px;
+  animation: fadeInUp 0.6s ease;
+}
+
+.backHome {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  margin-bottom: 2rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.backHome:hover {
+  color: var(--secondary);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 968px) {
+  .illustrationContainer {
+    display: none;
+  }
+
+  .authPage {
+    background: var(--bg-secondary);
+  }
+}
+
+@media (max-width: 480px) {
+  .formContainer {
+    padding: 1rem;
+  }
+}

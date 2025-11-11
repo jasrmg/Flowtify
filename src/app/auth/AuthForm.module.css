@@ -1,0 +1,318 @@
+/* Form Header */
+.formHeader {
+  margin-bottom: 2rem;
+}
+
+.formTitle {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.formSubtitle {
+  color: var(--text-secondary);
+}
+
+/* Form Tabs */
+.formTabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  background: var(--bg-primary);
+  padding: 0.25rem;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.formTab {
+  flex: 1;
+  padding: 0.75rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  color: var(--text-primary);
+}
+
+.formTab.active {
+  background: var(--bg-secondary);
+  box-shadow: 0 2px 8px var(--shadow);
+  color: var(--secondary);
+}
+
+/* Form Content */
+.formContent {
+  display: none;
+}
+
+.formContent.active {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+/* Form Groups */
+.formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 0.875rem;
+  border: 2px solid;
+  border-color: var(--bg-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(63, 169, 245, 0.1);
+}
+
+.formGroup input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Form Row - Side by side inputs */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.formRow .formGroup {
+  margin-bottom: 0;
+}
+
+/* Form Footer */
+.formFooter {
+  margin-top: 1.5rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.formFooter a {
+  color: var(--secondary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.formFooter a:hover {
+  text-decoration: underline;
+}
+
+/* Error Alert */
+.errorAlert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  color: #ef4444;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  animation: slideDown 0.3s ease;
+}
+
+.errorAlert svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* Password Strength Indicator */
+.passwordStrength {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.passwordStrengthBar {
+  flex: 1;
+  height: 4px;
+  background: var(--bg-primary);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.passwordStrengthFill {
+  height: 100%;
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.passwordStrengthFill.weak {
+  width: 33%;
+  background: #ef4444;
+}
+
+.passwordStrengthFill.medium {
+  width: 66%;
+  background: #f59e0b;
+}
+
+.passwordStrengthFill.strong {
+  width: 100%;
+  background: #10b981;
+}
+
+.passwordStrengthText {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.passwordStrengthText.weak {
+  color: #ef4444;
+}
+
+.passwordStrengthText.medium {
+  color: #f59e0b;
+}
+
+.passwordStrengthText.strong {
+  color: #10b981;
+}
+
+/* Password Match Indicator */
+.passwordMatch {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.passwordMatch svg {
+  width: 16px;
+  height: 16px;
+}
+
+.passwordMatch.match {
+  color: #10b981;
+}
+
+.passwordMatch.noMatch {
+  color: #ef4444;
+}
+
+/* Loading Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
+
+/* Disabled Button State */
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Password Input Wrapper */
+.passwordInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordInputWrapper input {
+  padding-right: 3rem; /* Make space for the toggle button */
+}
+
+.passwordToggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: color 0.2s ease;
+  border-radius: 4px;
+}
+
+.passwordToggle:hover {
+  color: var(--text-primary);
+  background: var(--bg-primary);
+}
+
+.passwordToggle:focus {
+  outline: 2px solid var(--secondary);
+  outline-offset: 2px;
+}
+
+.passwordToggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .formTitle {
+    font-size: 1.5rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
