@@ -9,17 +9,46 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
-export function useMapReports() {
+/**
+ * Hook for fetching map reports with different query options
+ * @param {string} queryType - Type of query: "all", "pendingAndVerified", "verifiedOnly"
+ */
+export function useMapReports(queryType = "all") {
   const [markers, setMarkers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Query reports with status 'pending' or 'verified'
-    const reportsQuery = query(
-      collection(db, "reports"),
-      where("status", "in", ["pending", "verified"]),
-      orderBy("createdAt", "desc")
-    );
+    let reportsQuery;
+
+    // Create different queries based on the queryType
+    switch (queryType) {
+      case "pendingAndVerified":
+        // Original query - for components that need pending and verified only
+        reportsQuery = query(
+          collection(db, "reports"),
+          where("status", "in", ["pending", "verified"]),
+          orderBy("createdAt", "desc")
+        );
+        break;
+
+      case "verifiedOnly":
+        // Only verified reports
+        reportsQuery = query(
+          collection(db, "reports"),
+          where("status", "==", "verified"),
+          orderBy("createdAt", "desc")
+        );
+        break;
+
+      case "all":
+      default:
+        // All reports - filtering by status will happen in the component
+        reportsQuery = query(
+          collection(db, "reports"),
+          orderBy("createdAt", "desc")
+        );
+        break;
+    }
 
     // Real-time listener
     const unsubscribe = onSnapshot(
@@ -57,6 +86,13 @@ export function useMapReports() {
             userId: data.userId,
             brg: data.location?.brg,
             city: data.location?.city,
+            verifiedAt: data.verifiedAt,
+            verifiedBy: data.verifiedBy,
+            resolvedAt: data.resolvedAt,
+            resolvedBy: data.resolvedBy,
+            rejectedAt: data.rejectedAt,
+            rejectedBy: data.rejectedBy,
+            rejectionReason: data.rejectionReason,
           };
         });
 
@@ -75,7 +111,7 @@ export function useMapReports() {
     );
 
     return () => unsubscribe();
-  }, []);
+  }, [queryType]);
 
   return { markers, loading };
 }

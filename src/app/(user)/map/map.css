@@ -227,6 +227,9 @@
 .legend-marker.resolved {
   background-color: var(--success);
 }
+.legend-marker.rejected {
+  background-color: #6b7280;
+}
 
 .legend-label {
   font-size: 0.875rem;
@@ -449,6 +452,10 @@ body.dark-mode .leaflet-control-zoom-out {
 .popup-status.resolved {
   background-color: rgba(16, 185, 129, 0.15);
   color: var(--success);
+}
+.popup-status.rejected {
+  background-color: rgba(86, 92, 89, 0.15);
+  color: #6b7280;
 }
 
 .popup-description {

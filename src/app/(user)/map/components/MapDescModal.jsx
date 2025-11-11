@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 
+import { useUser } from "@/hooks/useUser";
+
 import { ImageGallery } from "./ImageGallery";
 import { ImageLightbox } from "./ImageLightbox";
 
@@ -10,6 +12,8 @@ export const MapDescModal = ({ isOpen, onClose, report }) => {
   const [lightboxStartIndex, setLightboxStartIndex] = useState(0);
 
   const scrollPosition = useRef(0);
+
+  const { user, loading: userLoading } = useUser(report?.userId);
 
   // Prevent scrolling when modal is open
   useEffect(() => {
@@ -45,6 +49,13 @@ export const MapDescModal = ({ isOpen, onClose, report }) => {
   }, [isOpen]);
 
   if (!isOpen || !report) return null;
+
+  // Get reporter name
+  const getReporterName = () => {
+    if (userLoading) return "Loading...";
+    if (!user) return "Unknown User";
+    return `${user.firstName} ${user.lastName}`;
+  };
 
   // Get first photo if photo is an array, otherwise use photo directly
   const photoUrl = Array.isArray(report.photo) ? report.photo[0] : report.photo;
@@ -97,8 +108,8 @@ export const MapDescModal = ({ isOpen, onClose, report }) => {
           </div>
 
           <div className="modal-field">
-            <label>Reported</label>
-            <p>{report.timestamp}</p>
+            <label>Reported By:</label>
+            <p>{getReporterName()}</p>
           </div>
         </div>
       </div>

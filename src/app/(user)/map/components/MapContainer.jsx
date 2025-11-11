@@ -99,7 +99,7 @@ export const MapContainer = ({ reports, statusFilter }) => {
                   iconSize: [16, 16],
                 }),
               })
-                .addTo(map) // 👈 This is where the bad line was
+                .addTo(map)
                 .bindPopup("Your Location");
             }
           },
@@ -137,7 +137,16 @@ export const MapContainer = ({ reports, statusFilter }) => {
     const status = report.status || "unknown";
     const location = report.location || "Unknown location";
     const description = report.description || "No description provided.";
-    const timestamp = report.timestamp || "Invalid time";
+    const date =
+      report.createdAt && typeof report.createdAt.toDate === "function"
+        ? report.createdAt.toDate()
+        : null;
+    const formattedTime = date
+      ? date.toLocaleString("en-PH", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })
+      : "Unknown time";
 
     const statusClass = status;
     const statusText = status.charAt(0).toUpperCase() + status.slice(1);
@@ -173,9 +182,9 @@ export const MapContainer = ({ reports, statusFilter }) => {
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
-          ${timestamp}
+          ${formattedTime}
         </div>
-        <button class="popup-button" onclick="window.handleViewDescription(${report.id})">
+        <button class="popup-button" onclick="window.handleViewDescription('${report.id}')">
           View Full Description
         </button>
       </div>

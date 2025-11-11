@@ -30,6 +30,10 @@ export const Legend = ({ isOpen, onClose }) => {
           <span className="legend-marker resolved"></span>
           <span className="legend-label">Resolved</span>
         </div>
+        <div className="legend-item">
+          <span className="legend-marker rejected"></span>
+          <span className="legend-label">Rejected</span>
+        </div>
       </div>
     </div>
   );

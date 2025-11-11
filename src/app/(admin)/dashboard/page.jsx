@@ -71,7 +71,8 @@ export default function DashboardPage() {
   } = useReports("verified");
 
   const { toast, showSuccess, showError, hideToast } = useToast();
-  const { markers: mapMarkers, loading: mapLoading } = useMapReports();
+  const { markers: mapMarkers, loading: mapLoading } =
+    useMapReports("pendingAndVerified");
   console.log("map markers: ", mapMarkers);
 
   const { highlightText, clearHighlights } = useSearch();
