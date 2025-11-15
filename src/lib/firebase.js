@@ -1,5 +1,4 @@
-import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeApp, getApps } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -11,6 +10,16 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+// Initialize Firebase app only once
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
+
+// Firestore can be used server-side safely
 export const db = getFirestore(app);
+
+// Auth should only be used client-side
+let auth;
+if (typeof window !== "undefined") {
+  const { getAuth } = await import("firebase/auth");
+  auth = getAuth(app);
+}
+export { auth };
