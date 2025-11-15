@@ -79,6 +79,7 @@ export default function LandingPage() {
               </Link>
               <button
                 className="btn btn-secondary"
+                style={{ alignItems: "center", fontSize: "1rem" }}
                 onClick={() => scrollToSection("about")}
               >
                 Learn More
