@@ -431,8 +431,8 @@ export default function ChangePasswordModal({ isOpen, onClose, user }) {
             >
               {isChanging ? (
                 <>
-                  Changing...
                   <span className="cp-spinner" />
+                  Changing...
                 </>
               ) : (
                 "Change Password"

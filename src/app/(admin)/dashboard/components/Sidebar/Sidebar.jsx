@@ -1,11 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
+import { auth } from "@/lib/firebase";
+
+import { useAuth } from "@/contexts/AuthContext";
+
+import ChangePasswordModal from "@/app/components/Modals/ChangePasswordModal";
+
 import "./Sidebar.css";
 
 export const Sidebar = () => {
   const [activeSection, setActiveSection] = useState("map");
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const { currentUser } = useAuth();
 
   const navItems = [
     {
@@ -110,6 +119,25 @@ export const Sidebar = () => {
         </svg>
       ),
     },
+    {
+      id: "settings",
+      label: "Settings",
+      onClick: () => {
+        setIsChangePasswordOpen(true);
+        setIsMobileOpen(false);
+      },
+      icon: (
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M12 1v6m0 6v6M4.22 4.22l4.24 4.24m5.08 5.08l4.24 4.24M1 12h6m6 0h6M4.22 19.78l4.24-4.24m5.08-5.08l4.24-4.24"></path>
+        </svg>
+      ),
+    },
   ];
 
   useEffect(() => {
@@ -204,30 +232,46 @@ export const Sidebar = () => {
   }, [isMobileOpen]);
 
   return (
-    <aside
-      className={`sidebar-left ${isMobileOpen ? "active" : ""}`}
-      id="sidebarLeft"
-    >
-      <div className="sidebar-header">
-        <h3>Dashboard</h3>
-      </div>
-      <ul className="sidebar-nav">
-        {navItems.map((item) => (
-          <li key={item.id} className="nav-item">
-            <a
-              href={item.href}
-              className={`nav-link ${
-                activeSection === item.id ? "active" : ""
-              }`}
-              data-section={item.id}
-              onClick={(e) => handleNavClick(e, item.href, item.id)}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </aside>
+    <>
+      <aside
+        className={`sidebar-left ${isMobileOpen ? "active" : ""}`}
+        id="sidebarLeft"
+      >
+        <div className="sidebar-header">
+          <h3>Dashboard</h3>
+        </div>
+        <ul className="sidebar-nav">
+          {navItems.map((item) => (
+            <li key={item.id} className="nav-item">
+              {item.href ? (
+                <a
+                  href={item.href}
+                  className={`nav-link ${
+                    activeSection === item.id ? "active" : ""
+                  }`}
+                  data-section={item.id}
+                  onClick={(e) => handleNavClick(e, item.href, item.id)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </a>
+              ) : (
+                <button className="nav-link" onClick={item.onClick}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </aside>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
+        user={auth.currentUser}
+      />
+    </>
   );
 };
