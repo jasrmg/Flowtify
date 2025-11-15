@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   collection,
   query,
@@ -28,8 +28,12 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return R * c;
 };
 
-export const useFeedReports = (userLocation, pageSize = 10) => {
-  const [reports, setReports] = useState([]);
+export const useFeedReports = (
+  userLocation,
+  pageSize = 10,
+  searchTerm = ""
+) => {
+  const [allReports, setAllReports] = useState([]); // Store all fetched reports
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
@@ -157,9 +161,9 @@ export const useFeedReports = (userLocation, pageSize = 10) => {
 
         // Append or replace reports
         if (isInitial) {
-          setReports(fetchedReports);
+          setAllReports(fetchedReports);
         } else {
-          setReports((prev) => [...prev, ...fetchedReports]);
+          setAllReports((prev) => [...prev, ...fetchedReports]);
         }
 
         if (isInitial) {
@@ -182,7 +186,7 @@ export const useFeedReports = (userLocation, pageSize = 10) => {
 
   // Initial fetch
   useEffect(() => {
-    setReports([]);
+    setAllReports([]);
     setLastDoc(null);
     setHasMore(true);
     fetchReports(true);
@@ -194,8 +198,29 @@ export const useFeedReports = (userLocation, pageSize = 10) => {
     }
   };
 
+  // Filter reports based on search term
+  const filteredReports = useMemo(() => {
+    if (!searchTerm || searchTerm.trim() === "") {
+      return allReports;
+    }
+
+    const searchLower = searchTerm.toLowerCase().trim();
+
+    return allReports.filter((report) => {
+      const barangay = report.location?.brg?.toLowerCase() || "";
+      const city = report.location?.city?.toLowerCase() || "";
+      const reporterName = report.reporterName?.toLowerCase() || "";
+
+      return (
+        barangay.includes(searchLower) ||
+        city.includes(searchLower) ||
+        reporterName.includes(searchLower)
+      );
+    });
+  }, [allReports, searchTerm]);
+
   return {
-    reports,
+    reports: filteredReports,
     loading,
     isFetchingMore,
     error,

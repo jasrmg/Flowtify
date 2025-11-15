@@ -27,12 +27,24 @@ export function FeedContent() {
   const [locationPermissionAsked, setLocationPermissionAsked] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const pageSize = isMobile ? 8 : 10;
   const { reports, loading, isFetchingMore, error, hasMore, loadMore } =
-    useFeedReports(userLocation, pageSize);
+    useFeedReports(userLocation, pageSize, searchTerm);
 
   // side effects:
+  // Listen for search events from Navbar
+  useEffect(() => {
+    const handleMapSearch = (event) => {
+      const { searchTerm: term } = event.detail;
+      setSearchTerm(term);
+    };
+
+    window.addEventListener("mapSearch", handleMapSearch);
+    return () => window.removeEventListener("mapSearch", handleMapSearch);
+  }, []);
+
   // Infinite scroll effect
   useEffect(() => {
     const handleScroll = () => {
@@ -189,7 +201,11 @@ export function FeedContent() {
             </div>
           ) : reports.length === 0 ? (
             <div className="no-reports">
-              <p>No flood reports found in your area.</p>
+              <p>
+                {searchTerm
+                  ? `No reports found matching "${searchTerm}"`
+                  : "No flood reports found in your area."}
+              </p>
             </div>
           ) : (
             <>
