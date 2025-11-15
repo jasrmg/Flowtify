@@ -1,38 +1,43 @@
-### FLOWTIFY
+# Flowtify
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**AP6 Project** - Flowtify is a flood reporting application that allows residents to view and report flood incidents, while giving administrators tools to manage and verify reports in real time. The platform provides both a feed and a map view for residents, enabling easy access to verified flood information and emergency updates.
 
-## Getting Started
+## Features
 
-First, run the development server:
+### Resident Side
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Feed View:** See verified flood reports, searchable by barangay, city, or reporter name.
+- **Report Flood:** Residents can submit new flood reports via a modal containing:
+  - Map for selecting flood location
+  - Severity level dropdown
+  - Description field
+  - Optional photos (up to 5)
+- **Weather Integration:** Displays current weather using OpenWeather API.
+- **Map View:** Visual representation of flood reports with interactive markers. Clicking a marker shows a pop-up with a "View Full Description" option.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Admin Side
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+- **Pending Reports:** Table of reports awaiting verification with options to approve or reject.
+- **Verified Unresolved Reports:** Table of verified reports with a "Mark as Resolved" action, notifying reporters upon resolution.
+- **Active Flood Alerts:** Add alerts that residents can see in the feed sidebar.
+- **Emergency Hotline:** Add emergency hotlines with number, description, and agency name visible to residents.
+- **Statistics Overview:** Cards displaying total reports, pending reports, verified reports, resolved reports, total users, and active alerts.
+- **Monthly Trends:** Bar graph visualizing flood report trends by month.
+- **System Logs:** Detailed logs for administrative monitoring.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Screenshots
 
-## Learn More
+## Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend:** Next.js with React
+- **Backend / Database:** Firebase
+- **Storage:** Cloudinary for image uploads
+- **Deployment:** Vercel
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Author
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **jasrmg** – Sole developer of Flowtify
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is private/restricted and not open-source.
