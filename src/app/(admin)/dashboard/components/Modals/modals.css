@@ -554,6 +554,16 @@ label.photo-upload-btn {
   display: inline-block;
   margin-right: 0.5rem;
 }
+.cp-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+  margin-right: 0.5rem;
+}
 
 /* Report Status Bar */
 .report-status-bar {

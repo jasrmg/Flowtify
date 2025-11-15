@@ -84,6 +84,18 @@
   font-size: 0.95rem;
 }
 
+/* Button styled as nav-link */
+.nav-link[type="button"],
+button.nav-link {
+  width: 100%;
+  text-align: left;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  cursor: pointer;
+}
+
 /* Responsive Design */
 @media (max-width: 968px) {
   .sidebar-left {

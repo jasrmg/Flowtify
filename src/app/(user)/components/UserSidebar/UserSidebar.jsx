@@ -2,11 +2,20 @@
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+
+import { auth } from "@/lib/firebase";
+
+import { useAuth } from "@/contexts/AuthContext";
+
+import ChangePasswordModal from "@/app/components/Modals/ChangePasswordModal";
+
 import "./UserSidebar.css";
 
 export const UserSidebar = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const pathname = usePathname();
+  const { currentUser } = useAuth();
 
   // Listen for mobile menu toggle from Navbar
   useEffect(() => {
@@ -80,7 +89,10 @@ export const UserSidebar = () => {
     },
 
     {
-      href: "/settings",
+      onClick: () => {
+        setIsChangePasswordOpen(true);
+        setIsMobileOpen(false);
+      },
       label: "Settings",
       icon: (
         <svg
@@ -97,25 +109,43 @@ export const UserSidebar = () => {
   ];
 
   return (
-    <aside
-      className={`sidebar-left ${isMobileOpen ? "active" : ""}`}
-      id="userSidebarLeft"
-    >
-      <ul className="sidebar-nav">
-        {navItems.map((item) => (
-          <li key={item.href} className="nav-item">
-            <Link
-              href={item.href}
-              className={`nav-link ${pathname === item.href ? "active" : ""}`}
-              onClick={() => setIsMobileOpen(false)}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </aside>
+    <>
+      <aside
+        className={`sidebar-left ${isMobileOpen ? "active" : ""}`}
+        id="userSidebarLeft"
+      >
+        <ul className="sidebar-nav">
+          {navItems.map((item, index) => (
+            <li key={item.href || index} className="nav-item">
+              {item.href ? (
+                <Link
+                  href={item.href}
+                  className={`nav-link ${
+                    pathname === item.href ? "active" : ""
+                  }`}
+                  onClick={() => setIsMobileOpen(false)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              ) : (
+                <button className="nav-link" onClick={item.onClick}>
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </aside>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={isChangePasswordOpen}
+        onClose={() => setIsChangePasswordOpen(false)}
+        user={auth.currentUser}
+      />
+    </>
   );
 };
 
