@@ -5,7 +5,7 @@ nav {
   position: fixed;
   width: 100%;
   top: 0;
-  z-index: 1000;
+  z-index: 99;
   transition: all 0.3s ease;
 }
 
@@ -35,6 +35,10 @@ nav {
   height: 32px;
 }
 
+.logo span:hover {
+  color: var(--secondary);
+}
+
 .nav-links {
   display: flex;
   list-style: none;
@@ -49,8 +53,12 @@ nav {
   transition: color 0.3s ease;
 }
 
-.nav-links a:hover {
+.nav-links li:hover a:hover {
   color: var(--secondary);
+}
+
+.nav-links li:last-child a:hover {
+  color: var(--bg-primary);
 }
 
 .mobile-menu-btn {
