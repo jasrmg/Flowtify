@@ -283,6 +283,7 @@ export default function LandingPage() {
                         message: e.target.value,
                       })
                     }
+                    style={{ resize: "none" }}
                     rows="5"
                     required
                   ></textarea>
