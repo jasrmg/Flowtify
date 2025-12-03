@@ -9,7 +9,7 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../lib/firebase";
+import { db } from "@/lib/firebase";
 
 export function useNotifications(userId) {
   const [notifications, setNotifications] = useState([]);

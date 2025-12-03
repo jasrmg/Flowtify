@@ -7,7 +7,9 @@ import Image from "next/image";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/contexts/AuthContext";
+
 import { uploadImagesToCloudinary } from "@/utils/cloudinaryHelpers";
+import { notifyAdminsNewReport } from "@/utils/notificationHelpers";
 import { Toast } from "@/components/Toast/Toast";
 import "@/app/(admin)/dashboard/components/Modals/modals.css";
 
@@ -178,7 +180,24 @@ export const ReportModal = ({ isOpen, onClose }) => {
       };
 
       // Save to Firestore
-      await addDoc(collection(db, "reports"), reportData);
+      const docRef = await addDoc(collection(db, "reports"), reportData);
+
+      // Notify all admins about the new report
+      await notifyAdminsNewReport({
+        reportId: docRef.id,
+        submittedBy: {
+          uid: currentUser.uid,
+          firstName: currentUser.firstName,
+          lastName: currentUser.lastName,
+          email: currentUser.email,
+        },
+        location: {
+          brg: formData.location.barangay || "",
+          city: formData.location.city || "Cebu City",
+        },
+        severity: formData.severity,
+        description: formData.description,
+      });
 
       // Show success toast
       setToast({

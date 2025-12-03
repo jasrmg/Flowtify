@@ -1,6 +1,13 @@
 import { formatDistanceToNow } from "date-fns";
 import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  query,
+  where,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
 
 export function getNotificationIcon(type) {
   switch (type) {
@@ -143,6 +150,64 @@ export async function createReportStatusNotification({
     return { success: true };
   } catch (error) {
     console.error("Error creating notification:", error);
+    return { success: false, error: error.message };
+  }
+}
+// Create notification for admin when a new report is submitted
+export async function notifyAdminsNewReport({
+  reportId,
+  submittedBy, // user object with firstName, lastName, email
+  location,
+  severity,
+  description,
+}) {
+  try {
+    // 1. Get all admin users from Firestore
+    const usersRef = collection(db, "users");
+    const adminsQuery = query(usersRef, where("role", "==", "admin"));
+    const adminsSnapshot = await getDocs(adminsQuery);
+
+    if (adminsSnapshot.empty) {
+      console.log("No admin users found");
+      return { success: true, adminCount: 0 };
+    }
+
+    // 2. Create notification for each admin
+    const notificationsRef = collection(db, "notifications");
+    const notificationPromises = [];
+
+    const submitterName =
+      submittedBy.firstName && submittedBy.lastName
+        ? `${submittedBy.firstName} ${submittedBy.lastName}`
+        : submittedBy.email;
+
+    const locationText = location.brg
+      ? `${location.brg}, ${location.city}`
+      : location.city;
+
+    adminsSnapshot.forEach((adminDoc) => {
+      const notificationData = {
+        title: "New Flood Report Submitted",
+        body: `${submitterName} reported ${severity} flooding at ${locationText}. Review required.`,
+        type: "report",
+        reportId,
+        receiverId: adminDoc.id, // Each admin's user ID
+        submittedBy: submittedBy.uid,
+        severity,
+        isRead: false,
+        createdAt: serverTimestamp(),
+      };
+
+      notificationPromises.push(addDoc(notificationsRef, notificationData));
+    });
+
+    // 3. Wait for all notifications to be created
+    await Promise.all(notificationPromises);
+
+    console.log(`Created notifications for ${adminsSnapshot.size} admin(s)`);
+    return { success: true, adminCount: adminsSnapshot.size };
+  } catch (error) {
+    console.error("Error notifying admins:", error);
     return { success: false, error: error.message };
   }
 }
