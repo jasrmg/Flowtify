@@ -2,7 +2,8 @@
 const nextConfig = {
   /* config options here */
   reactStrictMode: true,
-  output: "standalone",
+  // Vercel deploys the default .next output. Standalone is only for Docker.
+  ...(process.env.VERCEL ? {} : { output: "standalone" }),
 
   images: {
     remotePatterns: [
